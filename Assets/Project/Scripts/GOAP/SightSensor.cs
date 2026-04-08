@@ -109,10 +109,40 @@ namespace GOAP
         /// <summary>
         /// Draws vision cone for debugging
         /// </summary>
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) { return; }
+
+            GOAPAgent agent = GetComponent<GOAPAgent>();
+            if (agent == null) { return; }
+
+            bool targetVisible = agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_VISIBLE);
+
+            Color coneColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.12f) : new Color(0.0f, 1.0f, 0.0f, 0.06f);
+            Color outlineColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.6f) : new Color(0.0f, 0.8f, 0.0f, 0.4f);
+
+            UnityEditor.Handles.color = coneColor;
+            UnityEditor.Handles.DrawSolidArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+            UnityEditor.Handles.color = outlineColor;
+            UnityEditor.Handles.DrawWireArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+
+            Gizmos.color = outlineColor;
+            Gizmos.DrawRay(eyeLocation.position, transform.forward * _sightRange);
+
+            if (agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS))
+            {
+                Vector3 lastKnown = agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
+
+                Gizmos.color = new Color(1.0f, 0.8f, 0.0f, 0.8f);
+                Gizmos.DrawLine(transform.position, lastKnown);
+                Gizmos.DrawWireSphere(lastKnown, 0.3f);
+            }
+        }
+
         private void OnDrawGizmosSelected()
         {
-            UnityEditor.Handles.color = new Color(0.0f, 1.0f, 0.0f, 0.08f);
-            UnityEditor.Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+            Gizmos.color = new Color(1.0f, 1.0f, 1.0f, 0.15f);
+            Gizmos.DrawWireSphere(transform.position, _sightRange);
         }
 #endif
     }

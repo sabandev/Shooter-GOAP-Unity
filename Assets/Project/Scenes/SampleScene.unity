@@ -205,8 +205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0.2643898, y: 0.6572941, z: -0.2658235, w: -0.65375865}
+  m_LocalPosition: {x: 45.546364, y: 34.62849, z: 2.5529385}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -794,7 +794,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fdaa29ea907a44f51a19ef88cf7cdb93, type: 2}
   _waypointNetwork: {fileID: 836632606}
   _planningTickRate: 3
-  _debugLogging: 1
+  _debugLogging: 0
 --- !u!195 &939849239
 NavMeshAgent:
   m_ObjectHideFlags: 0

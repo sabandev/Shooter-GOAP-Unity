@@ -41,6 +41,13 @@ namespace GOAP
         public AgentBlackboard Blackboard { get; private set; }
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
 
+        // ----------FOR EDITOR----------
+        public GOAPGoal ActiveGoal => _activeGoal;
+        public List<GOAPActionInstance> CurrentPlan => _currentPlan;
+        public int CurrentActionIndex => _currentActionIndex;
+        public IReadOnlyList<GOAPGoal> Goals => _goals;
+        public IReadOnlyList<GOAPActionInstance> ActionInstances => _actionInstances;
+
         // -----MonoBehaviour methods-----
         private void Awake()
         {
@@ -165,7 +172,7 @@ namespace GOAP
         /// runs the plan if one is returned.
         /// </summary>
         /// <param name="goal"></param>
-        private void RequestReplan(GOAPGoal goal)
+        public void RequestReplan(GOAPGoal goal)
         {
             if (goal == null) { return; }
 
@@ -269,6 +276,33 @@ namespace GOAP
             GOAPGoal currentGoal = _activeGoal;
             AbortCurrentPlan();
             RequestReplan(currentGoal);
+        }
+
+        // -----Editor Helper-----
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) { return; }
+
+            string goalName = _activeGoal?.GoalName ?? "No Goal";
+            string actionName = (_currentPlan != null && _currentActionIndex < _currentPlan?.Count) ? _currentPlan[_currentActionIndex].Data.ActionName : "No Action";
+
+            UnityEditor.Handles.Label(
+                transform.position + Vector3.up * 2.2f, 
+                $"{gameObject.name}\n{goalName}\n{actionName}",
+                new GUIStyle
+                {
+                    normal = { textColor = Color.white },
+                    fontSize = 10,
+                    alignment = TextAnchor.MiddleCenter,
+                    richText = true,
+                });
+
+            if (_currentPlan != null && NavAgent.hasPath)
+            {
+                Gizmos.color = new Color(0.4f, 0.8f, 1.0f, 0.6f);
+                Gizmos.DrawLine(transform.position, NavAgent.destination);
+                Gizmos.DrawWireSphere(NavAgent.destination, 0.3f);
+            }
         }
     }
 }
