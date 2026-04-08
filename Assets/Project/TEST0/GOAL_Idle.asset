@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29c225e8742e04956a0631cacd695d86, type: 3}
+  m_Name: GOAL_Idle
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.IdleGoal
+  _goalName: Idle Goal
+  _basePriority: 20
+  _desiredState:
+  - _key: IS_IDLE
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0

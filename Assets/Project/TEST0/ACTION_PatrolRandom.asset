@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89053d11e6629495b95b9f83caba726c, type: 3}
+  m_Name: ACTION_PatrolRandom
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.PatrolRandomActionData
+  _actionName: Patrol Randomly Action
+  _cost: 5
+  _preconditions: []
+  _effects:
+  - _key: IS_PATROLLING
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0
+  _wanderRadius: 10
+  _arrivalTolerance: 0.5

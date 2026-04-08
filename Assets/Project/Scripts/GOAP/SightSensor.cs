@@ -1,0 +1,120 @@
+using UnityEngine;
+
+namespace GOAP
+{
+    /// <summary>
+    /// Sensor that a GOAP agent can own and have access to its results. Detects whether the agent has
+    /// line-of-sight to a target.
+    /// Writes vision information to the agent's blackboard.
+    /// </summary>
+    [RequireComponent(typeof(GOAPAgent))]
+    public sealed class SightSensor : MonoBehaviour
+    {
+        // -----Serialized properties-----
+        [SerializeField] private Transform eyeLocation;
+        [SerializeField] private float _sightRange = 20.0f;
+        [SerializeField] [Range(1.0f, 180.0f)] private float _sightAngle = 90.0f;
+        [SerializeField] private LayerMask _targetMask;
+        [SerializeField] private LayerMask _occlusionMask;
+        [SerializeField] [Range(1.0f, 30.0f)] private float _tickRate = 6.0f;
+
+        // -----Private properties-----
+        private GOAPAgent _agent;
+        private float _tickTimer;
+
+        // -----MonoBehaviour methods-----
+        private void Awake()
+        {
+            _agent = GetComponent<GOAPAgent>();
+            Debug.Assert(_agent != null, "[SightSensor] Requires a GOAP Agent on the same GameObject to function.", this);
+        }
+
+        private void Update()
+        {
+            _tickTimer -= Time.deltaTime;
+            if (_tickTimer > 0.0f) { return; }
+
+            _tickTimer = 1.0f / _tickRate;
+            Sense();
+        }
+
+        // -----Private methods-----
+
+        /// <summary>
+        /// Sends visual information to the agent's blackboard
+        /// </summary>
+        private void Sense()
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, _sightRange, _targetMask);
+            if (hits.Length == 0)
+            {
+                _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
+                return;
+            }
+
+            Transform nearest = FindNearest(hits);
+            if (nearest == null)
+            {
+                _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
+                return;
+            }
+
+            bool hasLOS = CheckLineOfSight(nearest);
+            _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, hasLOS);
+
+            if (hasLOS)
+            {
+                _agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_POS, nearest.position);
+                _agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(transform.position, nearest.position));
+            }
+        }
+
+        private Transform FindNearest(Collider[] hits)
+        {
+            Transform nearest = null;
+            float nearestDist = float.MaxValue;
+
+            foreach (Collider hit in hits)
+            {
+                if (hit.transform == transform) { continue; }
+
+                float dist = (hit.transform.position - transform.position).sqrMagnitude;
+
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearest = hit.transform;
+                }
+            }
+
+            return nearest;
+        }
+
+        private bool CheckLineOfSight(Transform target)
+        {
+            Vector3 origin = eyeLocation.position;
+            Vector3 targetPos = target.position + (Vector3.up * 0.5f);
+            Vector3 direction = (targetPos - origin).normalized;
+
+            float angle = Vector3.Angle(transform.forward, direction);
+            if (angle > _sightAngle) { return false; }
+
+            float distance = Vector3.Distance(origin, targetPos);
+
+            return !Physics.Raycast(origin, direction, distance, _occlusionMask);
+        }
+
+        // -----Editor Helper-----
+#if UNITY_EDITOR
+        /// <summary>
+        /// Draws vision cone for debugging
+        /// </summary>
+        private void OnDrawGizmosSelected()
+        {
+            UnityEditor.Handles.color = new Color(0.0f, 1.0f, 0.0f, 0.08f);
+            UnityEditor.Handles.DrawSolidArc(transform.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+        }
+#endif
+    }
+}
+

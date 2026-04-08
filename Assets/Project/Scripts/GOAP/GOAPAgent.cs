@@ -1,0 +1,275 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+namespace GOAP
+{
+    /// <summary>
+    /// MonoBehaviour that drives all GOAP agents and their behaviour.
+    /// 
+    /// Authorised Use Instructions:
+    ///     - Must create runtime action instances during initialisation from action data
+    ///       (prevents coupled action data and logic)
+    ///     - Must constantly evaluate goal priorities for intelligent behaviour
+    ///     - Must drive/call action execution loop (OnStart, Perform, OnEnd, OnReset)
+    ///     - Must monitor for changes to the WorldState that could trigger a re-plan and
+    ///       invalidate the current plan + call for a new one if necessary
+    ///     - Must decouple planning rate from Unity player loop (xHz < every update call) 
+    ///       to prevent large performance loss
+    /// </summary>
+    [RequireComponent(typeof(NavMeshAgent))]
+    public sealed class GOAPAgent : MonoBehaviour
+    {
+        // -----Serialized properties-----
+        [SerializeField] private List<GOAPActionData> _actionDataAssets = new();
+        [SerializeField] private List<GOAPGoal> _goals = new();
+        [SerializeField] private WaypointPatrolPath _waypointNetwork;
+        [SerializeField] [Range(0.0f, 30.0f)] float _planningTickRate = 3.0f;
+        [SerializeField] private bool _debugLogging = true;
+
+        // -----Private properties-----
+        private List<GOAPActionInstance> _actionInstances;
+        private GOAPPlanner _planner;
+        private List<GOAPActionInstance> _currentPlan;
+        private GOAPGoal _activeGoal;
+
+        private int _currentActionIndex;
+        private float _planningTickTimer;
+
+        // -----Public properties-----
+        public NavMeshAgent NavAgent { get; private set; }
+        public AgentBlackboard Blackboard { get; private set; }
+        public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
+
+        // -----MonoBehaviour methods-----
+        private void Awake()
+        {
+            NavAgent = GetComponent<NavMeshAgent>();
+            Blackboard = new AgentBlackboard();
+            _planner = new GOAPPlanner();
+
+            InitializeActionInstances();
+            RegisterReplanCallbacks();
+        }
+
+        private void Update()
+        {
+            TickActionExecution();
+            TickPlanning();
+        }
+
+        // -----Private methods-----
+
+        /// <summary>
+        /// Builds a GOAPActionInstance for every GOAPActionData the agent has.
+        /// Each will be used for whole agent lifecycle.
+        /// </summary>
+        private void InitializeActionInstances()
+        {
+            _actionInstances = new List<GOAPActionInstance>(_actionDataAssets.Count);
+
+            foreach (GOAPActionData data in _actionDataAssets)
+            {
+                if (data == null)
+                {
+                    Debug.LogWarning($"[GOAPAgent] Action data null on {name}. Skipping this GOAPActionData.");
+                    continue;
+                }
+
+                _actionInstances.Add(data.CreateInstance(this));
+            }
+        }
+
+        private void RegisterReplanCallbacks()
+        {
+            Blackboard.RegisterChangeCallback(BlackboardKeys.TARGET_VISIBLE, _ => OnSignificantFactChanged());
+        }
+
+        /// <summary>
+        /// Runs every frame. Handles the current action's execution loop and transitions between actions in the plan.
+        /// </summary>
+        private void TickActionExecution()
+        {
+            if (_currentPlan == null || _currentActionIndex >= _currentPlan.Count) { return; }
+
+            GOAPActionInstance activeAction = _currentPlan[_currentActionIndex];
+            ActionStatus status = activeAction.Perform();
+
+            switch(status)
+            {
+                case ActionStatus.Running:
+                // no-op
+                // Keep executing action next frame
+                break;
+
+                case ActionStatus.Succeeded:
+                OnActionSucceeded(activeAction);
+                break;
+
+                case ActionStatus.Failed:
+                OnActionFailed(activeAction);
+                break;
+            }
+        }
+
+        /// <summary>
+        /// Runs every specified planning tick (1-10Hz usually).
+        /// Constantly calculates the most important goal and triggers a re-plan if the best
+        /// goal is not the current goal OR if there is no current plan.
+        /// </summary>
+        private void TickPlanning()
+        {
+            // Re-plan optimisation
+            _planningTickTimer -= Time.deltaTime;
+            if (_planningTickTimer > 0.0f) { return; }
+            _planningTickTimer = 1.0f / _planningTickRate;
+
+            GOAPGoal bestGoal = SelectBestGoal();
+            if (bestGoal == null) { return; }
+
+            bool needsReplan = _currentPlan == null || bestGoal != _activeGoal;
+            if (!needsReplan) { return; }
+
+            RequestReplan(bestGoal);
+        }
+
+        /// <summary>
+        /// Evaluates all agent goals and returns the one with the highest priority given the WorldState
+        /// </summary>
+        /// <returns></returns>
+        private GOAPGoal SelectBestGoal()
+        {
+            GOAPGoal bestGoal = null;
+            int bestPriority = int.MinValue;
+
+            WorldState snapshot = Blackboard.GetWorldStateSnapshot();
+
+            foreach (GOAPGoal goal in _goals)
+            {
+                if (goal == null) { continue; }
+
+                int priority = goal.EvaluatePriority(snapshot);
+
+                if (priority > bestPriority)
+                {
+                    bestPriority = priority;
+                    bestGoal = goal;
+                }
+            }
+
+            return bestGoal;
+        }
+
+        /// <summary>
+        /// Aborts the current plan, requests a fresh plan from the GOAP planner with the given goal and 
+        /// runs the plan if one is returned.
+        /// </summary>
+        /// <param name="goal"></param>
+        private void RequestReplan(GOAPGoal goal)
+        {
+            if (goal == null) { return; }
+
+            AbortCurrentPlan();
+
+            WorldState snapshot = Blackboard.GetWorldStateSnapshot();
+
+            List<GOAPActionInstance> newPlan = _planner.Plan(snapshot, goal.GetDesiredState(), _actionInstances);
+
+            if (newPlan == null || newPlan.Count == 0)
+            {
+                Debug.Log($"[GOAPAgent] '{name}' could not find a plan for goal: '{goal.GoalName}'. Retrying on next tick.", this);
+                return;
+            }
+
+            _currentPlan = newPlan;
+            _currentActionIndex = 0;
+            _activeGoal = goal;
+
+            if (_debugLogging)
+            {
+                string planString = string.Join
+                (
+                    "-->",
+                    _currentPlan.ConvertAll(a => a.Data.ActionName)
+                );
+
+                Debug.Log($"[GOAPAgent] '{name}' new plan for '{goal.GoalName}': [{planString}]", this);
+            }
+
+            // Start first action in new plan immediately
+            _currentPlan[_currentActionIndex].OnStart();
+        }
+
+        /// <summary>
+        /// Terminates the current plan by ending + resetting the current action, then clearing all planning state.
+        /// </summary>
+        private void AbortCurrentPlan()
+        {
+            if (_currentPlan == null) { return; }
+
+            if (_currentActionIndex < _currentPlan.Count)
+            {
+                GOAPActionInstance activeAction = _currentPlan[_currentActionIndex];
+                activeAction.OnEnd();
+                activeAction.OnReset();
+            }
+
+            _currentPlan = null;
+            _currentActionIndex = 0;
+        }
+
+        /// <summary>
+        /// Begins next action in plan OR clears planning status if last action completed.
+        /// </summary>
+        /// <param name="action"></param>
+        private void OnActionSucceeded(GOAPActionInstance action)
+        {
+            action.OnEnd();
+            action.OnReset();
+
+            _currentActionIndex++;
+
+            // Plan is complete
+            if (_currentActionIndex >= _currentPlan.Count)
+            {
+                if (_debugLogging)
+                    Debug.Log($"[GOAPAgent] '{name}' completed plan for '{_activeGoal}'.", this);
+
+                _currentPlan = null;
+                _activeGoal = null;
+                return;
+            }
+
+            _currentPlan[_currentActionIndex].OnStart();
+        }
+
+        /// <summary>
+        /// Aborts the current plan and forces a re-plan so the AI agent can try again.
+        /// </summary>
+        /// <param name="action"></param>
+        private void OnActionFailed(GOAPActionInstance action)
+        {
+            if (_debugLogging)
+                Debug.Log($"[GOAPAgent] Action: '{action.Data.ActionName}' failed on '{name}'. Replanning.", this);
+
+            // Re-plan IMMEDIATELY with no delay to prevent delayed behaviour
+            GOAPGoal failedGoal = _activeGoal;
+            AbortCurrentPlan();
+            RequestReplan(failedGoal);
+        }
+
+        /// <summary>
+        /// Called when a significant fact on the blackboard has changed, rendering the current plan stale.
+        /// Requests a replan of the goal.
+        /// </summary>
+        private void OnSignificantFactChanged()
+        {
+            if (_activeGoal == null) { return; }
+
+            GOAPGoal currentGoal = _activeGoal;
+            AbortCurrentPlan();
+            RequestReplan(currentGoal);
+        }
+    }
+}
+
