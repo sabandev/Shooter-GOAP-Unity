@@ -46,7 +46,7 @@ namespace GOAP
 
         // -----Public properties-----
         public NavMeshAgent NavAgent { get; private set; }
-        public AgentBlackboard Blackboard { get; private set; }
+        public AgentBlackboard Blackboard { get; private set; } = new AgentBlackboard();
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
         public IReadOnlyList<PlanHistoryEntry> PlanHistory => _planHistory;
 

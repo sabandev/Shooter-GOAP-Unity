@@ -48,6 +48,7 @@ namespace GOAP
         {
             Vector3 destination = _waypointNetwork.GetWaypoint(_currentWaypointIndex);
             Agent.NavAgent.SetDestination(destination);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Jog);
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, true);
         }
 
@@ -64,6 +65,7 @@ namespace GOAP
         public override void OnEnd()
         {
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, false);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
         }
 
         /// <summary>
@@ -71,6 +73,7 @@ namespace GOAP
         /// </summary>
         public override void OnReset()
         {
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
         }
     }
 }

@@ -15,6 +15,9 @@ namespace GOAP
         public const string IS_PATROLLING = "IS_PATROLLING";
         public const string IS_INVESTIGATING = "IS_INVESTIGATING";
 
+        // -----Locomotion States-----
+        public const string MOVEMENT_SPEED = "MOVEMENT_SPEED";
+
         // -----Vision-----
         public const string TARGET_VISIBLE = "TARGET_VISIBLE";
         public const string TARGET_LAST_KNOWN_POS = "TARGET_LAST_KNOWN_POS";

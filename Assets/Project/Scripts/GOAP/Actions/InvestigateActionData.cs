@@ -33,6 +33,8 @@ namespace GOAP
             var destination = Agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
 
             Agent.NavAgent.SetDestination(destination);
+            
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Sprint);
             Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, true);
             _destinationSet = true;
         }
@@ -57,11 +59,13 @@ namespace GOAP
         public override void OnEnd()
         {
             Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, false);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
         }
 
         public override void OnReset()
         {
             _destinationSet = false;
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
         }
     }
 }
