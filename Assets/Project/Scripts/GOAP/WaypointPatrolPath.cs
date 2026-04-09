@@ -12,7 +12,12 @@ namespace GOAP
     {
         // -----Serialized properties-----
         [SerializeField] private Transform[] _waypoints;
+
+        [Space(10.0f)]
+
+        [Header("Gizmos")]
         [SerializeField] private float _gizmoSphereRadius = 0.3f;
+        [SerializeField] private bool _debugVisualiseWaypoints = true;
 
         // -----Public properties-----
         public int Count => _waypoints?.Length ?? 0;
@@ -40,7 +45,7 @@ namespace GOAP
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (_waypoints == null || _waypoints.Length == 0) { return; }
+            if (_waypoints == null || _waypoints.Length == 0 || !_debugVisualiseWaypoints) { return; }
 
             Gizmos.color = Color.green;
 

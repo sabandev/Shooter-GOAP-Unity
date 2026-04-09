@@ -24,14 +24,22 @@ namespace GOAP
         [SerializeField] private List<GOAPActionData> _actionDataAssets = new();
         [SerializeField] private List<GOAPGoal> _goals = new();
         [SerializeField] private WaypointPatrolPath _waypointNetwork;
-        [SerializeField] [Range(0.0f, 30.0f)] float _planningTickRate = 3.0f;
+        [SerializeField] [Range(1.0f, 30.0f)] float _planningTickRate = 3.0f;
         [SerializeField] private bool _debugLogging = true;
+
+        [Space(10.0f)]
+
+        [Header("Gizmos")]
+        [SerializeField] private bool _drawVisualiserGizmos = true;
+        [SerializeField] private bool _drawPlaningStatusInWorldSpaceGizmos = true;
+        [SerializeField] private bool _drawNavigationGizmos = true;
 
         // -----Private properties-----
         private List<GOAPActionInstance> _actionInstances;
         private GOAPPlanner _planner;
         private List<GOAPActionInstance> _currentPlan;
         private GOAPGoal _activeGoal;
+        private readonly List<PlanHistoryEntry> _planHistory = new();
 
         private int _currentActionIndex;
         private float _planningTickTimer;
@@ -40,6 +48,10 @@ namespace GOAP
         public NavMeshAgent NavAgent { get; private set; }
         public AgentBlackboard Blackboard { get; private set; }
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
+        public IReadOnlyList<PlanHistoryEntry> PlanHistory => _planHistory;
+
+        // -----Constants-----
+        private const int MAX_HISTORY_ENTRIES  = 50;
 
         // ----------FOR EDITOR----------
         public GOAPGoal ActiveGoal => _activeGoal;
@@ -137,7 +149,7 @@ namespace GOAP
             bool needsReplan = _currentPlan == null || bestGoal != _activeGoal;
             if (!needsReplan) { return; }
 
-            RequestReplan(bestGoal);
+            RequestReplan(bestGoal, "Goal changed");
         }
 
         /// <summary>
@@ -172,7 +184,7 @@ namespace GOAP
         /// runs the plan if one is returned.
         /// </summary>
         /// <param name="goal"></param>
-        public void RequestReplan(GOAPGoal goal)
+        public void RequestReplan(GOAPGoal goal, string triggerReason = "Manual")
         {
             if (goal == null) { return; }
 
@@ -180,11 +192,16 @@ namespace GOAP
 
             WorldState snapshot = Blackboard.GetWorldStateSnapshot();
 
-            List<GOAPActionInstance> newPlan = _planner.Plan(snapshot, goal.GetDesiredState(), _actionInstances);
+            List<GOAPActionInstance> newPlan = _planner.Plan(snapshot, goal.GetDesiredState(), _actionInstances, out int nodesExpanded);
 
-            if (newPlan == null || newPlan.Count == 0)
+            bool planFound = newPlan != null && newPlan.Count > 0;
+            RecordPlanHistory(goal, triggerReason, newPlan, nodesExpanded, planFound);
+
+            if (!planFound)
             {
-                Debug.Log($"[GOAPAgent] '{name}' could not find a plan for goal: '{goal.GoalName}'. Retrying on next tick.", this);
+                if (_debugLogging)
+                    Debug.Log($"[GOAPAgent] '{name}' could not find a plan for goal: '{goal.GoalName}'. Retrying on next tick.", this);
+
                 return;
             }
 
@@ -205,6 +222,18 @@ namespace GOAP
 
             // Start first action in new plan immediately
             _currentPlan[_currentActionIndex].OnStart();
+        }
+
+        private void RecordPlanHistory(GOAPGoal goal, string triggerReason, List<GOAPActionInstance> plan, int nodesExpanded, bool planFound)
+        {
+            var actionNames = planFound ? plan.ConvertAll(a => a.Data.ActionName) : new List<string>();
+
+            var entry = new PlanHistoryEntry(Time.time, goal.GoalName, triggerReason, actionNames, nodesExpanded, planFound);
+
+            _planHistory.Add(entry);
+
+            if (_planHistory.Count > MAX_HISTORY_ENTRIES)
+                _planHistory.RemoveAt(0);
         }
 
         /// <summary>
@@ -240,7 +269,7 @@ namespace GOAP
             if (_currentActionIndex >= _currentPlan.Count)
             {
                 if (_debugLogging)
-                    Debug.Log($"[GOAPAgent] '{name}' completed plan for '{_activeGoal}'.", this);
+                    Debug.Log($"[GOAPAgent] '{name}' completed plan for '{_activeGoal.GoalName}'.", this);
 
                 _currentPlan = null;
                 _activeGoal = null;
@@ -250,7 +279,7 @@ namespace GOAP
             _currentPlan[_currentActionIndex].OnStart();
         }
 
-        /// <summary>
+        /// <summary>§
         /// Aborts the current plan and forces a re-plan so the AI agent can try again.
         /// </summary>
         /// <param name="action"></param>
@@ -262,7 +291,7 @@ namespace GOAP
             // Re-plan IMMEDIATELY with no delay to prevent delayed behaviour
             GOAPGoal failedGoal = _activeGoal;
             AbortCurrentPlan();
-            RequestReplan(failedGoal);
+            RequestReplan(failedGoal, $"Action failed: {action.Data.ActionName}");
         }
 
         /// <summary>
@@ -275,29 +304,38 @@ namespace GOAP
 
             GOAPGoal currentGoal = _activeGoal;
             AbortCurrentPlan();
-            RequestReplan(currentGoal);
+            RequestReplan(currentGoal, "Significant fact changed");
         }
+
+        /// <summary>
+        /// Used by GOAP debugger to clear history at runtime
+        /// </summary>
+        public void ClearPlanHistory() => _planHistory.Clear();
 
         // -----Editor Helper-----
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying) { return; }
+            if (!_drawVisualiserGizmos) { return; }
 
-            string goalName = _activeGoal?.GoalName ?? "No Goal";
-            string actionName = (_currentPlan != null && _currentActionIndex < _currentPlan?.Count) ? _currentPlan[_currentActionIndex].Data.ActionName : "No Action";
+            if (_drawPlaningStatusInWorldSpaceGizmos)
+            {    
+                string goalName = _activeGoal?.GoalName ?? "No Goal";
+                string actionName = (_currentPlan != null && _currentActionIndex < _currentPlan.Count) ? _currentPlan[_currentActionIndex].Data.ActionName : "No Action";
 
-            UnityEditor.Handles.Label(
-                transform.position + Vector3.up * 2.2f, 
-                $"{gameObject.name}\n{goalName}\n{actionName}",
-                new GUIStyle
-                {
-                    normal = { textColor = Color.white },
-                    fontSize = 10,
-                    alignment = TextAnchor.MiddleCenter,
-                    richText = true,
-                });
+                UnityEditor.Handles.Label(
+                    transform.position + Vector3.up * 2.2f, 
+                    $"{gameObject.name}\n{goalName}\n{actionName}",
+                    new GUIStyle
+                    {
+                        normal = { textColor = Color.white },
+                        fontSize = 10,
+                        alignment = TextAnchor.MiddleCenter,
+                        richText = true,
+                    });
+            }
 
-            if (_currentPlan != null && NavAgent.hasPath)
+            if (_currentPlan != null && NavAgent.hasPath && _drawNavigationGizmos)
             {
                 Gizmos.color = new Color(0.4f, 0.8f, 1.0f, 0.6f);
                 Gizmos.DrawLine(transform.position, NavAgent.destination);

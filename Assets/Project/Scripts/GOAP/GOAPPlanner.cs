@@ -40,7 +40,7 @@ namespace GOAP
         /// <param name="goal"></param>
         /// <param name="availableActions"></param>
         /// <returns></returns>
-        public List<GOAPActionInstance> Plan(WorldState currentState, WorldState goal, IReadOnlyList<GOAPActionInstance> availableActions)
+        public List<GOAPActionInstance> Plan(WorldState currentState, WorldState goal, IReadOnlyList<GOAPActionInstance> availableActions, out int nodesExpanded)
         {
             // LogPlannerDiagnostics(currentState, goal, availableActions);
 
@@ -53,7 +53,7 @@ namespace GOAP
 
             openSet.Add(root);
 
-            int nodesExpanded = 0;
+            nodesExpanded = 0;
 
             while (openSet.Count > 0)
             {

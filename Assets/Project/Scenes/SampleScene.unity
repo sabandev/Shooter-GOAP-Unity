@@ -666,6 +666,7 @@ MonoBehaviour:
   - {fileID: 410751336}
   - {fileID: 1546070441}
   _gizmoSphereRadius: 0.6
+  _debugVisualiseWaypoints: 0
 --- !u!1 &837885927
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,6 +772,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _tickRate: 6
+  _drawVisualiserGizmos: 1
+  _drawSightSphereOnSelectGizmos: 1
+  _drawVisionConeGizmos: 1
+  _drawPathToLastKnownTargetPositionGizmos: 1
 --- !u!114 &939849238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +800,9 @@ MonoBehaviour:
   _waypointNetwork: {fileID: 836632606}
   _planningTickRate: 3
   _debugLogging: 0
+  _drawVisualiserGizmos: 1
+  _drawPlaningStatusInWorldSpaceGizmos: 1
+  _drawNavigationGizmos: 1
 --- !u!195 &939849239
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1294,7 +1302,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.533, z: 0.376}
-  m_LocalScale: {x: 0.50322, y: 0.30744, z: 0.38155}
+  m_LocalScale: {x: 0.50322, y: 0.17255378, z: 0.38155}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 939849240}

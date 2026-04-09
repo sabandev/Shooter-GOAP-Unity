@@ -18,6 +18,14 @@ namespace GOAP
         [SerializeField] private LayerMask _occlusionMask;
         [SerializeField] [Range(1.0f, 30.0f)] private float _tickRate = 6.0f;
 
+        [Space(10.0f)]
+
+        [Header("Gizmos")]
+        [SerializeField] private bool _drawVisualiserGizmos = true;
+        [SerializeField] private bool _drawSightSphereOnSelectGizmos = true;
+        [SerializeField] private bool _drawVisionConeGizmos = true;
+        [SerializeField] private bool _drawPathToLastKnownTargetPositionGizmos = true;
+
         // -----Private properties-----
         private GOAPAgent _agent;
         private float _tickTimer;
@@ -112,24 +120,28 @@ namespace GOAP
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying) { return; }
+            if (!_drawVisualiserGizmos) { return; }
 
             GOAPAgent agent = GetComponent<GOAPAgent>();
             if (agent == null) { return; }
 
-            bool targetVisible = agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_VISIBLE);
+            if (_drawVisionConeGizmos)
+            {
+                bool targetVisible = agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_VISIBLE);
 
-            Color coneColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.12f) : new Color(0.0f, 1.0f, 0.0f, 0.06f);
-            Color outlineColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.6f) : new Color(0.0f, 0.8f, 0.0f, 0.4f);
+                Color coneColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.12f) : new Color(0.0f, 1.0f, 0.0f, 0.06f);
+                Color outlineColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.6f) : new Color(0.0f, 0.8f, 0.0f, 0.4f);
 
-            UnityEditor.Handles.color = coneColor;
-            UnityEditor.Handles.DrawSolidArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
-            UnityEditor.Handles.color = outlineColor;
-            UnityEditor.Handles.DrawWireArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+                UnityEditor.Handles.color = coneColor;
+                UnityEditor.Handles.DrawSolidArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+                UnityEditor.Handles.color = outlineColor;
+                UnityEditor.Handles.DrawWireArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
 
-            Gizmos.color = outlineColor;
-            Gizmos.DrawRay(eyeLocation.position, transform.forward * _sightRange);
+                Gizmos.color = outlineColor;
+                Gizmos.DrawRay(eyeLocation.position, transform.forward * _sightRange);
+            }
 
-            if (agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS))
+            if (agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS) && _drawPathToLastKnownTargetPositionGizmos)
             {
                 Vector3 lastKnown = agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
 
@@ -141,6 +153,8 @@ namespace GOAP
 
         private void OnDrawGizmosSelected()
         {
+            if (!_drawSightSphereOnSelectGizmos || !_drawVisualiserGizmos) { return; }
+
             Gizmos.color = new Color(1.0f, 1.0f, 1.0f, 0.15f);
             Gizmos.DrawWireSphere(transform.position, _sightRange);
         }

@@ -98,6 +98,12 @@ namespace GOAP.Editor
         private bool _showBlackboard = true;
         private Vector2 _blackboardScroll;
 
+        private readonly Dictionary<string, bool> _proceduralCache = new();
+        private float _proceduralCacheTime;
+
+        // -----Constants-----
+        private const float PROCEDURAL_CACHE_REFRESH_INTERVAL = 0.2f;
+
         // -----Lifecycle methods-----
         private void OnEnable()
         {
@@ -134,20 +140,20 @@ namespace GOAP.Editor
 
             EditorGUILayout.Space(10.0f);
 
-            EditorGUILayout.LabelField("Diagnostics", Styles.DiagnosticsHeader);
-            EditorGUILayout.Space(10.0f);
+            EditorGUILayout.LabelField("Live Diagnostics", Styles.DiagnosticsHeader);
+            EditorGUILayout.Space(25.0f);
 
             DrawActiveGoalPanel(agent);
             EditorGUILayout.Space(10.0f);
 
             DrawPlanPanel(agent);
-            EditorGUILayout.Space(4.0f);
+            EditorGUILayout.Space(10.0f);
             DrawGoalsPanel(agent);
-            EditorGUILayout.Space(4.0f);
+            EditorGUILayout.Space(10.0f);
             DrawActionsPanel(agent);            
-            EditorGUILayout.Space(4.0f);
+            EditorGUILayout.Space(10.0f);
             DrawBlackboardPanel(agent);
-            EditorGUILayout.Space(4.0f);
+            EditorGUILayout.Space(10.0f);
             DrawControlsPanel(agent);
         }
 
@@ -164,14 +170,14 @@ namespace GOAP.Editor
             string goalDisplay = agent.ActiveGoal != null ? $"<b>{goalName}</b>" : "<color=#888888>None</color>";
 
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Active Goal: ", Styles.SectionHeader, GUILayout.Width(90.0f));
+            EditorGUILayout.Foldout(false, $"Active Goal:", true, Styles.SectionHeader);
             EditorGUILayout.LabelField(goalDisplay, Styles.ActiveGoalLabel);
             EditorGUILayout.EndHorizontal();
         }
 
         private void DrawPlanPanel(GOAPAgent agent)
         {
-            _showPlan = EditorGUILayout.Foldout(_showPlan, "Current Plan", true, Styles.SectionHeader);
+            _showPlan = EditorGUILayout.Foldout(_showPlan, "Current Plan:", true, Styles.SectionHeader);
             if (!_showPlan) { return;}
 
             EditorGUI.indentLevel++;
@@ -290,7 +296,7 @@ namespace GOAP.Editor
 
             foreach (GOAPActionInstance instance in agent.ActionInstances)
             {
-                bool proceduralPass = instance.CheckProceduralPreconditions();
+                bool proceduralPass = GetProceduralResult(instance);
 
                 EditorGUILayout.BeginHorizontal();
 
@@ -365,10 +371,35 @@ namespace GOAP.Editor
             EditorGUILayout.EndHorizontal();
         }
 
+        // -----Helper methods-----
         private static void DrawDivider()
         {
             Rect rect = EditorGUILayout.GetControlRect(false, 1.0f, GUILayout.ExpandWidth(true));
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.3f));
+        }
+
+        /// <summary>
+        /// Checks procedural preconditions of the agent's action instances.
+        /// Used purely for optimisation so the results can be cached and the check can be throttled.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        private bool GetProceduralResult(GOAPActionInstance instance)
+        {
+            if (Time.realtimeSinceStartup - _proceduralCacheTime > PROCEDURAL_CACHE_REFRESH_INTERVAL)
+            {
+                _proceduralCache.Clear();
+                GOAPAgent agent = (GOAPAgent)target;
+
+                foreach (GOAPActionInstance a in agent.ActionInstances)
+                {
+                    _proceduralCache[a.Data.ActionName] = a.CheckProceduralPreconditions();
+                }
+
+                _proceduralCacheTime = Time.realtimeSinceStartup;
+            }
+
+            return _proceduralCache.TryGetValue(instance.Data.ActionName, out bool result) && result;
         }
     }
 }
