@@ -30,6 +30,9 @@ namespace GOAP
         private NavMeshAgent _navAgent;
         private GOAPAgent _goapAgent;
 
+        // -----Public properties-----
+        public float NormalizedSpeed { get; private set; }
+
         // -----Hashes-----
         private static readonly int _speedHash = Animator.StringToHash("Speed");
 
@@ -52,7 +55,7 @@ namespace GOAP
         private void Update()
         {
             UpdateMovementSpeed();
-            UpdateLocomotion();
+            UpdateAnimator();
         }
 
         // -----Private methods-----
@@ -70,13 +73,13 @@ namespace GOAP
             _navAgent.speed = Mathf.Lerp(_navAgent.speed, targetSpeed, _speedTransitionRate * Time.deltaTime);
         }
 
-        private void UpdateLocomotion()
+        private void UpdateAnimator()
         {
             if (_sprintSpeed <= 0.0f) { return; }
 
-            float normalizedSpeed = Mathf.Clamp01(_navAgent.velocity.magnitude / _sprintSpeed);
+            NormalizedSpeed = Mathf.Clamp01(_navAgent.velocity.magnitude / _sprintSpeed);
 
-            _animator.SetFloat(_speedHash, normalizedSpeed, _dampTime, Time.deltaTime);
+            _animator.SetFloat(_speedHash, NormalizedSpeed, _dampTime, Time.deltaTime);
         }
     }
 }
