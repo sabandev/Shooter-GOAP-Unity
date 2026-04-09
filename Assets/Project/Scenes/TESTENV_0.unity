@@ -5368,6 +5368,11 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &7399640003247502007 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+  m_PrefabInstance: {fileID: 7437332234020153209}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7437332234020153209
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5383,6 +5388,26 @@ PrefabInstance:
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_Name
       value: AI Agent
+      objectReference: {fileID: 0}
+    - target: {fileID: 3004393215260309275, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: m_moveLeaningStrength
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3767930458093458584, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 6269972533820714620, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6556569424958455604, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _jogSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6556569424958455604, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _turnDampTime
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5427,8 +5452,27 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 8621296569620548637}
   m_SourcePrefab: {fileID: 100100000, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+--- !u!114 &8621296569620548637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7399640003247502007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3f8902cd96744e8bb78425d68825ebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.TurnController
+  _turnTriggerAngle: 35
+  _maxSpeedToTurn: 0.35
+  _turnCheckInterval: 0.1
+  _rootMotionWeight: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

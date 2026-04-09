@@ -16,14 +16,19 @@ namespace GOAP
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(GOAPAgent))]
-    public sealed class GOAPAgentAnimator : MonoBehaviour
+    public sealed class AgentAnimator : MonoBehaviour
     {
         // -----Serialized properties-----
+        [Header("Movement Speeds")]
         [SerializeField] [Range(0.1f, 10.0f)] private float _walkSpeed = 2.0f;
         [SerializeField] [Range(0.1f, 10.0f)] private float _jogSpeed = 4.0f;
         [SerializeField] [Range(0.1f, 10.0f)] private float _sprintSpeed = 6.0f;
-        [SerializeField] [Range(1.0f, 20.0f)] private float _speedTransitionRate = 8.0f;
-        [SerializeField] [Range(0.01f, 1.0f)] private float _dampTime = 0.1f; // lower = smoother
+
+        [Space(10.0f)]
+
+        [Header("Blending")]
+        [SerializeField] [Range(0.01f, 1.0f)] private float _speedDampTime = 0.1f; // lower = smoother
+        [SerializeField] [Range(0.01f, 1.0f)] private float _speedSmoothHalfLife = 0.1f;
 
         // -----Private properties-----
         private Animator _animator;
@@ -70,7 +75,7 @@ namespace GOAP
                 _ => _walkSpeed
             };
 
-            _navAgent.speed = Mathf.Lerp(_navAgent.speed, targetSpeed, _speedTransitionRate * Time.deltaTime);
+            _navAgent.speed = Mathf.Lerp(_navAgent.speed, targetSpeed, 1.0f - Mathf.Pow(_speedSmoothHalfLife, Time.deltaTime));
         }
 
         private void UpdateAnimator()
@@ -79,7 +84,8 @@ namespace GOAP
 
             NormalizedSpeed = Mathf.Clamp01(_navAgent.velocity.magnitude / _sprintSpeed);
 
-            _animator.SetFloat(_speedHash, NormalizedSpeed, _dampTime, Time.deltaTime);
+            // Speed
+            _animator.SetFloat(_speedHash, NormalizedSpeed, _speedDampTime, Time.deltaTime);
         }
     }
 }
