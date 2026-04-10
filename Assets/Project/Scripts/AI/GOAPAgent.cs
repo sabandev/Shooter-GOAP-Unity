@@ -18,7 +18,6 @@ namespace GOAP
     ///       to prevent large performance loss
     /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(Animator))]
     public sealed class GOAPAgent : MonoBehaviour
     {
         // -----Serialized properties-----

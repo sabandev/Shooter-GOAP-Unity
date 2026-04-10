@@ -584,10 +584,12 @@ GameObject:
   - component: {fileID: 3767930458093458584}
   - component: {fileID: 6269972533820714620}
   - component: {fileID: 3026175124971572888}
-  - component: {fileID: 6556569424958455604}
   - component: {fileID: 1390674438380524051}
   - component: {fileID: 3441225848959391294}
+  - component: {fileID: 6556569424958455604}
+  - component: {fileID: 1937992328205216942}
   - component: {fileID: 3004393215260309275}
+  - component: {fileID: 7099646226373362311}
   m_Layer: 0
   m_Name: AI Agent
   m_TagString: Untagged
@@ -647,7 +649,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 3ebf5de246d6341e7904efdc4e60d950, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -672,23 +674,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 2426107753784815831}
     m_Active: 1
   m_Effectors: []
---- !u!114 &6556569424958455604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 826b33a2ec5b546b3ac683fe690923df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgentAnimator
-  _walkSpeed: 2
-  _jogSpeed: 4
-  _sprintSpeed: 6
-  _speedTransitionRate: 8
-  _dampTime: 0.1
 --- !u!114 &1390674438380524051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -738,10 +723,43 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   _tickRate: 6
-  _drawVisualiserGizmos: 1
+  _drawVisualiserGizmos: 0
   _drawSightSphereOnSelectGizmos: 1
   _drawVisionConeGizmos: 1
   _drawPathToLastKnownTargetPositionGizmos: 1
+--- !u!114 &6556569424958455604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2534134415953119248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826b33a2ec5b546b3ac683fe690923df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgentAnimator
+  _walkSpeed: 2
+  _jogSpeed: 4
+  _sprintSpeed: 6
+  _speedDampTime: 0.1
+  _speedSmoothHalfLife: 0.1
+--- !u!114 &1937992328205216942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2534134415953119248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3f8902cd96744e8bb78425d68825ebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.TurnController
+  _turnTriggerAngle: 35
+  _maxSpeedToTurn: 0.35
+  _turnCheckInterval: 0.1
+  _rootMotionWeight: 1
 --- !u!114 &3004393215260309275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -849,6 +867,32 @@ MonoBehaviour:
   m_maxIkCorrectionOffset: 0
   m_upwardsVelocity: 0
   m_maxUpwardsVelocity: 0
+--- !u!114 &7099646226373362311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2534134415953119248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff63a9140934841d49df299b6f7232c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.AgentPhysicsHandler
+  _pushForce: 5
+  _speedForceMultiplier: 1.5
+  _maxForce: 8
+  _maxPushMass: 10
+  _pushRadius: 0.8
+  _pushHeights:
+  - 0.3
+  - 0.9
+  - 1.5
+  _pushableLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  _pushCheckInterval: 0.05
+  _drawPushDetectionGizmos: 1
 --- !u!1 &2770308567161461260
 GameObject:
   m_ObjectHideFlags: 0
