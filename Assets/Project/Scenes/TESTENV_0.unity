@@ -5397,6 +5397,10 @@ PrefabInstance:
       value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 7099646226373362311, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _pushCheckInterval
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7099646226373362311, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: _pushableLayers.m_Bits
       value: 1
       objectReference: {fileID: 0}

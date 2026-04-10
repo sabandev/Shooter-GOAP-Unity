@@ -21,7 +21,7 @@ namespace GOAP
         [SerializeField] private float _pushRadius = 0.5f;
         [SerializeField] private float[] _pushHeights = { 0.3f, 0.9f, 1.5f };
         [SerializeField] private LayerMask _pushableLayers;
-        [SerializeField] private float _pushCheckInterval = 0.05f; // 20Hz
+        [SerializeField] [Range(0.016f, 1.0f)] private float _pushCheckInterval = 0.05f; // 60Hz - 1Hz
 
         [Space(10.0f)]
 
