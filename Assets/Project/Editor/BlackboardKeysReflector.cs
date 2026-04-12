@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace GOAP.Editor
 {
     /// <summary>
     /// Reads string constants from BlackboardKeys at editor time.
     /// Used to populate key dropdowns in asset inspectors, removing dependency on manual typing.
+    /// 
+    /// Authorised Use Instructions:
+    ///     - MUST use the ResetStaticState() method to reset static properties between playthroughs
     /// </summary>
     public static class BlackboardKeysReflector
     {
@@ -60,6 +64,12 @@ namespace GOAP.Editor
         }
 
         public static void ClearCache() => _cachedKeys = null;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            _cachedKeys = null;
+        }
     }
 }
 

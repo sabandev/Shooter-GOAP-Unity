@@ -520,7 +520,7 @@ namespace GOAP.Editor
             
                 // Key + Value
                 EditorGUILayout.LabelField(fact.Key, Styles.BlackboardKeyStyle, GUILayout.Width(position.width * 0.55f));
-                EditorGUILayout.LabelField(fact.Value?.ToString() ?? "Null Value", recentlyChanged ? Styles.BlackboardChangedStyle : Styles.BlackboardValueStyle);
+                EditorGUILayout.LabelField(FormatBlackboardValue(fact.Value), recentlyChanged ? Styles.BlackboardChangedStyle : Styles.BlackboardValueStyle);
             
                 EditorGUILayout.EndHorizontal();
                 rowIndex++;
@@ -714,6 +714,28 @@ namespace GOAP.Editor
         {
             Rect rect = EditorGUILayout.GetControlRect(false, GUILayout.Width(1.0f));
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.3f));
+        }
+
+        /// <summary>
+        /// Safely formats a blackboard value for display. Prevents Runtime errors due to null object
+        /// references.
+        /// </summary>
+        private static string FormatBlackboardValue(object value)
+        {
+            if (value == null) return "null";
+
+            if (value is UnityEngine.Object unityObj)
+                return unityObj != null ? $"{unityObj.name} ({value.GetType().Name})" : "null (destroyed)";
+
+            if (value is Vector3 v) return $"({v.x:F2}, {v.y:F2}, {v.z:F2})";
+
+            if (value is Quaternion q)
+            {
+                Vector3 euler = q.eulerAngles;
+                return $"euler({euler.x:F1}, {euler.y:F1}, {euler.z:F1})";
+            }
+
+            return value.ToString() ?? "null";
         }
     }
 }

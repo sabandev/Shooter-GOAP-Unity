@@ -16,6 +16,9 @@ namespace GOAP
         public const string TARGET_IS_DEAD = "TARGET_IS_DEAD";
         public const string TARGET_TRANSFORM = "TARGET_TRANSFORM";
 
+        // -----Agent Inventory-----
+        public const string HAS_ITEM = "HAS_ITEM";
+
         // -----Locomotion States-----
         public const string MOVEMENT_SPEED = "MOVEMENT_SPEED";
 
@@ -23,6 +26,11 @@ namespace GOAP
         public const string TARGET_VISIBLE = "TARGET_VISIBLE";
         public const string TARGET_LAST_KNOWN_POS = "TARGET_LAST_KNOWN_POS";
         public const string TARGET_DISTANCE = "TARGET_DISTANCE";
+
+        // -----Smart Object States-----
+        public const string PICKUP_AVAILABLE = "PICKUP_AVAILABLE";
+        public const string PICKUP_TRANSFORM = "PICKUP_TRANSFORM";
+        public const string PICKUP_DISTANCE  = "PICKUP_DISTANCE";
     }
 }
 

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adddd31eaa1044743ad9e05a28e6f0ee, type: 3}
+  m_Name: ACTION_Pickup
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.PickupActionData
+  _actionName: Pickup Action
+  _cost: 1
+  _preconditions:
+  - _key: PICKUP_AVAILABLE
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0
+  _effects:
+  - _key: HAS_ITEM
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0
+  _targetObjectTag: Pickup
+  _searchRange: 20
+  _acquiredItemKey: HAS_ITEM
+  _pickupDuration: 0.8
+  _disableOnPickup: 1
