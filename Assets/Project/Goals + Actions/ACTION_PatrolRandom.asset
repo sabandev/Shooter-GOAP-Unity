@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ACTION_PatrolRandom
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.PatrolRandomActionData
   _actionName: Patrol Randomly Action
-  _cost: 1
+  _cost: 2
   _preconditions: []
   _effects:
   - _key: IS_PATROLLING

@@ -18,6 +18,7 @@ namespace GOAP
     ///       to prevent large performance loss
     /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(Animator))]
     public sealed class GOAPAgent : MonoBehaviour
     {
         // -----Serialized properties-----
@@ -46,6 +47,7 @@ namespace GOAP
 
         // -----Public properties-----
         public NavMeshAgent NavAgent { get; private set; }
+        public Animator Animator { get; private set; }
         public AgentBlackboard Blackboard { get; private set; } = new AgentBlackboard();
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
         public IReadOnlyList<PlanHistoryEntry> PlanHistory => _planHistory;
@@ -64,6 +66,7 @@ namespace GOAP
         private void Awake()
         {
             NavAgent = GetComponent<NavMeshAgent>();
+            Animator = GetComponent<Animator>();
             Blackboard = new AgentBlackboard();
             _planner = new GOAPPlanner();
 
@@ -169,6 +172,8 @@ namespace GOAP
 
                 int priority = goal.EvaluatePriority(snapshot);
 
+                // Debug.Log($"[GoalSelect] {goal.name} priority: {priority}");
+
                 if (priority > bestPriority)
                 {
                     bestPriority = priority;
@@ -220,8 +225,24 @@ namespace GOAP
                 Debug.Log($"[GOAPAgent] '{name}' new plan for '{goal.GoalName}': [{planString}]", this);
             }
 
+            GOAPActionInstance firstAction = _currentPlan[_currentActionIndex];
+
+            if (!firstAction.CheckProceduralPreconditions())
+            {
+                // First action already invalid — discard plan and wait for next tick
+                if (_debugLogging)
+                    Debug.Log($"[GOAPAgent] '{name}' first action " +
+                            $"'{firstAction.Data.name}' failed procedural " +
+                            $"preconditions. Discarding plan.");
+
+                _currentPlan          = null;
+                _currentActionIndex   = 0;
+                return;
+            }
+
+
             // Start first action in new plan immediately
-            _currentPlan[_currentActionIndex].OnStart();
+            firstAction.OnStart();
         }
 
         private void RecordPlanHistory(GOAPGoal goal, string triggerReason, List<GOAPActionInstance> plan, int nodesExpanded, bool planFound)
@@ -276,7 +297,20 @@ namespace GOAP
                 return;
             }
 
-            _currentPlan[_currentActionIndex].OnStart();
+            GOAPActionInstance nextAction = _currentPlan[_currentActionIndex];
+
+            if (!nextAction.CheckProceduralPreconditions())
+            {
+                if (_debugLogging)
+                    Debug.Log($"[GOAPAgent] '{name}' next action " +
+                            $"'{nextAction.Data.name}' failed procedural " +
+                            $"preconditions. Replanning.");
+
+                RequestReplan(_activeGoal, "Procedural preconditions failed");
+                return;
+            }
+
+            nextAction.OnStart();
         }
 
         /// <summary>§

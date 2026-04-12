@@ -37,7 +37,7 @@ namespace GOAP
 
             if (_waypointNetwork == null)
             {
-                // Debug.LogWarning($"[PatrolWaypointActionInstance] No WaypointPatrolPath component found on '{Agent.name}'. Add one to use waypoint patrol action.", Agent);
+                Debug.LogWarning($"[PatrolWaypointActionInstance] No WaypointPatrolPath component found on '{Agent.name}'. Add one to use waypoint patrol action.", Agent);
                 return false;
             }
 

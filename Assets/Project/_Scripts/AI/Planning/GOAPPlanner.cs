@@ -76,7 +76,7 @@ namespace GOAP
 
                     WorldState nextRequired = BuildNextRequiredState(current.RequiredState, action);
 
-                    if (!action.CheckProceduralPreconditions()) { continue; }
+                    // if (!action.CheckProceduralPreconditions()) { continue; }
 
                     float nextCost = current.RunningCost + action.Cost;
 
@@ -108,7 +108,8 @@ namespace GOAP
                 current = current.Parent;
             }
 
-            reversedPlan.Reverse();
+            // reversedPlan.Reverse();
+
             return reversedPlan;
         }
 

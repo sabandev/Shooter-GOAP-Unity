@@ -52,6 +52,9 @@ namespace GOAP
             Debug.Assert(_navAgent != null, "[GOAPAgentAnimator] No NavMeshAgent component found.", this);
             Debug.Assert(_goapAgent != null, "[GOAPAgentAnimator] No GOAPAgent component found.", this);
 
+            _animator?.Rebind();
+            _animator?.Update(0.0f);
+
             // Set walk as default speed
             _navAgent.speed = _walkSpeed;
             _goapAgent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk); // MOVE TO START IF ENCOUNTERING NULLREFEX ERRORS.

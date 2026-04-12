@@ -8,7 +8,7 @@ namespace GOAP
     /// Writes vision information to the agent's blackboard.
     /// </summary>
     [RequireComponent(typeof(GOAPAgent))]
-    public sealed class SightSensor : MonoBehaviour
+    public sealed class SightSensor : Sensor
     {
         // -----Serialized properties-----
         [SerializeField] private Transform eyeLocation;
@@ -16,7 +16,6 @@ namespace GOAP
         [SerializeField] [Range(1.0f, 180.0f)] private float _sightAngle = 90.0f;
         [SerializeField] private LayerMask _targetMask;
         [SerializeField] private LayerMask _occlusionMask;
-        [SerializeField] [Range(1.0f, 30.0f)] private float _tickRate = 6.0f;
 
         [Space(10.0f)]
 
@@ -26,54 +25,35 @@ namespace GOAP
         [SerializeField] private bool _drawVisionConeGizmos = true;
         [SerializeField] private bool _drawPathToLastKnownTargetPositionGizmos = true;
 
-        // -----Private properties-----
-        private GOAPAgent _agent;
-        private float _tickTimer;
-
-        // -----MonoBehaviour methods-----
-        private void Awake()
-        {
-            _agent = GetComponent<GOAPAgent>();
-            Debug.Assert(_agent != null, "[SightSensor] Requires a GOAP Agent on the same GameObject to function.", this);
-        }
-
-        private void Update()
-        {
-            _tickTimer -= Time.deltaTime;
-            if (_tickTimer > 0.0f) { return; }
-
-            _tickTimer = 1.0f / _tickRate;
-            Sense();
-        }
-
-        // -----Private methods-----
+        // -----Implementation-----
 
         /// <summary>
         /// Sends visual information to the agent's blackboard
         /// </summary>
-        private void Sense()
+        protected override void Sense()
         {
             Collider[] hits = Physics.OverlapSphere(transform.position, _sightRange, _targetMask);
             if (hits.Length == 0)
             {
-                _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
                 return;
             }
 
             Transform nearest = FindNearest(hits);
             if (nearest == null)
             {
-                _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
                 return;
             }
 
             bool hasLOS = CheckLineOfSight(nearest);
-            _agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, hasLOS);
+            Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, hasLOS);
 
             if (hasLOS)
             {
-                _agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_POS, nearest.position);
-                _agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(transform.position, nearest.position));
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_POS, nearest.position);
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(transform.position, nearest.position));
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_TRANSFORM, nearest);
             }
         }
 

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace GOAP
 {
     /// <summary>
@@ -14,6 +12,9 @@ namespace GOAP
         public const string IS_IDLE = "IS_IDLE";
         public const string IS_PATROLLING = "IS_PATROLLING";
         public const string IS_INVESTIGATING = "IS_INVESTIGATING";
+        public const string TARGET_IN_MELEE_RANGE = "TARGET_IN_MELEE_RANGE";
+        public const string TARGET_IS_DEAD = "TARGET_IS_DEAD";
+        public const string TARGET_TRANSFORM = "TARGET_TRANSFORM";
 
         // -----Locomotion States-----
         public const string MOVEMENT_SPEED = "MOVEMENT_SPEED";
