@@ -26,8 +26,8 @@ namespace GOAP
         // -----Lifecycle methods-----
         protected virtual void Awake()
         {
-            Agent = GetComponent<GOAPAgent>();
-            Debug.Assert(Agent != null, $"[{GetType().Name}] Requires GOAPAgent on the same GameObject.", this);
+            Agent = GetComponentInParent<GOAPAgent>();
+            Debug.Assert(Agent != null, $"[{GetType().Name}] Requires GOAPAgent on the parent GameObject.", this);
         }
 
         private void Update()

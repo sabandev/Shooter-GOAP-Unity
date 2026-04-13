@@ -13,10 +13,15 @@ namespace GOAP
         [SerializeField] private float _forwardAngle = 60.0f;
         [SerializeField] private string _doorTag = "Door";
         
+        [Space(10.0f)]
+        
+        [Header("Gizmos")]
+        [SerializeField] private bool _drawDoorDetectionGizmos = true;
+        
         // -----Implementation-----
         protected override void Sense()
         {
-            SmartObject nearest = SmartObjectRegistry.Instance.FindNearestForAgent(_doorTag, transform.position, Agent);
+            SmartObject nearest = SmartObjectRegistry.Instance.FindNearestForAgent(_doorTag, Agent.transform.position, Agent);
             
             if (nearest == null)
             {
@@ -24,15 +29,15 @@ namespace GOAP
                 return;
             }
             
-            float dist = Vector3.Distance(transform.position, nearest.transform.position);
+            float dist = Vector3.Distance(Agent.transform.position, nearest.transform.position);
             if (dist > _detectionRange)
             {
                 ClearDoorAhead();
                 return;
             }
             
-            Vector3 toDoor = (nearest.transform.position - transform.position).normalized;
-            float angle = Vector3.Angle(transform.forward, toDoor);
+            Vector3 toDoor = (nearest.transform.position - Agent.transform.position).normalized;
+            float angle = Vector3.Angle(Agent.transform.forward, toDoor);
             
             if (angle >= _forwardAngle)
             {
@@ -89,15 +94,17 @@ namespace GOAP
         #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
+            if (!Application.isPlaying || !_drawDoorDetectionGizmos) { return; }
+            
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _detectionRange);
+            Gizmos.DrawWireSphere(Agent.transform.position, _detectionRange);
             
             Vector3 leftBound = Quaternion.Euler(0.0f, -_forwardAngle, 0.0f) * transform.forward;
             Vector3 rightBound = Quaternion.Euler(0.0f, _forwardAngle, 0.0f) * transform.forward;
             
             Gizmos.color = Color.yellowGreen;
-            Gizmos.DrawRay(transform.position, leftBound * _detectionRange);
-            Gizmos.DrawRay(transform.position, rightBound* _detectionRange);
+            Gizmos.DrawRay(Agent.transform.position, leftBound * _detectionRange);
+            Gizmos.DrawRay(Agent.transform.position, rightBound* _detectionRange);
         }
         #endif
     }

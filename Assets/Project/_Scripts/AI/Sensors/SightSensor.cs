@@ -7,7 +7,6 @@ namespace GOAP
     /// line-of-sight to a target.
     /// Writes vision information to the agent's blackboard.
     /// </summary>
-    [RequireComponent(typeof(GOAPAgent))]
     public sealed class SightSensor : Sensor
     {
         // -----Serialized properties-----
@@ -52,7 +51,7 @@ namespace GOAP
             if (hasLOS)
             {
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_POS, nearest.position);
-                Agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(transform.position, nearest.position));
+                Agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(Agent.transform.position, nearest.position));
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_TRANSFORM, nearest);
             }
         }
@@ -66,7 +65,7 @@ namespace GOAP
             {
                 if (hit.transform == transform) { continue; }
 
-                float dist = (hit.transform.position - transform.position).sqrMagnitude;
+                float dist = (hit.transform.position - Agent.transform.position).sqrMagnitude;
 
                 if (dist < nearestDist)
                 {
@@ -84,7 +83,7 @@ namespace GOAP
             Vector3 targetPos = target.position + (Vector3.up * 0.5f);
             Vector3 direction = (targetPos - origin).normalized;
 
-            float angle = Vector3.Angle(transform.forward, direction);
+            float angle = Vector3.Angle(Agent.transform.forward, direction);
             if (angle > _sightAngle) { return false; }
 
             float distance = Vector3.Distance(origin, targetPos);
@@ -92,7 +91,7 @@ namespace GOAP
             return !Physics.Raycast(origin, direction, distance, _occlusionMask);
         }
 
-        // -----Editor Helper-----
+        // -----Editor helper methods-----
 #if UNITY_EDITOR
         /// <summary>
         /// Draws vision cone for debugging
@@ -102,7 +101,7 @@ namespace GOAP
             if (!Application.isPlaying) { return; }
             if (!_drawVisualiserGizmos) { return; }
 
-            GOAPAgent agent = GetComponent<GOAPAgent>();
+            GOAPAgent agent = GetComponentInParent<GOAPAgent>();
             if (agent == null) { return; }
 
             if (_drawVisionConeGizmos)
@@ -113,12 +112,12 @@ namespace GOAP
                 Color outlineColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.6f) : new Color(0.0f, 0.8f, 0.0f, 0.4f);
 
                 UnityEditor.Handles.color = coneColor;
-                UnityEditor.Handles.DrawSolidArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+                UnityEditor.Handles.DrawSolidArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * Agent.transform.forward, _sightAngle * 2.0f, _sightRange);
                 UnityEditor.Handles.color = outlineColor;
-                UnityEditor.Handles.DrawWireArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * transform.forward, _sightAngle * 2.0f, _sightRange);
+                UnityEditor.Handles.DrawWireArc(eyeLocation.position, Vector3.up, Quaternion.Euler(0.0f, -_sightAngle, 0.0f) * Agent.transform.forward, _sightAngle * 2.0f, _sightRange);
 
                 Gizmos.color = outlineColor;
-                Gizmos.DrawRay(eyeLocation.position, transform.forward * _sightRange);
+                Gizmos.DrawRay(eyeLocation.position, Agent.transform.forward * _sightRange);
             }
 
             if (agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS) && _drawPathToLastKnownTargetPositionGizmos)
@@ -126,17 +125,17 @@ namespace GOAP
                 Vector3 lastKnown = agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
 
                 Gizmos.color = new Color(1.0f, 0.8f, 0.0f, 0.8f);
-                Gizmos.DrawLine(transform.position, lastKnown);
+                Gizmos.DrawLine(Agent.transform.position, lastKnown);
                 Gizmos.DrawWireSphere(lastKnown, 0.3f);
             }
         }
 
         private void OnDrawGizmosSelected()
         {
-            if (!_drawSightSphereOnSelectGizmos || !_drawVisualiserGizmos) { return; }
+            if (!_drawSightSphereOnSelectGizmos || !_drawVisualiserGizmos || !Application.isPlaying) { return; }
 
             Gizmos.color = new Color(1.0f, 1.0f, 1.0f, 0.15f);
-            Gizmos.DrawWireSphere(transform.position, _sightRange);
+            Gizmos.DrawWireSphere(Agent.transform.position, _sightRange);
         }
 #endif
     }

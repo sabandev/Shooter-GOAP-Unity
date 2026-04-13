@@ -9,7 +9,6 @@ namespace GOAP
     /// Authorised Use Instructions:
     ///     - Should run at a higher tick rate as melee range can change rapidly during a chase.
     /// </summary>
-    [RequireComponent(typeof(GOAPAgent))]
     public sealed class MeleeRangeSensor : Sensor
     {
         // -----Serialized properties-----
@@ -25,7 +24,7 @@ namespace GOAP
         // -----Implementation-----
         protected override void Sense()
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, _meleeRange, _targetMask);
+            Collider[] hits = Physics.OverlapSphere(Agent.transform.position, _meleeRange, _targetMask);
 
             if (hits.Length == 0)
             {
@@ -42,7 +41,7 @@ namespace GOAP
 
                 if (hit.TryGetComponent(out PlayerHealth health) && health.IsDead) { continue; }
 
-                float dist = (hit.transform.position - transform.position).sqrMagnitude;
+                float dist = (hit.transform.position - Agent.transform.position).sqrMagnitude;
                 if (dist < nearestDist)
                 {
                     nearestDist = dist;
@@ -64,13 +63,13 @@ namespace GOAP
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (!_drawMeleeRangeGizmos) { return; }
+            if (!_drawMeleeRangeGizmos || !Application.isPlaying) { return; }
 
-            bool inRange = Application.isPlaying && Agent != null && Agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_IN_MELEE_RANGE);
+            bool inRange = Agent != null && Agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_IN_MELEE_RANGE);
 
             Gizmos.color = inRange ? new Color(1.0f, 0.2f, 0.2f, 0.4f) : new Color(1.0f, 0.5f, 0.0f, 0.15f);
 
-            Gizmos.DrawWireSphere(transform.position, _meleeRange);
+            Gizmos.DrawWireSphere(Agent.transform.position, _meleeRange);
         }
 #endif
     }

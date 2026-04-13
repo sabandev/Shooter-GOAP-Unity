@@ -615,11 +615,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7420932954599747970, guid: b2baa11c7e87fe941afe32f3c50cc082, type: 3}
   m_PrefabInstance: {fileID: 34603436}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &35256403 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-  m_PrefabInstance: {fileID: 830369828}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &38962624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4562,6 +4557,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5284954248247006737, guid: 76a7e6c2e588e024d85efa115fe688c2, type: 3}
   m_PrefabInstance: {fileID: 424447291}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &436659006 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6642865713599515844, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+  m_PrefabInstance: {fileID: 830369828}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &459732283
 Mesh:
@@ -9835,19 +9835,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3441225848959391294, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1853672542}
-    - targetCorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1853672543}
-    - targetCorrespondingSourceObject: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1853672544}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 1939807472}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
 --- !u!1001 &833391146
 PrefabInstance:
@@ -31776,55 +31771,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
   m_PrefabInstance: {fileID: 830369828}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1853672542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 35256403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77bb67952b072451380c842ed4d53487, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.MeleeRangeSensor
-  _tickRate: 10
-  _meleeRange: 3
-  _targetMask:
-    serializedVersion: 2
-    m_Bits: 8
-  _drawMeleeRangeGizmos: 1
---- !u!114 &1853672543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 35256403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27da85858fc1148cf8dce1e9b684022c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectSensor
-  _tickRate: 5
-  _targetTag: Pickup
-  _detectionRange: 20
---- !u!114 &1853672544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 35256403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 368094ca0c5b943288100f5aa9198bc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.DoorSensor
-  _tickRate: 5
-  _detectionRange: 3
-  _forwardAngle: 60
-  _doorTag: Door
 --- !u!1 &1873651948
 GameObject:
   m_ObjectHideFlags: 0
@@ -33461,6 +33407,117 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3849171699990916794, guid: 7c525024ae8431e45b357520bb8407a6, type: 3}
   m_PrefabInstance: {fileID: 1934785228}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1939807471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1939807472}
+  - component: {fileID: 1939807476}
+  - component: {fileID: 1939807475}
+  - component: {fileID: 1939807474}
+  - component: {fileID: 1939807473}
+  m_Layer: 0
+  m_Name: AI Sensors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1939807472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939807471}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1853672532}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1939807473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939807471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 368094ca0c5b943288100f5aa9198bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.DoorSensor
+  _tickRate: 5
+  _detectionRange: 3
+  _forwardAngle: 60
+  _doorTag: Door
+  _drawDoorDetectionGizmos: 1
+--- !u!114 &1939807474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939807471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27da85858fc1148cf8dce1e9b684022c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectSensor
+  _tickRate: 5
+  _targetTag: Pickup
+  _detectionRange: 20
+--- !u!114 &1939807475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939807471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77bb67952b072451380c842ed4d53487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.MeleeRangeSensor
+  _tickRate: 10
+  _meleeRange: 3
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _drawMeleeRangeGizmos: 1
+--- !u!114 &1939807476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939807471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8096db9f9a4464fb89a890060eb0b118, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SightSensor
+  _tickRate: 6
+  eyeLocation: {fileID: 436659006}
+  _sightRange: 20
+  _sightAngle: 66.8
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _occlusionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  _drawVisualiserGizmos: 1
+  _drawSightSphereOnSelectGizmos: 1
+  _drawVisionConeGizmos: 1
+  _drawPathToLastKnownTargetPositionGizmos: 1
 --- !u!1001 &1942625059
 PrefabInstance:
   m_ObjectHideFlags: 0
