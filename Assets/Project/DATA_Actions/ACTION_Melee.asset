@@ -33,4 +33,4 @@ MonoBehaviour:
     m_Bits: 8
   _attackDuration: 1.13
   _applyDamageNormalisedFrame: 0.7
-  _attackCooldown: 1.2
+  _attackCooldown: 0.5

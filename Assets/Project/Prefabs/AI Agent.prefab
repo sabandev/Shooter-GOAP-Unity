@@ -713,6 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8096db9f9a4464fb89a890060eb0b118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.SightSensor
+  _tickRate: 6
   eyeLocation: {fileID: 6642865713599515844}
   _sightRange: 20
   _sightAngle: 66.8
@@ -722,7 +723,6 @@ MonoBehaviour:
   _occlusionMask:
     serializedVersion: 2
     m_Bits: 1
-  _tickRate: 6
   _drawVisualiserGizmos: 0
   _drawSightSphereOnSelectGizmos: 1
   _drawVisionConeGizmos: 1
@@ -890,7 +890,7 @@ MonoBehaviour:
   - 1.5
   _pushableLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _pushCheckInterval: 0.05
   _drawPushDetectionGizmos: 1
 --- !u!1 &2770308567161461260

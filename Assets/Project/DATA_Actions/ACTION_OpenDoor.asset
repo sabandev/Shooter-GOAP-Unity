@@ -9,26 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adddd31eaa1044743ad9e05a28e6f0ee, type: 3}
-  m_Name: ACTION_Pickup
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.PickupActionData
-  _actionName: Pickup Action
+  m_Script: {fileID: 11500000, guid: 0a89210edd97e4505907caf1e94005f8, type: 3}
+  m_Name: ACTION_OpenDoor
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.OpenDoorActionData
+  _actionName: Open Door Action
   _cost: 1
   _preconditions:
-  - _key: PICKUP_AVAILABLE
+  - _key: DOOR_AHEAD
     _valueType: 0
     _boolValue: 1
     _intValue: 0
     _floatValue: 0
   _effects:
-  - _key: HAS_ITEM
+  - _key: DOOR_IS_OPEN
     _valueType: 0
     _boolValue: 1
     _intValue: 0
     _floatValue: 0
-  _targetObjectTag: Pickup
-  _searchRange: 20
-  _acquiredItemKey: HAS_ITEM
-  _pickupDuration: 4.07
-  _itemDisappearNormalizedFrame: 0.43
-  _disableOnPickup: 1
+  _targetObjectTag: Door
+  _searchRange: 4
+  _faceBeforeOpening: 1
+  _waitForOpenDuration: 2

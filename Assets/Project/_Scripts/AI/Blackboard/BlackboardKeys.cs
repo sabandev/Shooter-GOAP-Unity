@@ -31,6 +31,10 @@ namespace GOAP
         public const string PICKUP_AVAILABLE = "PICKUP_AVAILABLE";
         public const string PICKUP_TRANSFORM = "PICKUP_TRANSFORM";
         public const string PICKUP_DISTANCE  = "PICKUP_DISTANCE";
+        public const string DOOR_AHEAD = "DOOR_AHEAD";
+        public const string DOOR_IS_OPEN = "DOOR_IS_OPEN";
+        public const string DOOR_TRANSFORM = "DOOR_TRANSFORM";
+        public const string DOOR_IS_OPENING = "DOOR_IS_OPENING";
     }
 }
 

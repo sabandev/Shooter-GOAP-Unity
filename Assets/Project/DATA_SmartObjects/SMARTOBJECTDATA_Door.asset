@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3517adb80fdc847c5a8fdef338fa93a8, type: 3}
-  m_Name: SOData_Pickup
+  m_Name: SMARTOBJECTDATA_Door
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectData
-  _objectTag: Pickup
-  _description: Collectable Item
+  _objectTag: Door
+  _description: Openable door
   _advertisedEffects:
-  - _key: HAS_ITEM
+  - _key: DOOR_IS_OPEN
     _valueType: 0
     _boolValue: 1
     _intValue: 0
     _floatValue: 0
   _requiredAgentState: []
   _baseCost: 1
-  _interactionRange: 1.2
-  _interactionOffset: {x: 0, y: 0, z: -0.8}
+  _interactionRange: 1.5
+  _interactionOffset: {x: 0, y: 0, z: 0.5}
   _allowsSimultaneousUse: 0
   _cooldownDuration: 0
