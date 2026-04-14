@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7608ece0c9ecf4242a9b537ac1d7d487, type: 3}
+  m_Name: HeadBobSettings_Crouching
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonShooterController.PlayerHeadBobSettings
+  Frequency: 1.2
+  VerticalAmplitude: 0.012
+  HorizontalAmplitude: 0.006
+  BlendSpeed: 4
+  MinSpeedThreshold: 0.1
