@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace FirstPersonShooterController
+namespace Player
 {
     /// <summary>
     /// First person character controller.
@@ -13,7 +13,7 @@ namespace FirstPersonShooterController
     [RequireComponent(typeof(CharacterController))]
     public sealed class FPSController : MonoBehaviour
     {
-        // ─── Serialized fields ────────────────────────────────────────
+        // ─── Serialized properties ────────────────────────────────────────
 
         [Header("Movement")]
         [SerializeField] private float _walkSpeed = 5.5f;
@@ -52,10 +52,11 @@ namespace FirstPersonShooterController
         [Header("Overlap Check")]
         [SerializeField] private LayerMask _obstacleMask; // LayerMask of objects player shouldn't stand inside of
 
-        // ─── Private state ────────────────────────────────────────────
+        // ─── Private properties ────────────────────────────────────────────
 
         private CharacterController  _controller;
         private PlayerInputActions   _input;
+        private PlayerInventory _inventory;
 
         // Velocity
         private Vector3 _velocity;
@@ -78,23 +79,23 @@ namespace FirstPersonShooterController
         private Vector2 _moveInput;
         private bool    _jumpPressed;
 
-        // ─── Properties ───────────────────────────────────────────────
+        // ─── Public properties ───────────────────────────────────────────────
 
-        public bool    IsGrounded        => _isGrounded;
-        public bool    IsCrouching       => _isCrouching;
-        public Vector3 Velocity          => _velocity;
+        public bool    IsGrounded => _isGrounded;
+        public bool    IsCrouching => _isCrouching;
+        public Vector3 Velocity => _velocity;
         public float   NormalisedSpeed   => _horizontalVelocity.magnitude / (_isCrouching ? _crouchSpeed : _walkSpeed);
 
-        // ─── Unity lifecycle ──────────────────────────────────────────
+        // ─── Lifecycle methods ──────────────────────────────────────────
 
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
+            _inventory = GetComponent<PlayerInventory>();
 
-            Debug.Assert(_controller     != null,
-                "[FPSController] Missing CharacterController.", this);
-            Debug.Assert(_crouchSettings != null,
-                "[FPSController] Missing CrouchSettings.",      this);
+            Debug.Assert(_controller != null,"[FPSController] Missing CharacterController.", this);
+            Debug.Assert(_crouchSettings != null,"[FPSController] Missing CrouchSettings.",      this);
+            Debug.Assert(_inventory != null, "[FPSController] Missing PlayerInventory.", this);
 
             _input = new PlayerInputActions();
 
@@ -102,8 +103,7 @@ namespace FirstPersonShooterController
             _targetHeight  = _crouchSettings.StandingHeight;
 
             _controller.height = _currentHeight;
-            _controller.center = Vector3.up *
-                                 (_currentHeight * 0.5f);
+            _controller.center = Vector3.up * (_currentHeight * 0.5f);
         }
 
         private void OnEnable()
@@ -112,6 +112,7 @@ namespace FirstPersonShooterController
             _input.Player.Jump.performed   += OnJumpPerformed;
             _input.Player.Crouch.performed += OnCrouchPerformed;
             _input.Player.Crouch.canceled  += OnCrouchCanceled;
+            _input.Player.UseHealthKit.performed += OnUseHealthKitPerformed;
         }
 
         private void OnDisable()
@@ -119,6 +120,7 @@ namespace FirstPersonShooterController
             _input.Player.Jump.performed   -= OnJumpPerformed;
             _input.Player.Crouch.performed -= OnCrouchPerformed;
             _input.Player.Crouch.canceled  -= OnCrouchCanceled;
+            _input.Player.UseHealthKit.performed -= OnUseHealthKitPerformed;
             _input.Player.Disable();
         }
 
@@ -168,41 +170,36 @@ namespace FirstPersonShooterController
         {
             _crouchInputHeld = false;
 
-            if (_crouchSettings.Mode == PlayerCrouchSettings.CrouchMode.Hold
-                && _isCrouching)
+            if (_crouchSettings.Mode == PlayerCrouchSettings.CrouchMode.Hold && _isCrouching)
             {
                 TryStand();
             }
+        }
+        
+        private void OnUseHealthKitPerformed(InputAction.CallbackContext ctx)
+        {
+            _inventory?.TryUseHealthKit();
         }
 
         // ─── Private methods ──────────────────────────────────────────
 
         /// <summary>
         /// Sphere cast downward to detect ground.
-        /// Updates _isGrounded and coyote time.
         /// </summary>
         private void UpdateGroundState()
         {
             _wasGrounded = _isGrounded;
 
-            Vector3 sphereOrigin = transform.position +
-                                   Vector3.up * _groundCheckRadius;
+            Vector3 sphereOrigin = transform.position + Vector3.up * _groundCheckRadius;
 
-            _isGrounded = Physics.SphereCast(
-                sphereOrigin,
-                _groundCheckRadius,
-                Vector3.down,
-                out RaycastHit hit,
-                _groundCheckDistance + _groundCheckRadius,
-                _groundMask);
+            _isGrounded = Physics.SphereCast(sphereOrigin,_groundCheckRadius,Vector3.down,out RaycastHit hit,_groundCheckDistance + _groundCheckRadius,_groundMask);
 
             // Also accept CharacterController's own ground check
             // as a fallback — catches edge cases on flat geometry
             if (!_isGrounded)
                 _isGrounded = _controller.isGrounded;
 
-            // Coyote time — maintain jump permission briefly
-            // after leaving ground
+            // Coyote time
             if (_wasGrounded && !_isGrounded)
                 _coyoteTimer = _coyoteTime;
             else if (_isGrounded)
@@ -222,15 +219,9 @@ namespace FirstPersonShooterController
         /// </summary>
         private void UpdateCrouch()
         {
-            if (Mathf.Approximately(_currentHeight, _targetHeight))
-                { return; }
+            if (Mathf.Approximately(_currentHeight, _targetHeight)) { return; }
 
-            _currentHeight = Mathf.Lerp(
-                _currentHeight,
-                _targetHeight,
-                1.0f - Mathf.Pow(
-                    0.1f,
-                    Time.deltaTime * _crouchSettings.CrouchSpeed));
+            _currentHeight = Mathf.Lerp(_currentHeight,_targetHeight,1.0f - Mathf.Pow(0.1f,Time.deltaTime * _crouchSettings.CrouchSpeed));
 
             // Snap when close enough
             if (Mathf.Abs(_currentHeight - _targetHeight) < 0.01f)
@@ -241,20 +232,15 @@ namespace FirstPersonShooterController
         }
 
         /// <summary>
-        /// Calculates horizontal velocity with F.E.A.R. style momentum.
-        /// Fast acceleration, slightly slower deceleration, reduced
-        /// air control.
+        /// Calculates horizontal velocity
         /// </summary>
         private void UpdateMovement()
         {
             float targetSpeed = _isCrouching ? _crouchSpeed : _walkSpeed;
 
-            // Build target velocity from input
-            Vector3 inputDir = new Vector3(_moveInput.x, 0.0f,
-                                           _moveInput.y).normalized;
+            Vector3 inputDir = new Vector3(_moveInput.x, 0.0f, _moveInput.y).normalized;
 
-            Vector3 targetVelocity = transform.TransformDirection(inputDir)
-                                     * targetSpeed;
+            Vector3 targetVelocity = transform.TransformDirection(inputDir) * targetSpeed;
 
             // Reduce control in air
             float controlFactor = _isGrounded ? 1.0f : _airControlFactor;
@@ -262,22 +248,12 @@ namespace FirstPersonShooterController
             if (inputDir.magnitude > 0.0f)
             {
                 // Accelerate toward target
-                _horizontalVelocity = Vector3.Lerp(
-                    _horizontalVelocity,
-                    targetVelocity,
-                    1.0f - Mathf.Pow(
-                        0.1f,
-                        Time.deltaTime * _acceleration * controlFactor));
+                _horizontalVelocity = Vector3.Lerp(_horizontalVelocity,targetVelocity,1.0f - Mathf.Pow(0.1f,Time.deltaTime * _acceleration * controlFactor));
             }
             else
             {
                 // Decelerate toward zero
-                _horizontalVelocity = Vector3.Lerp(
-                    _horizontalVelocity,
-                    Vector3.zero,
-                    1.0f - Mathf.Pow(
-                        0.1f,
-                        Time.deltaTime * _deceleration * controlFactor));
+                _horizontalVelocity = Vector3.Lerp(_horizontalVelocity, Vector3.zero,1.0f - Mathf.Pow(0.1f,Time.deltaTime * _deceleration * controlFactor));
 
                 // Snap to zero when nearly stopped
                 if (_horizontalVelocity.magnitude < 0.01f)
@@ -285,9 +261,6 @@ namespace FirstPersonShooterController
             }
         }
 
-        /// <summary>
-        /// Applies gravity and ground snapping to vertical velocity.
-        /// </summary>
         private void UpdateGravity()
         {
             if (_isGrounded && _verticalVelocity < 0.0f)
@@ -298,24 +271,16 @@ namespace FirstPersonShooterController
             else
             {
                 // Apply gravity
-                _verticalVelocity += Physics.gravity.y *
-                                     _gravityScale *
-                                     Time.deltaTime;
+                _verticalVelocity += Physics.gravity.y * _gravityScale * Time.deltaTime;
 
                 // Clamp to terminal velocity
-                _verticalVelocity = Mathf.Max(
-                    _verticalVelocity, -_maxFallSpeed);
+                _verticalVelocity = Mathf.Max(_verticalVelocity, -_maxFallSpeed);
             }
         }
 
-        /// <summary>
-        /// Combines horizontal and vertical velocity and moves
-        /// the CharacterController.
-        /// </summary>
         private void ApplyMovement()
         {
-            _velocity = _horizontalVelocity +
-                        Vector3.up * _verticalVelocity;
+            _velocity = _horizontalVelocity + Vector3.up * _verticalVelocity;
 
             _controller.Move(_velocity * Time.deltaTime);
         }
@@ -340,24 +305,17 @@ namespace FirstPersonShooterController
             if (!_isCrouching) { return; }
 
             // Check for overhead obstruction
-            float heightDiff      = _crouchSettings.StandingHeight -
-                                    _crouchSettings.CrouchingHeight;
-            Vector3 overheadOrigin = transform.position +
-                                     Vector3.up *
-                                     _crouchSettings.CrouchingHeight;
+            float heightDiff      = _crouchSettings.StandingHeight - _crouchSettings.CrouchingHeight;
+            Vector3 overheadOrigin = transform.position + Vector3.up * _crouchSettings.CrouchingHeight;
 
-            bool obstructed = Physics.SphereCast(
-                overheadOrigin,
-                _controller.radius * 0.9f,
-                Vector3.up,
-                out RaycastHit _,
-                heightDiff,
-                _obstacleMask);
+            bool obstructed = Physics.SphereCast(overheadOrigin,_controller.radius * 0.9f, Vector3.up, out RaycastHit _,heightDiff, _obstacleMask);
 
             if (obstructed) { return; }
 
             _isCrouching  = false;
             _targetHeight = _crouchSettings.StandingHeight;
         }
+        
+
     }
 }

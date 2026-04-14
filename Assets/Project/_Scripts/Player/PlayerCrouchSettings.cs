@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FirstPersonShooterController
+namespace Player
 {
     /// <summary>
     /// ScriptableObject configuration for crouch behaviour.
@@ -8,7 +8,7 @@ namespace FirstPersonShooterController
     [CreateAssetMenu(fileName = "CrouchSettings", menuName = "FPSController/Crouch Settings")]
     public sealed class PlayerCrouchSettings : ScriptableObject
     {
-        
+        // ───── Public properties ────────────────────────────────────────────────
         public CrouchMode Mode = CrouchMode.Toggle;
         public float StandingHeight = 1.8f;
         public float CrouchingHeight = 1.0f;
@@ -16,6 +16,7 @@ namespace FirstPersonShooterController
         public float StandingEyeHeight = 1.6f;
         public float CrouchingEyeHeight = 0.8f;
 
+        // ───── Nested type ────────────────────────────────────────────────
         public enum CrouchMode
         {
             Toggle,

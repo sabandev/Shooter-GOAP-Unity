@@ -5,22 +5,27 @@ using UnityEngine.AI;
 namespace GOAP
 {
     /// <summary>
-    /// Represents a door in the game environment.
+    /// Represents a door in the game environment. Can be interacted with through SmartObject for AI or IInteractable for player.
     ///
     /// Authorised Use Instructions:
-    ///     - Collider must be disabled immediately upon open
+    ///     - NavMeshObstacle must be disabled immediately upon close, enabled immidately upon open
     ///     - Hinge should be assigned for realistic door open motion
     ///     - Only the hinge gets rotated, so the door model should be a hierarchy CHILD of the hinge GameObject
     /// </summary>
-    public sealed class Door : MonoBehaviour
+    public sealed class Door : MonoBehaviour, IInteractable
     {
         // -----Nested Type-----
         public enum DoorState
         {
+            Closing,
             Closed,
             Opening,
             Open
         }
+
+        // ───── Implementation ────────────────────────────────────────────────
+        public string InteractionPrompt => _state == DoorState.Open ? "Close Door" : "Open Door";
+        public bool CanInteract => _state == DoorState.Open || _state == DoorState.Closed;
         
         // -----Serialized properties-----
         [Header("References")] 
@@ -45,6 +50,7 @@ namespace GOAP
         
         private float _openTimer;
         private float _targetAngle;
+        private float _closeTimer;
         
         // -----Public properties-----
         public DoorState State => _state;
@@ -52,6 +58,15 @@ namespace GOAP
         public bool IsClosed => _state == DoorState.Closed;
         
         public event Action OnDoorOpened;
+
+        // ───── Implementation ────────────────────────────────────────────────
+        public void Interact(GameObject interactor)
+        {
+            if (_state == DoorState.Closed)
+                Open(interactor.transform.position);
+            else if (_state == DoorState.Open)
+                Close(interactor.transform.position);
+        }
         
         // -----MonoBehaviour methods-----
         private void Awake()
@@ -71,24 +86,10 @@ namespace GOAP
 
         private void Update()
         {
-            if (_state != DoorState.Opening) { return; }
-            
-            _openTimer += Time.deltaTime;
-            
-            float t = Mathf.Clamp01(_openTimer / _openDuration);
-            float curveT =  _openCurve.Evaluate(t);
-            
-            _hinge.localEulerAngles = new Vector3(
-                _hinge.localEulerAngles.x,
-                Mathf.LerpAngle(_closedAngle, _targetAngle, curveT),
-                _hinge.localEulerAngles.z);
-            
-            if (t >= 1.0f)
-            {
-                _state = DoorState.Open;
-                SyncDoorStates(_state);
-                OnDoorOpened?.Invoke();
-            }
+            if (_state == DoorState.Opening)
+                TickOpening();
+            else if (_state == DoorState.Closing)
+                TickClosing();
         }
         
         // -----Public methods-----
@@ -99,6 +100,19 @@ namespace GOAP
             _targetAngle = CalculateOpenAngle(openerPosition);
             _state = DoorState.Opening;
             _openTimer = 0.0f;
+            
+            if (_navMeshObstacle != null)
+                _navMeshObstacle.enabled = false;
+        }
+        
+        public void Close(Vector3 closerPosition)
+        {
+            if (_state != DoorState.Open) { return; }
+            
+            _state = DoorState.Closing;
+            _closeTimer = 0.0f;
+            
+            _targetAngle = _closedAngle;
             
             if (_navMeshObstacle != null)
                 _navMeshObstacle.enabled = false;
@@ -121,10 +135,48 @@ namespace GOAP
         }
         
         // -----Private methods-----
+        private void TickOpening()
+        {
+            _openTimer += Time.deltaTime;
+            
+            float t = Mathf.Clamp01(_openTimer / _openDuration);
+            float curveT =  _openCurve.Evaluate(t);
+            
+            _hinge.localEulerAngles = new Vector3( _hinge.localEulerAngles.x, Mathf.LerpAngle(_closedAngle, _targetAngle, curveT), _hinge.localEulerAngles.z);
+            
+            if (t >= 1.0f)
+            {
+                _state = DoorState.Open;
+                SyncDoorStates(_state);
+                OnDoorOpened?.Invoke();
+            }
+        }
+        
+        private void TickClosing()
+        {
+            _closeTimer += Time.deltaTime;
+            
+            float t = Mathf.Clamp01(_closeTimer / _openDuration);
+            float curveT =  _openCurve.Evaluate(t);
+            
+            _hinge.localEulerAngles = new Vector3( _hinge.localEulerAngles.x, Mathf.LerpAngle(_targetAngle, _closedAngle, curveT), _hinge.localEulerAngles.z);
+            
+            if (t >= 1.0f)
+            {
+                _state = DoorState.Closed;
+                SyncDoorStates(_state);
+            }
+        }
+        
         private void SyncDoorStates(DoorState state)
         {
             switch (state)
             {
+                case DoorState.Closing:
+                    if (_navMeshObstacle != null)
+                        _navMeshObstacle.enabled = false;
+                    break;
+                
                 case DoorState.Closed:
                     if (_navMeshObstacle != null)
                         _navMeshObstacle.enabled = false;
