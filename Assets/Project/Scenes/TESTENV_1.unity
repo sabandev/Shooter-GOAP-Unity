@@ -9698,33 +9698,9 @@ PrefabInstance:
       propertyPath: _waypointNetwork
       value: 
       objectReference: {fileID: 579386585}
-    - target: {fileID: 1398816697108664609, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _tickRate
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1398816697108664609, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _forwardAngle
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 1398816697108664609, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _detectionRange
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1398816697108664609, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _drawDoorDetectionGizmos
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_Name
       value: AI Agent
-      objectReference: {fileID: 0}
-    - target: {fileID: 3145266589037262395, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _drawVisualiserGizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4883870662464631839, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _drawMeleeRangeGizmos
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_LocalPosition.x

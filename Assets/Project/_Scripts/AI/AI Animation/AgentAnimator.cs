@@ -14,8 +14,6 @@ namespace GOAP
     ///       write calls. Be CAUTIOUS of unchecked writing to the NavMeshAgent.
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(GOAPAgent))]
     public sealed class AgentAnimator : MonoBehaviour
     {
         // -----Serialized properties-----
@@ -45,12 +43,12 @@ namespace GOAP
         private void Awake()
         {
             _animator = GetComponent<Animator>();
-            _navAgent = GetComponent<NavMeshAgent>();
-            _goapAgent = GetComponent<GOAPAgent>();
+            _navAgent = GetComponentInParent<NavMeshAgent>();
+            _goapAgent = GetComponentInParent<GOAPAgent>();
 
-            Debug.Assert(_animator != null, "[GOAPAgentAnimator] No Animator component found.", this);
-            Debug.Assert(_navAgent != null, "[GOAPAgentAnimator] No NavMeshAgent component found.", this);
-            Debug.Assert(_goapAgent != null, "[GOAPAgentAnimator] No GOAPAgent component found.", this);
+            Debug.Assert(_animator != null, "[GOAPAgentAnimator] No Animator component found on this GameObject.", this);
+            Debug.Assert(_navAgent != null, "[GOAPAgentAnimator] No NavMeshAgent component found in parent GameObject.", this);
+            Debug.Assert(_goapAgent != null, "[GOAPAgentAnimator] No GOAPAgent component found in parent GameObject.", this);
 
             _animator?.Rebind();
             _animator?.Update(0.0f);

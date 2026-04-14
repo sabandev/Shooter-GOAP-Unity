@@ -36,7 +36,7 @@ namespace GOAP
 
         private void Awake()
         {
-            _agentAnimator = GetComponent<AgentAnimator>();
+            _agentAnimator = GetComponentInChildren<AgentAnimator>();
         }
 
         private void Update()

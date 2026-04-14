@@ -470,7 +470,7 @@ MonoBehaviour:
   _occlusionMask:
     serializedVersion: 2
     m_Bits: 1
-  _drawVisualiserGizmos: 1
+  _drawVisualiserGizmos: 0
   _drawSightSphereOnSelectGizmos: 1
   _drawVisionConeGizmos: 1
   _drawPathToLastKnownTargetPositionGizmos: 1
@@ -491,7 +491,7 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
-  _drawMeleeRangeGizmos: 1
+  _drawMeleeRangeGizmos: 0
 --- !u!114 &5170634492144560065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -520,7 +520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.DoorSensor
   _tickRate: 5
-  _detectionRange: 3
+  _detectionRange: 5
   _forwardAngle: 60
   _doorTag: Door
   _drawDoorDetectionGizmos: 1
@@ -693,12 +693,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8731467589096876401}
   - component: {fileID: 3767930458093458584}
-  - component: {fileID: 6269972533820714620}
-  - component: {fileID: 3026175124971572888}
   - component: {fileID: 1390674438380524051}
-  - component: {fileID: 6556569424958455604}
-  - component: {fileID: 1937992328205216942}
-  - component: {fileID: 3004393215260309275}
   - component: {fileID: 7099646226373362311}
   m_Layer: 0
   m_Name: AI Agent
@@ -747,44 +742,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!95 &6269972533820714620
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 0601e56abda0b46ebbbef03e85b78b26, type: 3}
-  m_Controller: {fileID: 9100000, guid: 3ebf5de246d6341e7904efdc4e60d950, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3026175124971572888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.RigBuilder
-  m_RigLayers:
-  - m_Rig: {fileID: 2426107753784815831}
-    m_Active: 1
-  m_Effectors: []
 --- !u!114 &1390674438380524051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,146 +772,6 @@ MonoBehaviour:
   _drawVisualiserGizmos: 1
   _drawPlaningStatusInWorldSpaceGizmos: 1
   _drawNavigationGizmos: 1
---- !u!114 &6556569424958455604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 826b33a2ec5b546b3ac683fe690923df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgentAnimator
-  _walkSpeed: 2
-  _jogSpeed: 4
-  _sprintSpeed: 6
-  _speedDampTime: 0.1
-  _speedSmoothHalfLife: 0.1
---- !u!114 &1937992328205216942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3f8902cd96744e8bb78425d68825ebe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.TurnController
-  _turnTriggerAngle: 60
-  _maxSpeedToTurn: 0.35
-  _turnCheckInterval: 0.1
-  _rootMotionWeight: 1
---- !u!114 &3004393215260309275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0d5750457a7c3a419199a1246eb9f30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HoaxGames.FootIK
-  m_animatorIkPassLayerIndex: 0
-  m_collisionLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_triggerCollisionInteraction: 1
-  m_resetToDefaultValuesSpeed: 1
-  m_activateCrouchSpecificBehaviour: 0
-  m_crouchCorrectionTolerance: 0
-  m_forceActivateCrouchingBehaviour: []
-  m_forceInvalidOnAnimatorStates: []
-  m_globalCharacterYOffset: 0
-  m_applyGlobalCharacterYOffsetToOtherIKsToo: 1
-  m_ikPlacementWeight: 1
-  m_ikPlacementStiffness: 8
-  m_ikRotationStiffness: 8
-  m_ikInterpolationMethod: 0
-  m_ikUpwardsExtrapolation: 1
-  m_ikUpwardsPullBackDownExtrapolation: 0
-  m_ikDownwardsExtrapolation: 2.5
-  m_automaticFootRotationBasedHeightAdaption: 0.7
-  m_ikMaxCorrection: 0.5
-  m_ikCorrectionRaycastMargin: 0.05
-  m_ikFootHeight: 0.1
-  m_ikFootLength: 0.24
-  m_ikFootWidth: 0.085
-  m_ikFootForwardBias: 0.065
-  m_maxAnkleRotationAdaptionAngle: 90
-  m_antiDownwardsIntersectionStiffness: 50
-  m_maxGroundAngleAtWhichTheGroundIsDetectedAsGround: 81
-  m_maxGroundAngleTheFeetsCanAdaptTo: 79
-  m_minimumMovementThreshold: 0.003
-  m_accountMinimumMovementThresholdForMovingGroundObjects: 1
-  m_isGluedToGroundNormalizedThreshold: 0.7
-  m_isGluedToGroundDistanceThreshold: 0.055
-  m_onlyAdaptRotationWhenGluedToGround: 1
-  m_computeIkHintPositionStrategy: 0
-  m_bodyPlacementWeight: 1
-  m_bodyStiffness: 8
-  m_bodyPositionInterpolationMethod: 0
-  m_bodyPositionMaxCorrection: 0.7
-  m_bodyPositionMaxCorrectionTolerance: 0.05
-  m_increaseBodyPositionMaxCorrectionWithForwardFootDistance: 0
-  m_canBodyPositionMoveHigherThanGroundedPosition: 1
-  m_bodyPositionOffset: 0
-  m_checkGroundedDistance: 0.7
-  m_checkGroundedRadius: 0.2
-  m_autoUngroundUpwardsVelocity: -1
-  m_slopeBendingUpwardsStrength: 0
-  m_slopeBendingDownwardsStrength: 0
-  m_slopeBendingTransitionStiffness: 10
-  m_averageSlopeLeaningFixedQueueCount: 20
-  m_maxAbsoluteSlopeSpineBending: 90
-  m_slopeLeaningType: 1
-  m_shouldersCounteractSpineBending: 1
-  m_ignoreVelocityDependency: 0
-  m_relativeSpineRotationAxisAffectedBySlopeLeaning: 0
-  m_moveLeaningStrength: 0
-  m_moveLeaningKneelFactor: 0
-  m_moveSpineLeaningStrength: 0
-  m_moveLeaningStiffness: 12
-  m_moveLeaningIsStartStopPercentage: 0
-  m_moveLeaningIsStartStopStartDurationStrength: 20
-  m_moveLeaningIsStartStopStopDurationStrength: 15
-  m_moveLeanWhenGrounded: 1
-  m_moveLeanWhenNotGrounded: 1
-  m_flipRightMoveLean: 0
-  m_flipForwardMoveLean: 0
-  m_eventCheckResetDistance: 0.05
-  m_stepLength: 0.7
-  m_footstepEventDelay: 0
-  m_onFootstepLeftStart:
-    m_PersistentCalls:
-      m_Calls: []
-  m_onFootstepRightStart:
-    m_PersistentCalls:
-      m_Calls: []
-  m_onFootstepLeftStop:
-    m_PersistentCalls:
-      m_Calls: []
-  m_onFootstepRightStop:
-    m_PersistentCalls:
-      m_Calls: []
-  m_onGroundedEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_onGroundedExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_isGrounded: 0
-  m_currBodyPositionOffset: 0
-  m_maxBodyPositionOffset: 0
-  m_currIkCorrectionOffset: 0
-  m_maxIkCorrectionOffset: 0
-  m_upwardsVelocity: 0
-  m_maxUpwardsVelocity: 0
 --- !u!114 &7099646226373362311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1324,6 +1141,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7920598974648344856}
+  - component: {fileID: 374917750061511497}
+  - component: {fileID: 5445901741203904122}
+  - component: {fileID: 3803127546708982896}
+  - component: {fileID: 5729889446948779931}
+  - component: {fileID: 8110474444802635540}
   m_Layer: 0
   m_Name: Y Bot
   m_TagString: Untagged
@@ -1350,6 +1172,184 @@ Transform:
   - {fileID: 8398561595707101688}
   m_Father: {fileID: 8731467589096876401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &374917750061511497
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419455468557257374}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 0601e56abda0b46ebbbef03e85b78b26, type: 3}
+  m_Controller: {fileID: 9100000, guid: 3ebf5de246d6341e7904efdc4e60d950, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5445901741203904122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419455468557257374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.RigBuilder
+  m_RigLayers:
+  - m_Rig: {fileID: 2426107753784815831}
+    m_Active: 1
+  m_Effectors: []
+--- !u!114 &3803127546708982896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419455468557257374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826b33a2ec5b546b3ac683fe690923df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgentAnimator
+  _walkSpeed: 2
+  _jogSpeed: 4
+  _sprintSpeed: 6
+  _speedDampTime: 0.1
+  _speedSmoothHalfLife: 0.1
+--- !u!114 &5729889446948779931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419455468557257374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3f8902cd96744e8bb78425d68825ebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.TurnController
+  _turnTriggerAngle: 60
+  _maxSpeedToTurn: 0.35
+  _turnCheckInterval: 0.1
+  _rootMotionWeight: 1
+--- !u!114 &8110474444802635540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419455468557257374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0d5750457a7c3a419199a1246eb9f30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoaxGames.FootIK
+  m_animatorIkPassLayerIndex: 0
+  m_collisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_triggerCollisionInteraction: 1
+  m_resetToDefaultValuesSpeed: 1
+  m_activateCrouchSpecificBehaviour: 0
+  m_crouchCorrectionTolerance: 0
+  m_forceActivateCrouchingBehaviour: []
+  m_forceInvalidOnAnimatorStates: []
+  m_globalCharacterYOffset: 0
+  m_applyGlobalCharacterYOffsetToOtherIKsToo: 1
+  m_ikPlacementWeight: 1
+  m_ikPlacementStiffness: 8
+  m_ikRotationStiffness: 8
+  m_ikInterpolationMethod: 0
+  m_ikUpwardsExtrapolation: 1
+  m_ikUpwardsPullBackDownExtrapolation: 0
+  m_ikDownwardsExtrapolation: 2.5
+  m_automaticFootRotationBasedHeightAdaption: 0.7
+  m_ikMaxCorrection: 0.5
+  m_ikCorrectionRaycastMargin: 0.05
+  m_ikFootHeight: 0.1
+  m_ikFootLength: 0.24
+  m_ikFootWidth: 0.085
+  m_ikFootForwardBias: 0.065
+  m_maxAnkleRotationAdaptionAngle: 90
+  m_antiDownwardsIntersectionStiffness: 50
+  m_maxGroundAngleAtWhichTheGroundIsDetectedAsGround: 81
+  m_maxGroundAngleTheFeetsCanAdaptTo: 79
+  m_minimumMovementThreshold: 0.003
+  m_accountMinimumMovementThresholdForMovingGroundObjects: 1
+  m_isGluedToGroundNormalizedThreshold: 0.7
+  m_isGluedToGroundDistanceThreshold: 0.055
+  m_onlyAdaptRotationWhenGluedToGround: 1
+  m_computeIkHintPositionStrategy: 0
+  m_bodyPlacementWeight: 1
+  m_bodyStiffness: 8
+  m_bodyPositionInterpolationMethod: 0
+  m_bodyPositionMaxCorrection: 0.7
+  m_bodyPositionMaxCorrectionTolerance: 0.05
+  m_increaseBodyPositionMaxCorrectionWithForwardFootDistance: 0
+  m_canBodyPositionMoveHigherThanGroundedPosition: 1
+  m_bodyPositionOffset: 0
+  m_checkGroundedDistance: 0.7
+  m_checkGroundedRadius: 0.2
+  m_autoUngroundUpwardsVelocity: -1
+  m_slopeBendingUpwardsStrength: 0
+  m_slopeBendingDownwardsStrength: 0
+  m_slopeBendingTransitionStiffness: 10
+  m_averageSlopeLeaningFixedQueueCount: 20
+  m_maxAbsoluteSlopeSpineBending: 90
+  m_slopeLeaningType: 1
+  m_shouldersCounteractSpineBending: 1
+  m_ignoreVelocityDependency: 0
+  m_relativeSpineRotationAxisAffectedBySlopeLeaning: 0
+  m_moveLeaningStrength: 0
+  m_moveLeaningKneelFactor: 0
+  m_moveSpineLeaningStrength: 0
+  m_moveLeaningStiffness: 12
+  m_moveLeaningIsStartStopPercentage: 0
+  m_moveLeaningIsStartStopStartDurationStrength: 20
+  m_moveLeaningIsStartStopStopDurationStrength: 15
+  m_moveLeanWhenGrounded: 1
+  m_moveLeanWhenNotGrounded: 1
+  m_flipRightMoveLean: 0
+  m_flipForwardMoveLean: 0
+  m_eventCheckResetDistance: 0.05
+  m_stepLength: 0.7
+  m_footstepEventDelay: 0
+  m_onFootstepLeftStart:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onFootstepRightStart:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onFootstepLeftStop:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onFootstepRightStop:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onGroundedEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_onGroundedExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_isGrounded: 0
+  m_currBodyPositionOffset: 0
+  m_maxBodyPositionOffset: 0
+  m_currIkCorrectionOffset: 0
+  m_maxIkCorrectionOffset: 0
+  m_upwardsVelocity: 0
+  m_maxUpwardsVelocity: 0
 --- !u!1 &4008489545687611481
 GameObject:
   m_ObjectHideFlags: 0

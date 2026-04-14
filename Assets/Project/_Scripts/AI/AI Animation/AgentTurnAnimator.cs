@@ -10,7 +10,6 @@ namespace GOAP
     /// Allows turning animations to drive agent rotation and prevents sliding.
     /// </summary>
     [RequireComponent(typeof(Animator))]
-    [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(AgentAnimator))]
     public sealed class AgentTurnAnimator : MonoBehaviour
     {
@@ -43,7 +42,7 @@ namespace GOAP
         private void Awake()
         {
             _animator = GetComponent<Animator>();
-            _navAgent = GetComponent<NavMeshAgent>();
+            _navAgent = GetComponentInParent<NavMeshAgent>();
             _agentAnimator = GetComponent<AgentAnimator>();
 
             Debug.Assert(_animator != null, "[TurnController] Missing Animator.", this);
@@ -72,11 +71,11 @@ namespace GOAP
         {
             if (!_isTurning) return;
 
-            Quaternion rootRotation = Quaternion.Slerp(transform.rotation, transform.rotation * _animator.deltaRotation, _rootMotionWeight);
+            Quaternion rootRotation = Quaternion.Slerp(_navAgent.transform.rotation, _navAgent.transform.rotation * _animator.deltaRotation, _rootMotionWeight);
 
-            transform.rotation = rootRotation;
+            _navAgent.transform.rotation = rootRotation;
 
-            _navAgent.nextPosition = transform.position;
+            _navAgent.nextPosition = _navAgent.transform.position;
         }
 
         // -----Private methods-----
@@ -94,13 +93,13 @@ namespace GOAP
             // No path — nothing to turn toward
             if (!_navAgent.hasPath) { return; }
 
-            Vector3 toDestination = (_navAgent.steeringTarget - transform.position).normalized;
+            Vector3 toDestination = (_navAgent.steeringTarget - _navAgent.transform.position).normalized;
 
             toDestination.y = 0.0f;
 
             if (toDestination == Vector3.zero) { return; }
 
-            float angle = Vector3.SignedAngle(transform.forward, toDestination, Vector3.up);
+            float angle = Vector3.SignedAngle(_navAgent.transform.forward, toDestination, Vector3.up);
 
             // Only trigger if angle exceeds threshold
             if (Mathf.Abs(angle) < _turnTriggerAngle) { return; }
@@ -117,7 +116,7 @@ namespace GOAP
                 return;
             }
 
-            Vector3 toDestination = (_navAgent.steeringTarget - transform.position).normalized;
+            Vector3 toDestination = (_navAgent.steeringTarget - _navAgent.transform.position).normalized;
 
             toDestination.y = 0.0f;
 
@@ -127,7 +126,7 @@ namespace GOAP
                 return;
             }
 
-            float remainingAngle = Vector3.SignedAngle(transform.forward, toDestination, Vector3.up);
+            float remainingAngle = Vector3.SignedAngle(_navAgent.transform.forward, toDestination, Vector3.up);
 
             // Use a smaller threshold than the trigger to prevent flickering
             if (Mathf.Abs(remainingAngle) < _turnTriggerAngle * 0.3f)

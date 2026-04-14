@@ -18,7 +18,6 @@ namespace GOAP
     ///       to prevent large performance loss
     /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(Animator))]
     public sealed class GOAPAgent : MonoBehaviour
     {
         // -----Serialized properties-----
@@ -66,7 +65,7 @@ namespace GOAP
         private void Awake()
         {
             NavAgent = GetComponent<NavMeshAgent>();
-            Animator = GetComponent<Animator>();
+            Animator = GetComponentInChildren<Animator>();
             Blackboard = new AgentBlackboard();
             _planner = new GOAPPlanner();
 
