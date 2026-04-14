@@ -98,15 +98,14 @@ namespace GOAP
         /// </summary>
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying) { return; }
             if (!_drawVisualiserGizmos) { return; }
 
-            GOAPAgent agent = GetComponentInParent<GOAPAgent>();
-            if (agent == null) { return; }
+            GetAgent();
+            if (Agent == null) { return; }
 
             if (_drawVisionConeGizmos)
             {
-                bool targetVisible = agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_VISIBLE);
+                bool targetVisible = Agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_VISIBLE);
 
                 Color coneColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.12f) : new Color(0.0f, 1.0f, 0.0f, 0.06f);
                 Color outlineColor = targetVisible ? new Color(1.0f, 0.3f, 0.3f, 0.6f) : new Color(0.0f, 0.8f, 0.0f, 0.4f);
@@ -120,9 +119,9 @@ namespace GOAP
                 Gizmos.DrawRay(eyeLocation.position, Agent.transform.forward * _sightRange);
             }
 
-            if (agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS) && _drawPathToLastKnownTargetPositionGizmos)
+            if (Agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS) && _drawPathToLastKnownTargetPositionGizmos)
             {
-                Vector3 lastKnown = agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
+                Vector3 lastKnown = Agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
 
                 Gizmos.color = new Color(1.0f, 0.8f, 0.0f, 0.8f);
                 Gizmos.DrawLine(Agent.transform.position, lastKnown);
@@ -132,7 +131,10 @@ namespace GOAP
 
         private void OnDrawGizmosSelected()
         {
-            if (!_drawSightSphereOnSelectGizmos || !_drawVisualiserGizmos || !Application.isPlaying) { return; }
+            if (!_drawSightSphereOnSelectGizmos || !_drawVisualiserGizmos) { return; }
+            
+            GetAgent();
+            if (Agent == null) { return; }
 
             Gizmos.color = new Color(1.0f, 1.0f, 1.0f, 0.15f);
             Gizmos.DrawWireSphere(Agent.transform.position, _sightRange);

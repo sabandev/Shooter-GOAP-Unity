@@ -63,9 +63,12 @@ namespace GOAP
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (!_drawMeleeRangeGizmos || !Application.isPlaying) { return; }
-
-            bool inRange = Agent != null && Agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_IN_MELEE_RANGE);
+            if (!_drawMeleeRangeGizmos) { return; }
+            
+            GetAgent();
+            if (Agent == null) { return; }
+            
+            bool inRange = Agent.Blackboard.Get<bool>(BlackboardKeys.TARGET_IN_MELEE_RANGE);
 
             Gizmos.color = inRange ? new Color(1.0f, 0.2f, 0.2f, 0.4f) : new Color(1.0f, 0.5f, 0.0f, 0.15f);
 

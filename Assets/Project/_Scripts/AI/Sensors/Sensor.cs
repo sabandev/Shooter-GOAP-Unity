@@ -10,6 +10,12 @@ namespace GOAP
     ///     - MUST respect individual tick rate and decouple sensing from the Unity loop.
     ///       If sensors run at 60Hz this can be overwhelming for builds and destroy performance. Run
     ///       at 5-10Hz for safety.
+    ///     - All editor helper methods (DrawGizmos) must call GetAgent() if they are to be run while the
+    ///       application is not playing. Two solutions to null reference exceptions:
+    ///         - Add !Application.isPlaying { return; } at the top to prevent gizmos from rendering while
+    ///           not in Play Mode. This stop the calls to an Agent that is not referenced yet.
+    ///         - Add GetAgent() and a null check { return; } to ensure an Agent reference is obtained,
+    ///           or the method won't execute.
     /// </summary>
     public abstract class Sensor : MonoBehaviour
     {
@@ -26,8 +32,7 @@ namespace GOAP
         // -----Lifecycle methods-----
         protected virtual void Awake()
         {
-            Agent = GetComponentInParent<GOAPAgent>();
-            Debug.Assert(Agent != null, $"[{GetType().Name}] Requires GOAPAgent on the parent GameObject.", this);
+            GetAgent();
         }
 
         private void Update()
@@ -43,6 +48,12 @@ namespace GOAP
 
         // -----Implementation-----
         protected abstract void Sense();
+        
+        protected virtual void GetAgent()
+        {
+            Agent = GetComponentInParent<GOAPAgent>();
+            Debug.Assert(Agent != null, $"[{GetType().Name}] Requires GOAPAgent on the parent GameObject.", this);
+        }
     }
 }
 

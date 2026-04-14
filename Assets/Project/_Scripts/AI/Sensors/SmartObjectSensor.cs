@@ -5,21 +5,10 @@ namespace GOAP
     /// <summary>
     /// Sensor that queries SmartObjectRegistry each tick and writes
     /// relevant availability facts to the agent's blackboard.
-    ///
-    /// Each sensor instance monitors one object tag. Add multiple
-    /// sensors to an agent to monitor multiple object types.
-    ///
-    /// Written facts:
-    ///   {Tag}_AVAILABLE  (bool)      — any available object of this type exists
-    ///   {Tag}_TRANSFORM  (Transform) — nearest available object's transform
-    ///   {Tag}_DISTANCE   (float)     — distance to nearest available object
-    ///
-    /// Example: tag "Pickup" produces keys:
-    ///   PICKUP_AVAILABLE, PICKUP_TRANSFORM, PICKUP_DISTANCE
     /// </summary>
     public sealed class SmartObjectSensor : Sensor
     {
-        // ─── Serialized fields ────────────────────────────────────────
+        // -----Serialized properties-----
 
         [Header("Smart Object Sensor")]
         [Tooltip("The SmartObjectData tag to monitor. Must match " +
@@ -30,13 +19,13 @@ namespace GOAP
                  "beyond this range are ignored.")]
         [SerializeField] private float _detectionRange = 20.0f;
 
-        // ─── Cached blackboard keys ───────────────────────────────────
+        // -----Private properties-----
 
         private string _availableKey;
         private string _transformKey;
         private string _distanceKey;
 
-        // ─── SensorBase implementation ────────────────────────────────
+        // -----Implementation-----
 
         protected override void Awake()
         {

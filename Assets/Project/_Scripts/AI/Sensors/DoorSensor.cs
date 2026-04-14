@@ -94,7 +94,10 @@ namespace GOAP
         #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (!Application.isPlaying || !_drawDoorDetectionGizmos) { return; }
+            if (!_drawDoorDetectionGizmos) { return; }
+            
+            GetAgent();
+            if (Agent == null) { return; }
             
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(Agent.transform.position, _detectionRange);

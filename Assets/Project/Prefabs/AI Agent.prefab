@@ -413,6 +413,117 @@ Transform:
   - {fileID: 6405891227691088966}
   m_Father: {fileID: 709035342152162646}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1830102529562912333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8650010479740081655}
+  - component: {fileID: 3145266589037262395}
+  - component: {fileID: 4883870662464631839}
+  - component: {fileID: 5170634492144560065}
+  - component: {fileID: 1398816697108664609}
+  m_Layer: 0
+  m_Name: AI Sensors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8650010479740081655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8731467589096876401}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3145266589037262395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8096db9f9a4464fb89a890060eb0b118, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SightSensor
+  _tickRate: 6
+  eyeLocation: {fileID: 6642865713599515844}
+  _sightRange: 20
+  _sightAngle: 66.8
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _occlusionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  _drawVisualiserGizmos: 1
+  _drawSightSphereOnSelectGizmos: 1
+  _drawVisionConeGizmos: 1
+  _drawPathToLastKnownTargetPositionGizmos: 1
+--- !u!114 &4883870662464631839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77bb67952b072451380c842ed4d53487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.MeleeRangeSensor
+  _tickRate: 10
+  _meleeRange: 3
+  _targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _drawMeleeRangeGizmos: 1
+--- !u!114 &5170634492144560065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27da85858fc1148cf8dce1e9b684022c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectSensor
+  _tickRate: 5
+  _targetTag: Pickup
+  _detectionRange: 20
+--- !u!114 &1398816697108664609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 368094ca0c5b943288100f5aa9198bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GOAP.DoorSensor
+  _tickRate: 5
+  _detectionRange: 3
+  _forwardAngle: 60
+  _doorTag: Door
+  _drawDoorDetectionGizmos: 1
 --- !u!1 &1843270042884595026
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,7 +696,6 @@ GameObject:
   - component: {fileID: 6269972533820714620}
   - component: {fileID: 3026175124971572888}
   - component: {fileID: 1390674438380524051}
-  - component: {fileID: 3441225848959391294}
   - component: {fileID: 6556569424958455604}
   - component: {fileID: 1937992328205216942}
   - component: {fileID: 3004393215260309275}
@@ -610,6 +720,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8650010479740081655}
   - {fileID: 6642865713599515844}
   - {fileID: 7920598974648344856}
   m_Father: {fileID: 0}
@@ -688,45 +799,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgent
   _actionDataAssets:
   - {fileID: 11400000, guid: bafc71e314fec41fdb7ecd0ce221e587, type: 2}
-  - {fileID: 11400000, guid: 319af3fd7f0e04148b47a681b58f1bb4, type: 2}
   - {fileID: 11400000, guid: b564cc1b24c4e4f29960c2c3e2eaa94b, type: 2}
   - {fileID: 11400000, guid: d1b3f0c7d97374c278498117714ecb6e, type: 2}
+  - {fileID: 11400000, guid: 354272894e0fc4bff88eab55c898edc4, type: 2}
+  - {fileID: 11400000, guid: 2b2dcc1891fed4247bdd07946a4364fb, type: 2}
+  - {fileID: 11400000, guid: 208ecb2c0ea4a45b7917c954cac988b0, type: 2}
+  - {fileID: 11400000, guid: 8d132720fdec34d41a974d718d4abf84, type: 2}
   _goals:
   - {fileID: 11400000, guid: 1e1c6c4dd80034acf8ab84b44edc16bf, type: 2}
-  - {fileID: 11400000, guid: d3b3b2a42897a4d9ba28eb15646b41de, type: 2}
   - {fileID: 11400000, guid: fdaa29ea907a44f51a19ef88cf7cdb93, type: 2}
+  - {fileID: 11400000, guid: e6680d072d11c440a9b7588ff1c76914, type: 2}
   _waypointNetwork: {fileID: 0}
   _planningTickRate: 3
   _debugLogging: 0
   _drawVisualiserGizmos: 1
   _drawPlaningStatusInWorldSpaceGizmos: 1
   _drawNavigationGizmos: 1
---- !u!114 &3441225848959391294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2534134415953119248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8096db9f9a4464fb89a890060eb0b118, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.SightSensor
-  _tickRate: 6
-  eyeLocation: {fileID: 6642865713599515844}
-  _sightRange: 20
-  _sightAngle: 66.8
-  _targetMask:
-    serializedVersion: 2
-    m_Bits: 8
-  _occlusionMask:
-    serializedVersion: 2
-    m_Bits: 1
-  _drawVisualiserGizmos: 0
-  _drawSightSphereOnSelectGizmos: 1
-  _drawVisionConeGizmos: 1
-  _drawPathToLastKnownTargetPositionGizmos: 1
 --- !u!114 &6556569424958455604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,7 +844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3f8902cd96744e8bb78425d68825ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.TurnController
-  _turnTriggerAngle: 35
+  _turnTriggerAngle: 60
   _maxSpeedToTurn: 0.35
   _turnCheckInterval: 0.1
   _rootMotionWeight: 1
@@ -885,14 +973,13 @@ MonoBehaviour:
   _maxPushMass: 10
   _pushRadius: 0.8
   _pushHeights:
-  - 0.3
-  - 0.9
-  - 1.5
+  - 0.4
+  - 1
   _pushableLayers:
     serializedVersion: 2
-    m_Bits: 0
-  _pushCheckInterval: 0.05
-  _drawPushDetectionGizmos: 1
+    m_Bits: 1
+  _pushCheckInterval: 0.1
+  _drawPushDetectionGizmos: 0
 --- !u!1 &2770308567161461260
 GameObject:
   m_ObjectHideFlags: 0
