@@ -346,6 +346,7 @@ namespace GOAP
         public void ClearPlanHistory() => _planHistory.Clear();
 
         // -----Editor Helper-----
+        #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying) { return; }
@@ -375,6 +376,7 @@ namespace GOAP
                 Gizmos.DrawWireSphere(NavAgent.destination, 0.3f);
             }
         }
+        #endif
     }
 }
 
