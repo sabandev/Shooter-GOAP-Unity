@@ -16,5 +16,5 @@ MonoBehaviour:
   StandingHeight: 1.8
   CrouchingHeight: 1
   CrouchSpeed: 10
-  StandingEyeHeight: 1.6
+  StandingEyeHeight: 1.65
   CrouchingEyeHeight: 0.8

@@ -124,8 +124,7 @@ namespace GOAP
             Agent.Blackboard.Set(BlackboardKeys.DOOR_AHEAD, false);
             Agent.Blackboard.Set(BlackboardKeys.DOOR_IS_OPEN, true);
             
-            Debug.Log($"[OpenDoorAction] '{Agent.name}' opened " +
-                      $"'{TargetObject?.name}'.");
+            // Debug.Log($"[OpenDoorAction] '{Agent.name}' opened '{TargetObject?.name}'.");
         }
     }
 }

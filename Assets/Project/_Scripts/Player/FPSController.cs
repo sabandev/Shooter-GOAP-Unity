@@ -14,7 +14,12 @@ namespace Player
     public sealed class FPSController : MonoBehaviour
     {
         // ─── Serialized properties ────────────────────────────────────────
-
+        
+        [Header("References")]
+        [SerializeField] private Transform _camera;
+        
+        [Space(10.0f)]
+        
         [Header("Movement")]
         [SerializeField] private float _walkSpeed = 5.5f;
         [SerializeField] private float _crouchSpeed = 2.5f;
@@ -85,6 +90,7 @@ namespace Player
         public bool    IsCrouching => _isCrouching;
         public Vector3 Velocity => _velocity;
         public float   NormalisedSpeed   => _horizontalVelocity.magnitude / (_isCrouching ? _crouchSpeed : _walkSpeed);
+        public float WalkSpeed => _walkSpeed;
 
         // ─── Lifecycle methods ──────────────────────────────────────────
 
@@ -239,8 +245,9 @@ namespace Player
             float targetSpeed = _isCrouching ? _crouchSpeed : _walkSpeed;
 
             Vector3 inputDir = new Vector3(_moveInput.x, 0.0f, _moveInput.y).normalized;
-
-            Vector3 targetVelocity = transform.TransformDirection(inputDir) * targetSpeed;
+            
+            Quaternion cameraYawRotation = Quaternion.Euler(0.0f, _camera.eulerAngles.y, 0.0f);
+            Vector3 targetVelocity = cameraYawRotation * inputDir * targetSpeed;
 
             // Reduce control in air
             float controlFactor = _isGrounded ? 1.0f : _airControlFactor;

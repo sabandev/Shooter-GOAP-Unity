@@ -23,6 +23,7 @@ namespace Player
         [Header("Eye Height")]
         [SerializeField] private PlayerCrouchSettings _crouchSettings;
         [SerializeField] [Range(1.0f, 20.0f)] private float _eyeHeightSpeed = 12.0f; // How fast camera lerps between eye heights
+        [SerializeField] private float _cameraForwardOffset = 0.15f;
 
         [Space(10.0f)]
         
@@ -92,7 +93,8 @@ namespace Player
             _pitch -= _smoothedLookDelta.y;
             _pitch = Mathf.Clamp(_pitch, -_maxPitchAngle, _maxPitchAngle);
             
-            _controller.transform.rotation = Quaternion.Euler(0.0f, _yaw, 0.0f);
+            // _controller.transform.rotation = Quaternion.Euler(0.0f, _yaw, 0.0f);
+            // Now owned by PlayerTurnAnimator
         }
         
         private void UpdateEyeHeight()
@@ -140,7 +142,7 @@ namespace Player
         
         private void ApplyTransform()
         {
-            transform.position = _controller.transform.position + Vector3.up * _currentEyeHeight + _bobOffset;
+            transform.position = _controller.transform.position + Vector3.up * _currentEyeHeight + _bobOffset + transform.forward * _cameraForwardOffset;
             
             transform.rotation = Quaternion.Euler(_pitch, _yaw, 0.0f);
         }
