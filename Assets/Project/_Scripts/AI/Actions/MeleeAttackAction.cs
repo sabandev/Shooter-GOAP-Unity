@@ -1,5 +1,4 @@
 using UnityEngine;
-using Player;
 
 namespace GOAP
 {
@@ -149,7 +148,7 @@ namespace GOAP
             {
                 if (hit.transform == Agent.transform) continue;
 
-                if (hit.TryGetComponent(out PlayerHealth health))
+                if (hit.TryGetComponent(out IHealth health))
                 {
                     health.TakeDamage(_damage);
                     hitSomething = true;

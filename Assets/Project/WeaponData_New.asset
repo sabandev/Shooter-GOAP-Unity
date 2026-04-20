@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f018d011be7e486aa8ae28b0029886c, type: 3}
+  m_Name: WeaponData_New
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  WeaponName: Pistol
+  HUDIcon: {fileID: 21300000, guid: 5de2ff934a8b3ea4ebfe923a6f958686, type: 3}
+  Damage: 25
+  FireRate: 4
+  Range: 50
+  Spread: 1.5
+  Mode: 0
+  MagazineSize: 12
+  MaxReserveAmmo: 60
+  ReloadDuration: 2
+  ReloadRefillTime: 0.6
+  RecoilVertical:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.15
+      value: 3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RecoilHorizontal:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 3.3333333
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.15
+      value: 0.5
+      inSlope: 3.3333333
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  RecoilRecoverySpeed: 8
+  CameraRecoilFraction: 0.4
+  SwayAmount: 0.06
+  SwayMaxAngle: 6
+  SwaySpeed: 8
+  BobFrequency: 1.8
+  BobVertical: 0.008
+  BobHorizontal: 0.004
+  CrouchBobFrequency: 1.2
+  CrouchBobVertical: 0.005
+  CrouchBobHorizontal: 0.003
+  WorldPrefab: {fileID: 1976862737327463217, guid: 311b48e9162b141798b2974e99a2c3f8, type: 3}
+  WorldWeaponMeshPrefab: {fileID: 866733176299875552, guid: 1aa870cb2f28f4816af21ac65a169404, type: 3}
+  MuzzleFlashPrefab: {fileID: 963963110781974004, guid: 1f3c8eba7019a4ea49b2898a00a4c971, type: 3}
+  BulletTrailPrefab: {fileID: 2687905153152593349, guid: 176c5c7a366d0468288fc2a733342a62, type: 3}
+  ShellCasingPrefab: {fileID: 2075224638957323060, guid: ed4388cc241ba4b0d87c0e6a2abfab44, type: 3}
+  ImpactDefaultPrefab: {fileID: 3827456383438362242, guid: fa419fd732d934cf586ec82f142ed5a2, type: 3}
+  ImpactMetalPrefab: {fileID: 0}
+  ImpactWoodPrefab: {fileID: 0}
+  ImpactConcretePrefab: {fileID: 0}
+  ImpactFleshPrefab: {fileID: 0}
+  ImpactGlassPrefab: {fileID: 0}

@@ -6,7 +6,7 @@ namespace Player
     /// <summary>
     /// Manages player health state.
     /// </summary>
-    public sealed class PlayerHealth : MonoBehaviour
+    public sealed class PlayerHealth : MonoBehaviour, IHealth
     {
         // ───── Serialized properties ────────────────────────────────────────────────
 

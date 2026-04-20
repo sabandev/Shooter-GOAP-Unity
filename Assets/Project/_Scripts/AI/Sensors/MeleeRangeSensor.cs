@@ -1,5 +1,4 @@
 using UnityEngine;
-using Player;
 
 namespace GOAP
 {
@@ -40,7 +39,7 @@ namespace GOAP
             {
                 if (hit.transform == transform) { continue; }
 
-                if (hit.TryGetComponent(out PlayerHealth health) && health.IsDead) { continue; }
+                if (hit.TryGetComponent(out IHealth health) && health.IsDead) { continue; }
 
                 float dist = (hit.transform.position - Agent.transform.position).sqrMagnitude;
                 if (dist < nearestDist)

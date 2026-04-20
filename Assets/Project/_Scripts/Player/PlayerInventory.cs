@@ -54,8 +54,6 @@ namespace Player
             
             _items[ItemType.HealthKit] = current + 1;
             OnHealthKitCountChanged?.Invoke(HealthKitCount);
-            
-            Debug.Log($"[PlayerInventory] Adding Health Kit. Total count: {HealthKitCount}");
         }
         
         public bool TryUseHealthKit()

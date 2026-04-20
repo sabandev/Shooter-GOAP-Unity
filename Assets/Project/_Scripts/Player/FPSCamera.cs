@@ -146,5 +146,12 @@ namespace Player
             
             transform.rotation = Quaternion.Euler(_pitch, _yaw, 0.0f);
         }
+
+        // ───── Public methods ────────────────────────────────────────────────
+        public void ApplyRecoil(float pitchKick)
+        {
+            _pitch -= pitchKick;
+            _pitch = Mathf.Clamp(_pitch, -_maxPitchAngle, _maxPitchAngle);
+        }
     }
 }

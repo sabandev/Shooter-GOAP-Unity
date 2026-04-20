@@ -47,8 +47,6 @@ public sealed class HealthKit : MonoBehaviour, IInteractable
             _visualMesh.SetActive(false);
         
         _smartObject?.SetPermanentlyUnavailable();
-        
-        Debug.Log("[HealthKit] Consumed.");
     }
 
     // ───── Lifecycle methods ────────────────────────────────────────────────

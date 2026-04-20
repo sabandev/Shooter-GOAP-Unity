@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b987f489ad7b48b5af69fe3394bc95b, type: 3}
   m_Name: CrouchSettings
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonShooterController.PlayerCrouchSettings
-  Mode: 0
+  Mode: 1
   StandingHeight: 1.8
   CrouchingHeight: 1
   CrouchSpeed: 10

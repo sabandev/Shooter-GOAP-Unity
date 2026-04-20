@@ -1,0 +1,228 @@
+using System;
+using UnityEngine;
+using GOAP;
+
+/// <summary>
+/// Core weapon gameplay component.
+/// Lives on the world pickup prefab.
+///
+/// Authorised Use Instructions:
+///     -  CANNOT own: visuals, animation, IK, procedural FX.
+///        They belong to ViewModelController, WeaponVFX, and WorldWeaponController.
+/// </summary>
+[RequireComponent(typeof(SmartObject))]
+public sealed class Weapon : MonoBehaviour, IInteractable
+{
+    // ─── Serialized properties ────────────────────────────────────────
+
+    [Header("Data")]
+    [SerializeField] private WeaponData _data;
+
+    [Space(10.0f)]
+    
+    [Header("Attachment Points")]
+    [SerializeField] private Transform _leftHandForegrip;
+    [SerializeField] private Transform _muzzlePoint;
+
+    // ─── Public properties ───────────────────────────────────────────────────
+
+    public event Action<Vector3> OnFired;
+    public event Action OnReloadStarted;
+    public event Action OnReloadCompleted;
+    public event Action<int, int> OnAmmoChanged;
+    
+    public WeaponData Data => _data;
+    public int CurrentAmmo { get; private set; }
+    public int ReserveAmmo { get; private set; }
+    public bool IsReloading { get; private set; }
+    public bool IsEmpty => CurrentAmmo <= 0;
+    public bool CanFire => !IsReloading && CurrentAmmo > 0 && _fireTimer <= 0.0f;
+    public Transform  LeftHandForegrip => _leftHandForegrip;
+
+    // AUDIO: Subscribe to OnFired for fire sound
+    // AUDIO: Subscribe to OnReloadStarted for reload start sound
+    // AUDIO: Subscribe to OnReloadCompleted for reload end sound
+
+    // ─── Implementation ────────────────────────────────────────────
+
+    public string InteractionPrompt => $"Pick Up {_data?.WeaponName ?? "Weapon"}";
+    public bool CanInteract => !_isHeld;
+
+    public void Interact(GameObject interactor)
+    {
+        WeaponHolder holder = interactor.GetComponent<WeaponHolder>();
+
+        if (holder == null) { return; }
+
+        holder.TryPickupWeapon(this);
+        // AUDIO: pickup sound here
+    }
+
+    // ─── Private properties ────────────────────────────────────────────
+
+    private SmartObject _smartObject;
+    private float _fireTimer;
+    private float _reloadTimer;
+    private bool _reloadRefilled;
+    private bool _isHeld;
+    private LayerMask _hitMask;
+
+    // ─── Lifecycle methods ──────────────────────────────────────────
+
+    private void Awake()
+    {
+        _smartObject = GetComponent<SmartObject>();
+
+        Debug.Assert(_data != null, "[Weapon] WeaponData not assigned.", this);
+
+        CurrentAmmo = _data.MagazineSize;
+        ReserveAmmo = _data.MaxReserveAmmo;
+
+        _hitMask = ~LayerMask.GetMask("ViewModel", "WorldModel");
+    }
+
+    private void Update()
+    {
+        if (_fireTimer > 0.0f)
+            _fireTimer -= Time.deltaTime;
+
+        if (IsReloading)
+            TickReload();
+    }
+
+    // ─── Public methods ───────────────────────────────────────────────
+
+    public bool TryFire()
+    {
+        if (!CanFire) { return false; }
+
+        Fire();
+        return true;
+    }
+
+    public bool TryReload()
+    {
+        if (IsReloading) { return false; }
+        if (CurrentAmmo >= _data.MagazineSize) { return false; }
+        if (ReserveAmmo <= 0) { return false; }
+
+        StartReload();
+        return true;
+    }
+
+    public void OnEquipped()
+    {
+        _isHeld              = true;
+        _smartObject.enabled = false;
+        SetRanderersEnabled(false);
+    }
+
+    public void OnDropped()
+    {
+        _isHeld              = false;
+        IsReloading          = false;
+        _reloadTimer         = 0.0f;
+        _smartObject.enabled = true;
+        SetRanderersEnabled(true);
+        // AUDIO: drop/clatter sound here
+    }
+    
+    public void SetMuzzlePoint(Transform muzzle) => _muzzlePoint = muzzle;
+
+    // ─── Private methods ──────────────────────────────────────────
+
+    private void Fire()
+    {
+        CurrentAmmo--;
+        _fireTimer = 1.0f / _data.FireRate;
+
+        Vector3 spread = new Vector3(UnityEngine.Random.Range(-_data.Spread, _data.Spread), UnityEngine.Random.Range(-_data.Spread, _data.Spread), 0.0f) * Mathf.Deg2Rad;
+
+        // Fire from camera since this is first person
+        Camera mainCam = Camera.main;
+        if (mainCam == null) { return; }
+
+        Vector3 origin    = mainCam.transform.position;
+        Vector3 direction = mainCam.transform.forward + spread;
+        Vector3 hitPoint;
+        
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, _data.Range, _hitMask))
+        {
+            ProcessHit(hit);
+            hitPoint = hit.point;
+        }
+        else
+        {
+            hitPoint = origin + direction * _data.Range;
+        }
+        
+        OnFired?.Invoke(hitPoint);
+        OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
+
+        if (CurrentAmmo <= 0 && ReserveAmmo > 0)
+            StartReload();
+    }
+
+    private void ProcessHit(RaycastHit hit)
+    {
+        if (hit.collider.TryGetComponent(out IHealth playerHealth))
+            playerHealth.TakeDamage(_data.Damage);
+        else if (hit.collider.TryGetComponent(out IHealth aiHealth))
+            aiHealth.TakeDamage(_data.Damage);
+
+        SurfaceType surface = hit.collider.GetComponentInParent<SurfaceType>();
+
+        SurfaceType.Surface type = surface != null ? surface.Type : SurfaceType.Surface.Default;
+
+        GameObject impactPrefab = _data.GetImpactPrefab(type);
+        if (impactPrefab == null) { return;}
+            
+        Quaternion impactRotation = Quaternion.LookRotation(hit.normal);
+        ObjectPool.Get(impactPrefab,hit.point, Quaternion.LookRotation(hit.normal));
+        
+            // AUDIO: impact sound based on surface type here
+    }
+
+    private void StartReload()
+    {
+        IsReloading     = true;
+        _reloadTimer    = 0.0f;
+        _reloadRefilled = false;
+
+        OnReloadStarted?.Invoke();
+        // AUDIO: reload start sound here
+    }
+
+    private void TickReload()
+    {
+        _reloadTimer += Time.deltaTime;
+
+        float t = _reloadTimer / _data.ReloadDuration;
+
+        if (!_reloadRefilled && t >= _data.ReloadRefillTime)
+        {
+            int needed  = _data.MagazineSize - CurrentAmmo;
+            int toAdd   = Mathf.Min(needed, ReserveAmmo);
+            CurrentAmmo += toAdd;
+            ReserveAmmo -= toAdd;
+            _reloadRefilled = true;
+            OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
+            // AUDIO: magazine click sound here
+        }
+
+        if (_reloadTimer >= _data.ReloadDuration)
+        {
+            IsReloading = false;
+            OnReloadCompleted?.Invoke();
+            // AUDIO: reload complete sound here
+        }
+    }
+    
+    private void SetRanderersEnabled(bool status)
+    {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            r.enabled = status;
+        }
+    }
+}

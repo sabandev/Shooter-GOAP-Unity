@@ -154,6 +154,60 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fire"",
+                    ""type"": ""Button"",
+                    ""id"": ""0372c0f7-9fce-42d3-ac9f-6c8c25ee8229"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""e6bc41ae-84ce-478c-b2a5-16110b5a1312"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WeaponSlot1"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a2ec403-2777-4202-b441-718c4ef6c6d1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WeaponSlot2"",
+                    ""type"": ""Button"",
+                    ""id"": ""c304a8d9-f620-4e42-ae73-c7701ddcffb4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""80b7b4ff-149e-4a79-aed1-a6a4e1b6ca91"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd5ed44d-5bc1-4026-92aa-f3bf963d2937"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -354,6 +408,105 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2351c17-7a90-4640-b9b6-0562de60a307"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0267fbb3-e68c-4785-9198-3e4d88268e15"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64d796b8-a4bc-4a6a-9922-5e431c2d2ec8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""be00ea05-8851-4837-8cd5-29ae84410d35"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5af8e201-ed75-4a3d-9cff-e64af8cea708"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""WeaponSlot1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b45e8aca-200f-4e79-a19a-53ae6b2355c6"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""WeaponSlot2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""754fe57c-470c-451d-9829-9c57c8dc5b20"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""CycleWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e9535504-660b-48aa-9da4-ddd0b47524b2"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""CycleWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4403a4c9-4872-47e2-a3c1-449df4727795"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""DropWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -397,6 +550,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_UseHealthKit = m_Player.FindAction("UseHealthKit", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
+        m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
+        m_Player_WeaponSlot1 = m_Player.FindAction("WeaponSlot1", throwIfNotFound: true);
+        m_Player_WeaponSlot2 = m_Player.FindAction("WeaponSlot2", throwIfNotFound: true);
+        m_Player_CycleWeapon = m_Player.FindAction("CycleWeapon", throwIfNotFound: true);
+        m_Player_DropWeapon = m_Player.FindAction("DropWeapon", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -484,6 +643,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_UseHealthKit;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_Fire;
+    private readonly InputAction m_Player_Reload;
+    private readonly InputAction m_Player_WeaponSlot1;
+    private readonly InputAction m_Player_WeaponSlot2;
+    private readonly InputAction m_Player_CycleWeapon;
+    private readonly InputAction m_Player_DropWeapon;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -523,6 +688,30 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Pause".
         /// </summary>
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Fire".
+        /// </summary>
+        public InputAction @Fire => m_Wrapper.m_Player_Fire;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Reload".
+        /// </summary>
+        public InputAction @Reload => m_Wrapper.m_Player_Reload;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/WeaponSlot1".
+        /// </summary>
+        public InputAction @WeaponSlot1 => m_Wrapper.m_Player_WeaponSlot1;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/WeaponSlot2".
+        /// </summary>
+        public InputAction @WeaponSlot2 => m_Wrapper.m_Player_WeaponSlot2;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/CycleWeapon".
+        /// </summary>
+        public InputAction @CycleWeapon => m_Wrapper.m_Player_CycleWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/DropWeapon".
+        /// </summary>
+        public InputAction @DropWeapon => m_Wrapper.m_Player_DropWeapon;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -570,6 +759,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @Fire.started += instance.OnFire;
+            @Fire.performed += instance.OnFire;
+            @Fire.canceled += instance.OnFire;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
+            @WeaponSlot1.started += instance.OnWeaponSlot1;
+            @WeaponSlot1.performed += instance.OnWeaponSlot1;
+            @WeaponSlot1.canceled += instance.OnWeaponSlot1;
+            @WeaponSlot2.started += instance.OnWeaponSlot2;
+            @WeaponSlot2.performed += instance.OnWeaponSlot2;
+            @WeaponSlot2.canceled += instance.OnWeaponSlot2;
+            @CycleWeapon.started += instance.OnCycleWeapon;
+            @CycleWeapon.performed += instance.OnCycleWeapon;
+            @CycleWeapon.canceled += instance.OnCycleWeapon;
+            @DropWeapon.started += instance.OnDropWeapon;
+            @DropWeapon.performed += instance.OnDropWeapon;
+            @DropWeapon.canceled += instance.OnDropWeapon;
         }
 
         /// <summary>
@@ -602,6 +809,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @Fire.started -= instance.OnFire;
+            @Fire.performed -= instance.OnFire;
+            @Fire.canceled -= instance.OnFire;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
+            @WeaponSlot1.started -= instance.OnWeaponSlot1;
+            @WeaponSlot1.performed -= instance.OnWeaponSlot1;
+            @WeaponSlot1.canceled -= instance.OnWeaponSlot1;
+            @WeaponSlot2.started -= instance.OnWeaponSlot2;
+            @WeaponSlot2.performed -= instance.OnWeaponSlot2;
+            @WeaponSlot2.canceled -= instance.OnWeaponSlot2;
+            @CycleWeapon.started -= instance.OnCycleWeapon;
+            @CycleWeapon.performed -= instance.OnCycleWeapon;
+            @CycleWeapon.canceled -= instance.OnCycleWeapon;
+            @DropWeapon.started -= instance.OnDropWeapon;
+            @DropWeapon.performed -= instance.OnDropWeapon;
+            @DropWeapon.canceled -= instance.OnDropWeapon;
         }
 
         /// <summary>
@@ -717,5 +942,47 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Fire" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFire(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Reload" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReload(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "WeaponSlot1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeaponSlot1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "WeaponSlot2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeaponSlot2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CycleWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCycleWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DropWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDropWeapon(InputAction.CallbackContext context);
     }
 }
