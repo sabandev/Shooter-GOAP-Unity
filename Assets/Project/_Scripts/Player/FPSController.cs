@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Audio;
 
 namespace Player
 {
@@ -17,6 +18,7 @@ namespace Player
         
         [Header("References")]
         [SerializeField] private Transform _camera;
+        [SerializeField] private FootstepSoundController _footstepSoundController;
         
         [Space(10.0f)]
         
@@ -301,6 +303,8 @@ namespace Player
 
             _isCrouching = true;
             _targetHeight = _crouchSettings.CrouchingHeight;
+            
+            _footstepSoundController?.SetCrouching(true);
         }
 
         /// <summary>
@@ -321,6 +325,8 @@ namespace Player
 
             _isCrouching  = false;
             _targetHeight = _crouchSettings.StandingHeight;
+            
+            _footstepSoundController?.SetCrouching(false);
         }
         
 

@@ -84,6 +84,13 @@ namespace Player
         
         private void UpdateLook()
         {
+            // Game is paused
+            if (Time.timeScale == 0.0f)
+            {
+                _smoothedLookDelta = Vector2.zero;
+                return;
+            }
+            
             Vector2 lookDelta = _input.Player.Look.ReadValue<Vector2>() * _sensitivity;
 
             // Smooth mouse input

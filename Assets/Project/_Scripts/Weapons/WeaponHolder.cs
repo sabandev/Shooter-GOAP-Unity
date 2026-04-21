@@ -1,44 +1,46 @@
 using UnityEngine;
+using Audio;
 
 /// <summary>
-/// Manages weapon inventory — two slots, F.E.A.R. style.
+/// Manages weapon inventory.
 /// Shared between player and AI.
 ///
-/// Owns ONLY gameplay state — which weapons are held,
-/// which is active, equip/drop/swap logic.
-///
-/// Does NOT own visuals. ViewModelController and
-/// WorldWeaponController subscribe to events here
-/// and handle all presentation independently.
+/// Authorised Use Instructions:
+///     - Can own ONLY gameplay state — which weapons are held,
+///       which is active, equip/drop/swap logic.
+///     - CANNOT own visuals. ViewModelController and
+///       WorldWeaponController subscribe to events here
+///       and handle all presentation independently.
 /// </summary>
 public sealed class WeaponHolder : MonoBehaviour
 {
-    // ─── Events ───────────────────────────────────────────────────
+    // ─── Serialized properties ───────────────────────────────────────────────────
+    [Header("Audio")]
+    [SerializeField] private SoundData _equipSound;
+    [SerializeField] private SoundData _dropSound;
+    [SerializeField] private SoundData _pickupSound;
+
+    // AUDIO: OnWeaponEquipped → equip sound
+    // AUDIO: OnWeaponDropped  → drop sound
+
+    // ─── Private properties ────────────────────────────────────────────
+
+    private readonly Weapon[] _slots = new Weapon[2];
+    private int _activeSlot = -1;
+
+    // ─── Public properties ───────────────────────────────────────────────
 
     public event System.Action<Weapon, int> OnWeaponEquipped;
     public event System.Action<int>         OnWeaponUnequipped;
     public event System.Action<Weapon, int> OnWeaponPickedUp;
     public event System.Action<Weapon>      OnWeaponDropped;
-
-    // AUDIO: OnWeaponEquipped → equip sound
-    // AUDIO: OnWeaponDropped  → drop sound
-
-    // ─── Private state ────────────────────────────────────────────
-
-    private readonly Weapon[] _slots      = new Weapon[2];
-    private          int      _activeSlot = -1;
-
-    // ─── Properties ───────────────────────────────────────────────
-
-    public Weapon ActiveWeapon =>
-        _activeSlot >= 0 ? _slots[_activeSlot] : null;
+    
+    public Weapon ActiveWeapon => _activeSlot >= 0 ? _slots[_activeSlot] : null;
+    public Weapon GetWeapon(int slot) => slot >= 0 && slot < _slots.Length ? _slots[slot] : null;
 
     public int    ActiveSlot => _activeSlot;
     public bool   HasWeapon  => ActiveWeapon != null;
 
-    public Weapon GetWeapon(int slot) =>
-        slot >= 0 && slot < _slots.Length
-            ? _slots[slot] : null;
 
     // ─── Public API ───────────────────────────────────────────────
 
@@ -50,7 +52,7 @@ public sealed class WeaponHolder : MonoBehaviour
 
             _slots[i] = weapon;
             OnWeaponPickedUp?.Invoke(weapon, i);
-            // AUDIO: pickup sound here
+            AudioManager.Instance.Play(_pickupSound, transform.position);
 
             if (_activeSlot < 0)
                 EquipSlot(i);
@@ -78,7 +80,7 @@ public sealed class WeaponHolder : MonoBehaviour
         _slots[slot].OnEquipped();
 
         OnWeaponEquipped?.Invoke(_slots[slot], slot);
-        // AUDIO: equip sound here
+        AudioManager.Instance.Play(_equipSound, transform.position);
     }
 
     public void CycleWeapon()
@@ -143,7 +145,7 @@ public sealed class WeaponHolder : MonoBehaviour
         }
 
         OnWeaponDropped?.Invoke(weapon);
-        // AUDIO: drop sound here
+        AudioManager.Instance.Play(_dropSound, transform.position);
     }
 
     private void SwapForWeapon(Weapon newWeapon)

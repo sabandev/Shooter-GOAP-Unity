@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f018d011be7e486aa8ae28b0029886c, type: 3}
-  m_Name: WeaponData_New
+  m_Name: WeaponData_Pistol
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   WeaponName: Pistol
   HUDIcon: {fileID: 21300000, guid: 5de2ff934a8b3ea4ebfe923a6f958686, type: 3}
   Damage: 25
-  FireRate: 4
+  FireRate: 8
   Range: 50
   Spread: 1.5
   Mode: 0
@@ -93,3 +93,9 @@ MonoBehaviour:
   ImpactConcretePrefab: {fileID: 0}
   ImpactFleshPrefab: {fileID: 0}
   ImpactGlassPrefab: {fileID: 0}
+  ImpactDefaultSound: {fileID: 11400000, guid: 042d70b702cf048598f0c5334f36fc5d, type: 2}
+  ImpactMetalSound: {fileID: 0}
+  ImpactWoodSound: {fileID: 0}
+  ImpactConcreteSound: {fileID: 0}
+  ImpactFleshSound: {fileID: 0}
+  ImpactGlassSound: {fileID: 0}

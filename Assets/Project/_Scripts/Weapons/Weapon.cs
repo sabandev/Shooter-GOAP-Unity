@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using GOAP;
+using Audio;
 
 /// <summary>
 /// Core weapon gameplay component.
@@ -23,6 +24,15 @@ public sealed class Weapon : MonoBehaviour, IInteractable
     [Header("Attachment Points")]
     [SerializeField] private Transform _leftHandForegrip;
     [SerializeField] private Transform _muzzlePoint;
+    
+    [Space(10.0f)]
+    
+    [Header("Audio")]
+    [SerializeField] private SoundData _fireSound;
+    [SerializeField] private SoundData _emptyClickSound;
+    [SerializeField] private SoundData _reloadStartSound;
+    [SerializeField] private SoundData _reloadMidSound;
+    [SerializeField] private SoundData _reloadEndSound;
 
     // ─── Public properties ───────────────────────────────────────────────────
 
@@ -94,6 +104,9 @@ public sealed class Weapon : MonoBehaviour, IInteractable
 
     public bool TryFire()
     {
+        if (IsEmpty)
+            AudioManager.Instance.Play(_emptyClickSound, transform.position);
+        
         if (!CanFire) { return false; }
 
         Fire();
@@ -158,6 +171,7 @@ public sealed class Weapon : MonoBehaviour, IInteractable
         
         OnFired?.Invoke(hitPoint);
         OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
+        AudioManager.Instance.Play(_fireSound, transform.position);
 
         if (CurrentAmmo <= 0 && ReserveAmmo > 0)
             StartReload();
@@ -178,9 +192,10 @@ public sealed class Weapon : MonoBehaviour, IInteractable
         if (impactPrefab == null) { return;}
             
         Quaternion impactRotation = Quaternion.LookRotation(hit.normal);
-        ObjectPool.Get(impactPrefab,hit.point, Quaternion.LookRotation(hit.normal));
+        ObjectPool.Get(impactPrefab,hit.point, impactRotation);
         
-            // AUDIO: impact sound based on surface type here
+        SoundData impactSound = _data.GetImpactSound(type);
+        AudioManager.Instance.Play(impactSound, hit.point);
     }
 
     private void StartReload()
@@ -190,7 +205,7 @@ public sealed class Weapon : MonoBehaviour, IInteractable
         _reloadRefilled = false;
 
         OnReloadStarted?.Invoke();
-        // AUDIO: reload start sound here
+        AudioManager.Instance.Play(_reloadStartSound, transform.position);
     }
 
     private void TickReload()
@@ -207,14 +222,14 @@ public sealed class Weapon : MonoBehaviour, IInteractable
             ReserveAmmo -= toAdd;
             _reloadRefilled = true;
             OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
-            // AUDIO: magazine click sound here
+            AudioManager.Instance.Play(_reloadMidSound, transform.position);
         }
 
         if (_reloadTimer >= _data.ReloadDuration)
         {
             IsReloading = false;
             OnReloadCompleted?.Invoke();
-            // AUDIO: reload complete sound here
+            AudioManager.Instance.Play(_reloadEndSound, transform.position);
         }
     }
     

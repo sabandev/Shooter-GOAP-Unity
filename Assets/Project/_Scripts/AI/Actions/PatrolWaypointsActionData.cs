@@ -1,15 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// First-pass test.
-/// Creating some basic actions to test the inital implementation of the GOAP system.
-/// </summary>
 
 namespace GOAP
 {
     // -----PATROL WAYPOINTS-----
-    [CreateAssetMenu(fileName = "ACTION_PatrolWaypoints", menuName = "GOAP/Actions/TEST0/PatrolWaypoints")]
+    [CreateAssetMenu(fileName = "ACTION_PatrolWaypoints", menuName = "GOAP/Actions/PatrolWaypoints")]
     public sealed class PatrolWaypointsActionData : GOAPActionData
     {
         // -----Serialized properties-----
@@ -48,7 +44,7 @@ namespace GOAP
         {
             Vector3 destination = _waypointNetwork.GetWaypoint(_currentWaypointIndex);
             Agent.NavAgent.SetDestination(destination);
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Jog);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, true);
         }
 

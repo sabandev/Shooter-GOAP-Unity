@@ -59,7 +59,7 @@ namespace Player
             _animator.SetBool(_weaponEquippedHash, true);
             SubscribeToWeapon(weapon);
             
-            SetFireLayerSpeed(weapon.Data.FireRate);
+            // SetFireLayerSpeed(weapon.Data.FireRate);
             // AUDIO: equip sound here
         }
 
@@ -92,6 +92,7 @@ namespace Player
         {
             _animator.ResetTrigger(_isFiringHash);
             _animator.SetTrigger(_isFiringHash);
+            _animator.Update(0.0f);
             // AUDIO: fire sound here
         }
 

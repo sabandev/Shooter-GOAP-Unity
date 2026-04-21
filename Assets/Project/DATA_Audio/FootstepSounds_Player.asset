@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054621ad0b35f40f6b470027800a76c7, type: 3}
+  m_Name: FootstepSounds_Player
+  m_EditorClassIdentifier: Audio::Audio.FootstepSounds
+  _default: {fileID: 11400000, guid: 1160e12ca34c14228b37ed26d706f0c3, type: 2}
+  _metal: {fileID: 0}
+  _wood: {fileID: 0}
+  _concrete: {fileID: 0}
+  _flesh: {fileID: 0}
+  _glass: {fileID: 0}

@@ -4922,8 +4922,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 0.60828614, b: 0, a: 1}
-  m_Intensity: 5
-  m_Range: 2.5
+  m_Intensity: 7
+  m_Range: 1
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -5018,5 +5018,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Weapons::MuzzleFlashLight
   _light: {fileID: 8797265816894950211}
-  _initialIntensity: 5
-  _fadeSpeed: 20
+  _initialIntensity: 7
+  _fadeSpeed: 25

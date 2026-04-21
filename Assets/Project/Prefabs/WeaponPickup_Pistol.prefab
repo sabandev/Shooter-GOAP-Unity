@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2247030885736963243}
   - component: {fileID: 1004915367704488495}
   - component: {fileID: 461155919757346110}
-  - component: {fileID: 266759519923843093}
   - component: {fileID: 974929582511738033}
   m_Layer: 7
   m_Name: WeaponPickup_Pistol
@@ -43,14 +42,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1976862737327463217}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67debcbcc1ef4737ba7d30edc1ff6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObject
-  _data: {fileID: 0}
+  _data: {fileID: 11400000, guid: 62d01a9d480ee4abebf4b9b2843a3854, type: 2}
   _interactionPointOverride: {fileID: 0}
-  _drawGizmos: 1
+  _drawGizmos: 0
 --- !u!114 &461155919757346110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,22 +62,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03cac033c676b40edbd02edc08be44d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _data: {fileID: 0}
+  _data: {fileID: 11400000, guid: 08eb0c2ff7c144f2ba8315e12ee114ac, type: 2}
   _leftHandForegrip: {fileID: 3571843187447434152}
---- !u!114 &266759519923843093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1976862737327463217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 423efd9e1ec8544d7b86aaee08ec8fe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponVFX
-  _muzzlePoint: {fileID: 204884808513338516}
-  _shellEjectPoint: {fileID: 614862981041870854}
+  _muzzlePoint: {fileID: 0}
 --- !u!54 &974929582511738033
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -105,7 +91,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &3845025027324299577
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +368,6 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -392933481853988088, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}

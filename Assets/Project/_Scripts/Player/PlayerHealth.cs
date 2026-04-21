@@ -1,5 +1,5 @@
-using System.Data;
 using UnityEngine;
+using Audio;
 
 namespace Player
 {
@@ -14,6 +14,13 @@ namespace Player
         [SerializeField] private float _maxHealth = 100.0f;
         [SerializeField] private float _lowHealthThreshold = 30.0f;
         [SerializeField] private float _healthKitHealAmount = 25.0f;
+        
+        [Space(10.0f)]
+        
+        [Header("Audio")]
+        [SerializeField] private SoundData _damageSound;
+        [SerializeField] private SoundData _deathSound;
+        [SerializeField] private SoundData _lowHealthSound;
 
         // ─── Public properties ───────────────────────────────────────────────────
         
@@ -57,7 +64,8 @@ namespace Player
             OnHealthChanged?.Invoke(CurrentHealth);
             CheckLowHealthTransition();
 
-            Debug.Log($"[PlayerHealth] Took {amount:F0} damage. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
+            AudioManager.Instance?.Play(_damageSound, transform.position);
+            // Debug.Log($"[PlayerHealth] Took {amount:F0} damage. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
 
             if (IsDead)
                 OnDeath?.Invoke();
@@ -77,7 +85,7 @@ namespace Player
             OnHealthChanged?.Invoke(CurrentHealth);
             CheckLowHealthTransition();
 
-            Debug.Log($"[PlayerHealth] Used syringe. Healed {actualHeal:F0}. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
+            // Debug.Log($"[PlayerHealth] Used syringe. Healed {actualHeal:F0}. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
         }
         
         public void Respawn()
@@ -94,6 +102,9 @@ namespace Player
         private void CheckLowHealthTransition()
         {
             bool nowLow = IsLowHealth;
+            
+            // if (nowLow)
+                // AudioManager.Instance?.Play(_lowHealthSound, transform.position);
 
             if (nowLow != _wasLowHealth)
             {
