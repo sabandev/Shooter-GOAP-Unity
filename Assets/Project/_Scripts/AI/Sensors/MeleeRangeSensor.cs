@@ -11,7 +11,8 @@ namespace GOAP
     /// </summary>
     public sealed class MeleeRangeSensor : Sensor
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Melee Range")]
         [SerializeField] private float _meleeRange = 1.5f;
         [SerializeField] private LayerMask _targetMask;
@@ -21,12 +22,17 @@ namespace GOAP
         [Header("Gizmos")]
         [SerializeField] private bool _drawMeleeRangeGizmos = true;
 
-        // -----Implementation-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
+        private readonly Collider[] _hits = new Collider[16];
+        
+        // ───── Implementation ────────────────────────────────────────────────
+        
         protected override void Sense()
         {
-            Collider[] hits = Physics.OverlapSphere(Agent.transform.position, _meleeRange, _targetMask);
+            int count = Physics.OverlapSphereNonAlloc(Agent.transform.position, _meleeRange, _hits, _targetMask);
 
-            if (hits.Length == 0)
+            if (count == 0)
             {
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_IN_MELEE_RANGE, false);
                 return;
@@ -35,17 +41,17 @@ namespace GOAP
             Transform nearest = null;
             float nearestDist = float.MaxValue;
 
-            foreach (Collider hit in hits)
+            for (int i = 0; i < count; i++)
             {
-                if (hit.transform == transform) { continue; }
-
-                if (hit.TryGetComponent(out IHealth health) && health.IsDead) { continue; }
-
-                float dist = (hit.transform.position - Agent.transform.position).sqrMagnitude;
+                if (_hits[i].transform == transform) { continue; }
+                
+                if (_hits[i].TryGetComponent(out IHealth health) && health.IsDead) { continue; }
+                
+                float dist = (_hits[i].transform.position - Agent.transform.position).sqrMagnitude;
                 if (dist < nearestDist)
                 {
                     nearestDist = dist;
-                    nearest = hit.transform;
+                    nearest = _hits[i].transform;
                 }
             }
 
@@ -59,7 +65,8 @@ namespace GOAP
             Agent.Blackboard.Set(BlackboardKeys.TARGET_TRANSFORM, nearest);
         }
 
-        // -----Editor helper methods-----
+        // ───── Helper methods ────────────────────────────────────────────────
+        
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {

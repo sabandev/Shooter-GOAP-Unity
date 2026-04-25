@@ -13,11 +13,11 @@ namespace GOAP
 
         public override int EvaluatePriority(WorldState agentState)
         {
-            bool targetDead = agentState.Get(BlackboardKeys.TARGET_IS_DEAD) is true;
+            bool targetDead = agentState.GetBool(BlackboardKeys.TARGET_IS_DEAD);
 
             if (targetDead) { return 0; }
 
-            bool targetVisible = agentState.Get(BlackboardKeys.TARGET_VISIBLE) is true;
+            bool targetVisible = agentState.GetBool(BlackboardKeys.TARGET_VISIBLE);
 
             return targetVisible ? _alertPriority : BasePriority;
         }

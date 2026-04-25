@@ -19,8 +19,8 @@ MonoBehaviour:
   Range: 50
   Spread: 1.5
   Mode: 0
-  MagazineSize: 12
-  MaxReserveAmmo: 60
+  MagazineSize: 8
+  MaxReserveAmmo: 16
   ReloadDuration: 2
   ReloadRefillTime: 0.6
   RecoilVertical:
@@ -83,7 +83,7 @@ MonoBehaviour:
   CrouchBobVertical: 0.005
   CrouchBobHorizontal: 0.003
   WorldPrefab: {fileID: 1976862737327463217, guid: 311b48e9162b141798b2974e99a2c3f8, type: 3}
-  WorldWeaponMeshPrefab: {fileID: 866733176299875552, guid: 1aa870cb2f28f4816af21ac65a169404, type: 3}
+  WorldWeaponMeshPrefab: {fileID: 1139013623974620631, guid: 8e4ecab45c4134302aa738b8d69ee417, type: 3}
   MuzzleFlashPrefab: {fileID: 963963110781974004, guid: 1f3c8eba7019a4ea49b2898a00a4c971, type: 3}
   BulletTrailPrefab: {fileID: 2687905153152593349, guid: 176c5c7a366d0468288fc2a733342a62, type: 3}
   ShellCasingPrefab: {fileID: 2075224638957323060, guid: ed4388cc241ba4b0d87c0e6a2abfab44, type: 3}

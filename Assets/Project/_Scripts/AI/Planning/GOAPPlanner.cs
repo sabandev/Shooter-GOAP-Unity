@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
 
 namespace GOAP
 {
@@ -9,16 +10,20 @@ namespace GOAP
     /// </summary>
     public sealed class GOAPPlanner
     {
-        // -----Nested types-----
+        // ───── Nested type ────────────────────────────────────────────────
+        
         private sealed class PlanNode
         {
-            // -----Public properties-----
+            // ───── Public properties ────────────────────────────────────────────────
+            
             public WorldState RequiredState { get; }
-            public float RunningCost { get; }
             public GOAPActionInstance Action { get; }
             public PlanNode Parent { get; }
+            
+            public float RunningCost { get; }
 
-            // -----Constructor-----
+            // ───── Constructor ────────────────────────────────────────────────
+            
             public PlanNode(WorldState requiredState, float runningCost, GOAPActionInstance action, PlanNode parent)
             {
                 RequiredState = requiredState;
@@ -28,69 +33,85 @@ namespace GOAP
             }
         }
 
-        // -----Constants-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
+        private static ProfilerMarker _planMarker = new("GOAPPlanner.Plan");
+        
+        private readonly Stack<WorldState> _statePool = new(32);
+        private readonly List<WorldState> _rentedThisSearch = new(32);
+
+        // ───── Constants ────────────────────────────────────────────────
+        
         private const int MAX_SEARCH_NODES = 1000;
 
-        // -----Public methods-----
-
+        // ───── Public methods ────────────────────────────────────────────────
+        
         /// <summary>
         /// Returns the plan as a list of GOAP actions.
         /// </summary>
         /// <param name="currentState"></param>
         /// <param name="goal"></param>
         /// <param name="availableActions"></param>
+        /// <param name="nodesExpanded"></param>
         /// <returns></returns>
         public List<GOAPActionInstance> Plan(WorldState currentState, WorldState goal, IReadOnlyList<GOAPActionInstance> availableActions, out int nodesExpanded)
         {
-            // LogPlannerDiagnostics(currentState, goal, availableActions);
-
-            // Nodes that are waiting to be expanded upon. Ordered by A* heuristic
-            // calculation f(n) = g(n) + h(n).
-            // If action sets have > 30 actions, use a priority queue for better performance
-            var openSet = new List<PlanNode>();
-
-            var root = new PlanNode(goal.Clone(), 0.0f, null, null);
-
-            openSet.Add(root);
-
-            nodesExpanded = 0;
-
-            while (openSet.Count > 0)
+            using (_planMarker.Auto())
             {
-                if (nodesExpanded >= MAX_SEARCH_NODES)
+                // LogPlannerDiagnostics(currentState, goal, availableActions);
+
+                // Nodes that are waiting to be expanded upon. Ordered by A* heuristic
+                // calculation f(n) = g(n) + h(n).
+                // If action sets have > 30 actions, use a priority queue for better performance
+                var openSet = new List<PlanNode>();
+
+                var root = new PlanNode(RentState(goal), 0.0f, null, null);
+
+                openSet.Add(root);
+
+                nodesExpanded = 0;
+
+                while (openSet.Count > 0)
                 {
-                    Debug.LogWarning($"[GOAPPlanner] Search exceed {MAX_SEARCH_NODES} nodes. No plan found. Must reduce action set complexity or increase search node ceiling.");
-                    return null;
+                    if (nodesExpanded >= MAX_SEARCH_NODES)
+                    {
+                        Debug.LogWarning($"[GOAPPlanner] Search exceed {MAX_SEARCH_NODES} nodes. No plan found. Must reduce action set complexity or increase search node ceiling.");
+                        ReturnAllRented();
+                        return null;
+                    }
+
+                    PlanNode current = PopLowestCostNode(openSet);
+                    nodesExpanded++;
+
+                    // Plan has successfully been found
+                    if (currentState.Satisfies(current.RequiredState))
+                    {
+                        List<GOAPActionInstance> plan = ReconstructPlan(current);
+                        ReturnAllRented();
+                        return plan;
+                    }
+                    
+                    foreach (GOAPActionInstance action in availableActions)
+                    {
+                        if (!ActionSatisfiesAnyRequirement(action, current.RequiredState)) { continue; }
+
+                        WorldState nextRequired = BuildNextRequiredState(current.RequiredState, action);
+
+                        float nextCost = current.RunningCost + action.Cost;
+
+                        var child = new PlanNode(nextRequired, nextCost, action, current);
+                        InsertByPriority(openSet, child, currentState);
+                    }
                 }
 
-                PlanNode current = PopLowestCostNode(openSet);
-                nodesExpanded++;
-
-                // Plan has successfully been found
-                if (currentState.Satisfies(current.RequiredState))
-                    return ReconstructPlan(current);
-                
-                foreach (GOAPActionInstance action in availableActions)
-                {
-                    if (!ActionSatisfiesAnyRequirement(action, current.RequiredState)) { continue; }
-
-                    WorldState nextRequired = BuildNextRequiredState(current.RequiredState, action);
-
-                    // if (!action.CheckProceduralPreconditions()) { continue; }
-
-                    float nextCost = current.RunningCost + action.Cost;
-
-                    var child = new PlanNode(nextRequired, nextCost, action, current);
-                    InsertByPriority(openSet, child, currentState);
-                }
+                // No valid plan exists given the list of available actions
+                ReturnAllRented();
+                return null;
             }
-
-            // No valid plan exists given the list of available actions
-            return null;
         }
 
-        // -----Private methods-----
-
+        // ───── Private methods ────────────────────────────────────────────────
+        
         /// <summary>
         /// Walks the chain of nodes from the leaf to the root. Then creates a new reversed version of the list
         /// that can get returned to the GOAP agent.
@@ -108,8 +129,6 @@ namespace GOAP
                 current = current.Parent;
             }
 
-            // reversedPlan.Reverse();
-
             return reversedPlan;
         }
 
@@ -124,7 +143,7 @@ namespace GOAP
         {
             foreach (WorldStatePair effect in action.Data.Effects)
             {
-                if (requiredState.Contains(effect.Key) && effect.ValueEquals(requiredState.Get(effect.Key))) { return true; }
+                if (effect.ValueEquals(requiredState)) { return true; }
             }
 
             return false;
@@ -136,9 +155,9 @@ namespace GOAP
         /// <param name="currentRequired"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        private static WorldState BuildNextRequiredState(WorldState currentRequired, GOAPActionInstance action)
+        private WorldState BuildNextRequiredState(WorldState currentRequired, GOAPActionInstance action)
         {
-            WorldState next = currentRequired.Clone();
+            WorldState next = RentState(currentRequired);
 
             // Remove facts that are already satisfied by the action's effects
             foreach (WorldStatePair effect in action.Data.Effects)
@@ -146,30 +165,12 @@ namespace GOAP
 
             // Add this action's preconditions as new requirements
             foreach (WorldStatePair precondition in action.Data.Preconditions)
-                next.Set(precondition.Key, precondition.GetValue());
+                precondition.ApplyTo(next);
             
             return next;
         }
 
-        /// <summary>
-        /// A* quirk that calculates the number of unsatisfied facts remaining in the required state that
-        /// are not present in the current state.
-        /// </summary>
-        /// <param name="requiredState"></param>
-        /// <param name="currentState"></param>
-        /// <returns></returns>
-        private static float Heuristic(WorldState requiredState, WorldState currentState)
-        {
-            int unsatisfiedCount = 0;
-
-            foreach (KeyValuePair<string, object> fact in requiredState.GetFacts())
-            {
-                if (!currentState.TryGet(fact.Key, out object value) || !Equals(value, fact.Value))
-                    unsatisfiedCount++;
-            }
-
-            return unsatisfiedCount;
-        }
+        private static float Heuristic(WorldState requiredState, WorldState currentState) => requiredState.CountUnsatisfied(currentState);
 
         /// <summary>
         /// Removes and returns the PlanNode with the lowest heuristic.
@@ -207,6 +208,25 @@ namespace GOAP
 
             openSet.Add(node);
         }
+        
+        private WorldState RentState(WorldState copyFrom)
+        {
+            WorldState state = _statePool.Count > 0 ? _statePool.Pop() : new WorldState();
+            state.CopyFrom(copyFrom);
+            _rentedThisSearch.Add(state);
+            return state;
+        }
+        
+        private void ReturnAllRented()
+        {
+            foreach (WorldState state in _rentedThisSearch)
+            {
+                state.Clear();
+                _statePool.Push(state);
+            }
+            
+            _rentedThisSearch.Clear();
+        }
 
         private void LogPlannerDiagnostics(WorldState currentState, WorldState goal, IReadOnlyList<GOAPActionInstance> availableActions)
         {
@@ -214,14 +234,10 @@ namespace GOAP
 
             sb.AppendLine("─── Planner Diagnostic ───────────────────");
             sb.AppendLine($"Goal state:");
-
-            foreach (var fact in goal.GetFacts())
-                sb.AppendLine($"  {fact.Key} = {fact.Value}");
+            sb.AppendLine($"  {goal}");
 
             sb.AppendLine($"Current state:");
-
-            foreach (var fact in currentState.GetFacts())
-                sb.AppendLine($"  {fact.Key} = {fact.Value}");
+            sb.AppendLine($"  {currentState}");
 
             sb.AppendLine($"Available actions ({availableActions.Count}):");
 
@@ -239,8 +255,7 @@ namespace GOAP
                     sb.AppendLine($"      {pair.Key} = {pair.GetValue()}");
 
                 bool proceduralPass = action.CheckProceduralPreconditions();
-                sb.AppendLine($"    Procedural preconditions: " +
-                            $"{(proceduralPass ? "PASS" : "FAIL")}");
+                sb.AppendLine($"    Procedural preconditions: {(proceduralPass ? "PASS" : "FAIL")}");
             }
 
             sb.AppendLine("──────────────────────────────────────────");

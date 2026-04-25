@@ -6,7 +6,7 @@ namespace GOAP
     public sealed class OpenDoorActionData : SmartObjectActionData
     {
         [SerializeField] private bool _faceBeforeOpening = true;
-        [SerializeField] private float _waitForOpenDuration = 0.7f;
+        [SerializeField] [Min(0.0f)] private float _waitForOpenDuration = 0.7f;
         
         public bool FaceBeforeOpening => _faceBeforeOpening;
         public float WaitForOpenDuration => _waitForOpenDuration;
@@ -44,7 +44,7 @@ namespace GOAP
             _waitTimer = 0.0f;
             _doorOpenTriggered = false;
             
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         protected override void OnArrival()
@@ -106,7 +106,7 @@ namespace GOAP
         {
             Agent.Blackboard.Set(BlackboardKeys.DOOR_IS_OPENING, false);
             base.OnEnd();
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         public override void OnReset()

@@ -1,28 +1,31 @@
 using UnityEngine;
 
-/// <summary>
-/// Fades out the muzzle flash light over its lifetime.
-/// </summary>
-public sealed class MuzzleFlashLight : MonoBehaviour
+namespace Weapons
 {
-    // ───── Serialized properties ────────────────────────────────────────────────
-    
-    [SerializeField] private Light _light;
-    [SerializeField] private float _initialIntensity = 5.0f;
-    [SerializeField] private float _fadeSpeed        = 20.0f;
-
-    // ───── Lifecycle methods ────────────────────────────────────────────────
-    
-    private void OnEnable()
+    /// <summary>
+    /// Fades out the muzzle flash light over its lifetime.
+    /// </summary>
+    public sealed class MuzzleFlashLight : MonoBehaviour
     {
-        if (_light != null)
-            _light.intensity = _initialIntensity;
-    }
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
+        [SerializeField] private Light _light;
+        [SerializeField] private float _initialIntensity = 5.0f;
+        [SerializeField] private float _fadeSpeed        = 20.0f;
 
-    private void Update()
-    {
-        if (_light == null) { return; }
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
+        private void OnEnable()
+        {
+            if (_light != null)
+                _light.intensity = _initialIntensity;
+        }
 
-        _light.intensity = Mathf.MoveTowards(_light.intensity,0.0f,Time.deltaTime * _fadeSpeed);
+        private void Update()
+        {
+            if (_light == null) { return; }
+
+            _light.intensity = Mathf.MoveTowards(_light.intensity,0.0f,Time.deltaTime * _fadeSpeed);
+        }
     }
 }

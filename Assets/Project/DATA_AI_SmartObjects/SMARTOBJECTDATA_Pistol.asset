@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectData
   _objectTag: Pistol
   _description: 
-  _advertisedEffects: []
+  _advertisedEffects:
+  - _key: IS_IDLE
+    _valueType: 0
+    _boolValue: 0
+    _intValue: 0
+    _floatValue: 0
   _requiredAgentState: []
   _baseCost: 1
   _interactionRange: 1.2

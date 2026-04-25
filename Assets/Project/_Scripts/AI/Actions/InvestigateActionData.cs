@@ -1,17 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// First-pass test.
-/// Creating some basic actions to test the inital implementation of the GOAP system.
-/// </summary>
-
 namespace GOAP
 {
-    [CreateAssetMenu(fileName = "ACTION_Investigate", menuName = "GOAP/Actions/TEST0/Investigate")]
+    [CreateAssetMenu(fileName = "ACTION_Investigate", menuName = "GOAP/Actions/Investigate")]
     public sealed class InvestigateActionData : GOAPActionData
     {
-        [SerializeField] private float _arrivalTolerance = 1.5f;
+        [SerializeField] [Min(0.0f)] private float _arrivalTolerance = 1.5f;
 
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new InvestigateActionInstance(agent, this, _arrivalTolerance);
     }
@@ -34,7 +29,7 @@ namespace GOAP
 
             Agent.NavAgent.SetDestination(destination);
             
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Sprint);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Sprint);
             Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, true);
             _destinationSet = true;
         }
@@ -59,13 +54,13 @@ namespace GOAP
         public override void OnEnd()
         {
             Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, false);
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         public override void OnReset()
         {
             _destinationSet = false;
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
     }
 }

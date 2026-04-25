@@ -15,10 +15,10 @@ MonoBehaviour:
   _clips:
   - {fileID: 8300000, guid: 9e9480b4d07646942b555fd43f2a0f71, type: 3}
   - {fileID: 8300000, guid: 0addcc409a57b4a43b86a3d2310ac5b4, type: 3}
-  _minVolume: 0.8
+  _minVolume: 1
   _maxVolume: 1
-  _minPitch: 0.95
-  _maxPitch: 1.05
+  _minPitch: 0.75
+  _maxPitch: 0.8
   _spatialBlend: 1
   _maxDistance: 30
   _minDistance: 1

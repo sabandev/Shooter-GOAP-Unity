@@ -106,7 +106,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CycleWeapon",
+                    "name": "CycleWeaponButton",
                     "type": "Button",
                     "id": "80b7b4ff-149e-4a79-aed1-a6a4e1b6ca91",
                     "expectedControlType": "",
@@ -122,6 +122,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ScrollWeapon",
+                    "type": "Value",
+                    "id": "9da38851-c108-49c0-a979-e662ff6a6eff",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -391,23 +400,12 @@
                 },
                 {
                     "name": "",
-                    "id": "754fe57c-470c-451d-9829-9c57c8dc5b20",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";KAM",
-                    "action": "CycleWeapon",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e9535504-660b-48aa-9da4-ddd0b47524b2",
                     "path": "<Gamepad>/dpad/right",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Controller",
-                    "action": "CycleWeapon",
+                    "action": "CycleWeaponButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -419,6 +417,17 @@
                     "processors": "",
                     "groups": ";KAM",
                     "action": "DropWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "442bb4c1-e3e2-4889-8a03-89de2a819107",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KAM",
+                    "action": "ScrollWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

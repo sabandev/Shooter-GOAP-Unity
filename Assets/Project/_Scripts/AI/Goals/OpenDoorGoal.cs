@@ -9,13 +9,13 @@ namespace GOAP
 
         public override int EvaluatePriority(WorldState agentState)
         {
-            bool inProgress = agentState.Get(BlackboardKeys.DOOR_IS_OPENING) is true;
+            bool inProgress = agentState.GetBool(BlackboardKeys.DOOR_IS_OPENING);
             if (inProgress) { return _alertPriority; }
             
-            bool doorOpen = agentState.Get(BlackboardKeys.DOOR_IS_OPEN) is true;
+            bool doorOpen = agentState.GetBool(BlackboardKeys.DOOR_IS_OPEN);
             if (doorOpen) { return 0; }
             
-            bool doorAhead = agentState.Get(BlackboardKeys.DOOR_AHEAD) is true;
+            bool doorAhead = agentState.GetBool(BlackboardKeys.DOOR_AHEAD);
             
             return doorAhead ? _alertPriority : BasePriority;
         }

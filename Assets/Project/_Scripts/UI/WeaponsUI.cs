@@ -1,69 +1,51 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Weapons;
 
 namespace UI
 {
     /// <summary>
     /// Displays weapon inventory state.
-    ///
     /// Hidden until first weapon pickup.
     /// Shows both weapon slots with icon and ammo count.
-    /// Fades out when all weapons are dropped.
-    ///
-    /// Subscribes to WeaponHolder and Weapon events —
-    /// no polling, updates only when state changes.
     /// </summary>
     public sealed class WeaponUI : MonoBehaviour
     {
-        // ─── Serialized fields ────────────────────────────────────────
+        // ─── Serialized properties ────────────────────────────────────────
 
         [Header("References")]
         [SerializeField] private WeaponHolder _weaponHolder;
-        [SerializeField] private CanvasGroup          _canvasGroup;
+        [SerializeField] private CanvasGroup _canvasGroup;
 
         [Header("Slot 0")]
         [SerializeField] private Image           _icon0;
         [SerializeField] private TextMeshProUGUI _ammoText0;
-        [SerializeField] private GameObject      _slot0Root;
 
         [Header("Slot 1")]
         [SerializeField] private Image           _icon1;
         [SerializeField] private TextMeshProUGUI _ammoText1;
-        [SerializeField] private GameObject      _slot1Root;
 
         [Header("Active Slot Highlight")]
-        [Tooltip("Colour of the icon when weapon is active.")]
-        [SerializeField] private Color _activeColour =
-            Color.white;
-
-        [Tooltip("Colour of the icon when weapon is in inactive slot.")]
-        [SerializeField] private Color _inactiveColour =
-            new Color(1f, 1f, 1f, 0.4f);
-
-        [Tooltip("Colour tint when slot is empty.")]
-        [SerializeField] private Color _emptyColour =
-            new Color(1f, 1f, 1f, 0.15f);
+        [SerializeField] private Color _activeColour = Color.white;
+        [SerializeField] private Color _inactiveColour = new Color(1f, 1f, 1f, 0.4f);
+        [SerializeField] private Color _emptyColour = new Color(1f, 1f, 1f, 0.15f);
 
         [Header("Fade")]
-        [SerializeField] [Range(1.0f, 10.0f)]
-        private float _fadeSpeed = 4.0f;
+        [SerializeField] [Range(1.0f, 10.0f)] private float _fadeSpeed = 4.0f;
 
-        // ─── Private state ────────────────────────────────────────────
+        // ─── Private properties ────────────────────────────────────────────
 
         private float    _targetAlpha;
-        private Weapon[] _subscribedWeapons = new Weapon[2];
+        private readonly Weapon[] _subscribedWeapons = new Weapon[2];
 
-        // ─── Unity lifecycle ──────────────────────────────────────────
+        // ─── Lifecycle methods ──────────────────────────────────────────
 
         private void Awake()
         {
-            Debug.Assert(_weaponHolder != null,
-                "[WeaponUI] WeaponHolder not assigned.", this);
-            Debug.Assert(_canvasGroup  != null,
-                "[WeaponUI] CanvasGroup not assigned.",  this);
+            Debug.Assert(_weaponHolder != null,"[WeaponUI] WeaponHolder not assigned.", this);
+            Debug.Assert(_canvasGroup  != null, "[WeaponUI] CanvasGroup not assigned.",  this);
 
-            // Hidden until first pickup
             _canvasGroup.alpha = 0.0f;
             _targetAlpha       = 0.0f;
         }
@@ -94,7 +76,7 @@ namespace UI
             _canvasGroup.alpha = Mathf.MoveTowards(_canvasGroup.alpha, _targetAlpha, Time.deltaTime * _fadeSpeed);
         }
 
-        // ─── Event handlers ───────────────────────────────────────────
+        // ─── Private methods ───────────────────────────────────────────
 
         private void OnWeaponPickedUp(Weapon weapon, int slot)
         {
@@ -138,8 +120,6 @@ namespace UI
             }
         }
 
-        // ─── Private methods ──────────────────────────────────────────
-
         private void RefreshAllSlots()
         {
             RefreshSlot(0);
@@ -153,7 +133,6 @@ namespace UI
 
             Image           icon     = slot == 0 ? _icon0     : _icon1;
             TextMeshProUGUI ammoText = slot == 0 ? _ammoText0 : _ammoText1;
-            GameObject      root     = slot == 0 ? _slot0Root : _slot1Root;
 
             if (weapon == null)
             {

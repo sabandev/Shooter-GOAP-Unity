@@ -16,7 +16,8 @@ namespace GOAP
     [RequireComponent(typeof(Animator))]
     public sealed class AgentAnimator : MonoBehaviour
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Movement Speeds")]
         [SerializeField] [Range(0.1f, 10.0f)] private float _walkSpeed = 2.0f;
         [SerializeField] [Range(0.1f, 10.0f)] private float _jogSpeed = 4.0f;
@@ -28,18 +29,22 @@ namespace GOAP
         [SerializeField] [Range(0.01f, 1.0f)] private float _speedDampTime = 0.1f; // lower = smoother
         [SerializeField] [Range(0.01f, 1.0f)] private float _speedSmoothHalfLife = 0.1f;
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private Animator _animator;
         private NavMeshAgent _navAgent;
         private GOAPAgent _goapAgent;
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public float NormalizedSpeed { get; private set; }
 
-        // -----Hashes-----
+        // ───── Hashes────────────────────────────────────────────────
+        
         private static readonly int _speedHash = Animator.StringToHash("Speed");
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void Awake()
         {
             _animator = GetComponent<Animator>();
@@ -49,13 +54,14 @@ namespace GOAP
             Debug.Assert(_animator != null, "[GOAPAgentAnimator] No Animator component found on this GameObject.", this);
             Debug.Assert(_navAgent != null, "[GOAPAgentAnimator] No NavMeshAgent component found in parent GameObject.", this);
             Debug.Assert(_goapAgent != null, "[GOAPAgentAnimator] No GOAPAgent component found in parent GameObject.", this);
-
+        }
+        
+        private void Start()
+        {
             _animator?.Rebind();
             _animator?.Update(0.0f);
-
-            // Set walk as default speed
             _navAgent.speed = _walkSpeed;
-            _goapAgent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk); // MOVE TO START IF ENCOUNTERING NULLREFEX ERRORS.
+            _goapAgent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk); 
         }
 
         private void Update()

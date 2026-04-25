@@ -9,7 +9,8 @@ namespace GOAP
     /// </summary>
     public sealed class SightSensor : Sensor
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] private Transform eyeLocation;
         [SerializeField] private float _sightRange = 20.0f;
         [SerializeField] [Range(1.0f, 180.0f)] private float _sightAngle = 90.0f;
@@ -24,21 +25,25 @@ namespace GOAP
         [SerializeField] private bool _drawVisionConeGizmos = true;
         [SerializeField] private bool _drawPathToLastKnownTargetPositionGizmos = true;
 
-        // -----Implementation-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
+        private readonly Collider[] _hits = new Collider[16];
+
+        // ───── Implementation ────────────────────────────────────────────────
 
         /// <summary>
         /// Sends visual information to the agent's blackboard
         /// </summary>
         protected override void Sense()
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, _sightRange, _targetMask);
-            if (hits.Length == 0)
+            int count = Physics.OverlapSphereNonAlloc(transform.position, _sightRange, _hits, _targetMask);
+            if (count == 0)
             {
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
                 return;
             }
 
-            Transform nearest = FindNearest(hits);
+            Transform nearest = FindNearest(count);
             if (nearest == null)
             {
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
@@ -56,21 +61,21 @@ namespace GOAP
             }
         }
 
-        private Transform FindNearest(Collider[] hits)
+        private Transform FindNearest(int count)
         {
             Transform nearest = null;
             float nearestDist = float.MaxValue;
-
-            foreach (Collider hit in hits)
+            
+            for (int i = 0; i < count; i++)
             {
-                if (hit.transform == transform) { continue; }
-
-                float dist = (hit.transform.position - Agent.transform.position).sqrMagnitude;
-
+                if (_hits[i].transform == transform) { continue; }
+                
+                float dist = (_hits[i].transform.position - Agent.transform.position).sqrMagnitude;
+                
                 if (dist < nearestDist)
                 {
                     nearestDist = dist;
-                    nearest = hit.transform;
+                    nearest = _hits[i].transform;
                 }
             }
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Weapons;
 
 namespace Player
 {
@@ -35,7 +36,13 @@ namespace Player
             _input.Player.Reload.performed      += ctx => _weaponHolder.TryReload();
             _input.Player.WeaponSlot1.performed += ctx => _weaponHolder.EquipSlot(0);
             _input.Player.WeaponSlot2.performed += ctx => _weaponHolder.EquipSlot(1);
-            _input.Player.CycleWeapon.performed += ctx => _weaponHolder.CycleWeapon();
+            _input.Player.CycleWeaponButton.performed += ctx => _weaponHolder.CycleWeapon();
+            _input.Player.ScrollWeapon.performed += ctx =>
+            {
+                float scroll = ctx.ReadValue<float>();
+                if (scroll != 0.0f)
+                    _weaponHolder.CycleWeapon();
+            };
             _input.Player.DropWeapon.performed  += ctx => _weaponHolder.DropActiveWeapon();
         }
 

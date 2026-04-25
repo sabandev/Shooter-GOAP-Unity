@@ -1,28 +1,31 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// First-pass test.
-/// Creating some basic actions to test the inital implementation of the GOAP system.
-/// </summary>
-
 namespace GOAP
 {
-    [CreateAssetMenu(fileName = "ACTION_PatrolRandom", menuName = "GOAP/Actions/TEST0/PatrolRandom")]
+    [CreateAssetMenu(fileName = "ACTION_PatrolRandom", menuName = "GOAP/Actions/PatrolRandom")]
     public sealed class PatrolRandomActionData : GOAPActionData
     {
-        [SerializeField] private float _wanderRadius = 10.0f;
-        [SerializeField] private float _arrivalTolerance = 0.5f;
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
+        [SerializeField] [Min(0.0f)] private float _wanderRadius = 10.0f;
+        [SerializeField] [Min(0.0f)] private float _arrivalTolerance = 0.5f;
 
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new PatrolRandomActionInstance(agent, this, _wanderRadius, _arrivalTolerance);
     }
 
     public sealed class PatrolRandomActionInstance : GOAPActionInstance
     {
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private readonly float _wanderRadius;
         private readonly float _arrivalTolerance;
         private bool _destinationSet;
 
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public PatrolRandomActionInstance(GOAPAgent agent, GOAPActionData data, float wanderRadius, float arrivalTolerance) : base(agent, data)
         {
             _wanderRadius = wanderRadius;

@@ -13,16 +13,18 @@ namespace GOAP
     [CreateAssetMenu(fileName = "Goal_New", menuName = "GOAP/Goal")]
     public class GOAPGoal : ScriptableObject
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] private string _goalName = "New Goal";
         [SerializeField] [Range(0, 100)] private int _basePriority = 1;
         [SerializeField] private List<WorldStatePair> _desiredState = new();
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public string GoalName => _goalName;
         public int BasePriority => _basePriority;
 
-        // -----Public methods-----
+        // ───── Public methods ────────────────────────────────────────────────
 
         // Builds and returns a WorldState based on the list of WorldStatePairs we own (desired state)
         // Should only be called once per planning cycle and avoid calling in hot loops due to memory allocation when creating a new WorldState
@@ -31,7 +33,7 @@ namespace GOAP
             var desiredState = new WorldState(_desiredState.Count);
 
             foreach (WorldStatePair pair in _desiredState)
-                desiredState.Set(pair.Key, pair.GetValue());
+                pair.ApplyTo(desiredState);
 
             return desiredState;
         }

@@ -645,7 +645,7 @@ namespace GOAP.Editor
             // Checks for new/changed facts
             foreach (KeyValuePair<string, object> fact in _cachedSnapshot.GetFacts())
             {
-                bool existedBefore = _previousBlackboardSnapshot.TryGet(fact.Key, out object previousValue);
+                bool existedBefore = _previousBlackboardSnapshot.TryGetBoxed(fact.Key, out object previousValue);
                 bool changed = !existedBefore || !Equals(previousValue, fact.Value);
 
                 if (changed)

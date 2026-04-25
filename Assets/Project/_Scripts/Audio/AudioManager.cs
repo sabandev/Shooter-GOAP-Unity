@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
 
 namespace Audio
 {
@@ -34,8 +35,10 @@ namespace Audio
 
         // ───── Private properties ────────────────────────────────────────────────
         
-        private Queue<AudioSource> _availableSources = new Queue<AudioSource>();
-        private List<AudioSource> _activeSources = new List<AudioSource>();
+        private readonly Queue<AudioSource> _availableSources = new Queue<AudioSource>();
+        private readonly List<AudioSource> _activeSources = new List<AudioSource>();
+        
+        private static ProfilerMarker _playSoundMarker = new ProfilerMarker("AudioManager.Play");
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
@@ -67,16 +70,19 @@ namespace Audio
         /// <param name="position"></param>
         public void Play(SoundData data, Vector3 position)
         {
-            if (data == null || !data.IsValid) { return; }
-            
-            AudioSource source = GetSource();
-            if (source == null) { return; }
-            
-            ConfigureSource(source, data, position);
-            source.transform.position = position;
-            source.Play();
-            
-            _activeSources.Add(source);
+            using (_playSoundMarker.Auto())
+            {
+                if (data == null || !data.IsValid) { return; }
+                
+                AudioSource source = GetSource();
+                if (source == null) { return; }
+                
+                ConfigureSource(source, data, position);
+                source.transform.position = position;
+                source.Play();
+                
+                _activeSources.Add(source);
+            }
         }
         
         /// <summary>
@@ -87,16 +93,19 @@ namespace Audio
         /// <param name="parent"></param>
         public void Play(SoundData data, Vector3 position, Transform parent)
         {
-            if (data == null || !data.IsValid) { return; }
-            
-            AudioSource source = GetSource();
-            if (source == null) { return; }
-            
-            source.transform.SetParent(parent);
-            ConfigureSource(source, data, position);
-            source.Play();
-            
-            _activeSources.Add(source);
+            using (_playSoundMarker.Auto())
+            {
+                if (data == null || !data.IsValid) { return; }
+                
+                AudioSource source = GetSource();
+                if (source == null) { return; }
+                
+                source.transform.SetParent(parent);
+                ConfigureSource(source, data, position);
+                source.Play();
+                
+                _activeSources.Add(source);
+            }
         }
         
         /// <summary>
@@ -107,18 +116,21 @@ namespace Audio
         /// <param name="volumeMultiplier"></param>
         public void Play(SoundData data, Vector3 position, float volumeMultiplier)
         {
-            if (data == null || !data.IsValid) { return; }
-            
-            AudioSource source = GetSource();
-            if (source == null) { return; }
-            
-            ConfigureSource(source, data, position);
-            
-            source.volume *= volumeMultiplier;
-            source.transform.position = position;
-            source.Play();
-            
-            _activeSources.Add(source);
+            using (_playSoundMarker.Auto())
+            {
+                if (data == null || !data.IsValid) { return; }
+                
+                AudioSource source = GetSource();
+                if (source == null) { return; }
+                
+                ConfigureSource(source, data, position);
+                
+                source.volume *= volumeMultiplier;
+                source.transform.position = position;
+                source.Play();
+                
+                _activeSources.Add(source);
+            }
         }
         
         /// <summary>
@@ -127,17 +139,20 @@ namespace Audio
         /// <param name="data"></param>
         public void Play2D(SoundData data)
         {
-            if (data == null || !data.IsValid) { return; }
-            
-            AudioSource source = GetSource();
-            if (source == null) { return; }
+            using (_playSoundMarker.Auto())
+            {
+                if (data == null || !data.IsValid) { return; }
+                
+                AudioSource source = GetSource();
+                if (source == null) { return; }
 
-            source.transform.position = Vector3.zero;
-            ConfigureSource(source, data, Vector3.zero);
-            source.spatialBlend = 0.0f;
-            source.Play();
+                source.transform.position = Vector3.zero;
+                ConfigureSource(source, data, Vector3.zero);
+                source.spatialBlend = 0.0f;
+                source.Play();
 
-            _activeSources.Add(source);
+                _activeSources.Add(source);
+            }
         }
         
         public void SetVolume(AudioCategory category, float volume)

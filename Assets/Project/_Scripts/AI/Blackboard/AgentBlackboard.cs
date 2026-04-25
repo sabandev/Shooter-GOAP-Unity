@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GOAP
 {
@@ -8,36 +9,62 @@ namespace GOAP
     /// Written to by sensors, read by the planner and action instances.
     /// </summary>
     public sealed class AgentBlackboard
-    {   
-        // -----Private properties-----
+    {
+        // ───── Public properties ────────────────────────────────────────────────
+        
+        public WorldState WorldState => _worldState;
+        
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private readonly WorldState _worldState = new();
         private readonly Dictionary<string, List<Action<object>>> _changeCallbacks = new();
 
-        // -----Public methods-----
+        // ───── Getters ────────────────────────────────────────────────
+        
+        public bool GetBool(string key) => _worldState.GetBool(key);
+        public int GetInt(string key) => _worldState.GetInt(key);
+        public float GetFloat(string key) => _worldState.GetFloat(key);
+        public Transform GetTransform(string key) => _worldState.GetTransform(key);
+        public Vector3 GetVector3(string key) => _worldState.GetVector3(key);
+
+        // ───── Public methods ────────────────────────────────────────────────
+        
         public WorldState GetWorldStateSnapshot() => _worldState.Clone();
 
-        /// <summary>
-        /// Sets a fact on the blackboard.
-        /// If any changes to the blackboard occur, notifies consumers.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        public void Set(string key, object value)
+        public void Set(string key, bool value)
         {
-            bool changed = !_worldState.TryGet(key, out object current) || !Equals(current, value);
-
+            bool changed = !_worldState.TryGet(key, out bool current) || current != value;
             _worldState.Set(key, value);
-
-            if (changed)
-                NotifyCallbacks(key, value);
+            if (changed) NotifyCallbacks(key, value);
         }
-
-        /// <summary>
-        /// Returns raw value for a given key or null if the key does not exist.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public object Get(string key) => _worldState.Get(key);
+        
+        public void Set(string key, int value)
+        {
+            bool changed = !_worldState.TryGet(key, out int current) || current != value;
+            _worldState.Set(key, value);
+            if (changed) NotifyCallbacks(key, value);
+        }
+        
+        public void Set(string key, float value)
+        {
+            bool changed = !_worldState.TryGet(key, out float current) || !Mathf.Approximately(current, value);
+            _worldState.Set(key, value);
+            if (changed) NotifyCallbacks(key, value);
+        }
+        
+        public void Set(string key, Transform value)
+        {
+            bool changed = !_worldState.TryGet(key, out Transform current) || current != value;
+            _worldState.Set(key, value);
+            if (changed) NotifyCallbacks(key, value);
+        }
+        
+        public void Set(string key, Vector3 value)
+        {
+            bool changed = !_worldState.TryGet(key, out Vector3 current) || current != value;
+            _worldState.Set(key, value);
+            if (changed) NotifyCallbacks(key, value);
+        }
 
         /// <summary>
         /// Returns the type of the value given a key or a default type if the key does not exist. 
@@ -47,8 +74,13 @@ namespace GOAP
         /// <returns></returns>
         public T Get<T>(string key)
         {
-            object value = _worldState.Get(key);
-            return value is T typed ? typed : default;
+            if (typeof(T) == typeof(bool)) return (T)(object)_worldState.GetBool(key);
+            if (typeof(T) == typeof(int)) return (T)(object)_worldState.GetInt(key); 
+            if (typeof(T) == typeof(float)) return (T)(object)_worldState.GetFloat(key);                                                                                                                                        
+            if (typeof(T) == typeof(Transform)) return (T)(object)_worldState.GetTransform(key);
+            if (typeof(T) == typeof(Vector3)) return (T)(object)_worldState.GetVector3(key);                                                                                                                                      
+            if (typeof(T).IsEnum) return (T)(object)_worldState.GetInt(key);                                                                                                                                          
+            return default;  
         }
 
         /// <summary>
@@ -80,9 +112,10 @@ namespace GOAP
         /// </summary>
         /// <param name="key"></param>
         /// <param name="newValue"></param>
+        /// <param name="callback"></param>
         public void UnregisterChangeCallback(string key, Action<object> callback)
         {
-            if (!_changeCallbacks.TryGetValue(key, out List<Action<object>> callbacks))
+            if (_changeCallbacks.TryGetValue(key, out List<Action<object>> callbacks))
                 callbacks.Remove(callback);
         }
 

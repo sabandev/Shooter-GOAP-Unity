@@ -4,16 +4,15 @@ using UnityEngine.AI;
 namespace GOAP
 {
     /// <summary>
-    /// Manages rotation handoff between NavMeshAgent and animation
-    /// root motion for in-place turn animations.
-    ///
+    /// Manages rotation handoff between NavMeshAgent and animation root motion for in-place turn animations.
     /// Allows turning animations to drive agent rotation and prevents sliding.
     /// </summary>
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(AgentAnimator))]
     public sealed class AgentTurnAnimator : MonoBehaviour
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Turn Detection")]
         [SerializeField] [Range(10.0f, 90.0f)] private float _turnTriggerAngle = 50.0f;
         [SerializeField] private float _maxSpeedToTurn = 0.15f;
@@ -24,21 +23,23 @@ namespace GOAP
         [Header("Root Motion")]
         [SerializeField] [Range(0.0f, 1.0f)] private float _rootMotionWeight = 1.0f;
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private Animator        _animator;
         private NavMeshAgent    _navAgent;
         private AgentAnimator _agentAnimator;
 
         private bool  _isTurning;
         private float _turnCheckTimer;
-        private float _targetAngle;
 
-        // -----Hashes-----
+        // ───── Hashes ────────────────────────────────────────────────
+        
         private static readonly int _turnLeftHash  = Animator.StringToHash("TurnLeft");
         private static readonly int _turnRightHash = Animator.StringToHash("TurnRight");
         private static readonly int _isTurningHash = Animator.StringToHash("IsTurning");
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void Awake()
         {
             _animator = GetComponent<Animator>();
@@ -78,7 +79,8 @@ namespace GOAP
             _navAgent.nextPosition = _navAgent.transform.position;
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
+        
         private void TickTurnDetection()
         {
             _turnCheckTimer -= Time.deltaTime;
@@ -136,7 +138,6 @@ namespace GOAP
         private void StartTurn(float angle)
         {
             _isTurning   = true;
-            _targetAngle = angle;
 
             _navAgent.updateRotation = false;
             _navAgent.isStopped = true;

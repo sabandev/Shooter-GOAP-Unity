@@ -74,11 +74,9 @@ namespace Player
         private bool  _isGrounded;
         private bool  _wasGrounded;
         private float _coyoteTimer;
-        private float _groundedTimer;
 
         // Crouch state
         private bool  _isCrouching;
-        private bool  _crouchInputHeld;
         private float _currentHeight;
         private float _targetHeight;
 
@@ -154,13 +152,10 @@ namespace Player
 
             _verticalVelocity = _jumpForce;
             _coyoteTimer      = 0.0f;
-            _groundedTimer    = 0.0f;
         }
 
         private void OnCrouchPerformed(InputAction.CallbackContext ctx)
         {
-            _crouchInputHeld = true;
-
             if (_crouchSettings.Mode == PlayerCrouchSettings.CrouchMode.Toggle)
             {
                 if (_isCrouching)
@@ -176,8 +171,6 @@ namespace Player
 
         private void OnCrouchCanceled(InputAction.CallbackContext ctx)
         {
-            _crouchInputHeld = false;
-
             if (_crouchSettings.Mode == PlayerCrouchSettings.CrouchMode.Hold && _isCrouching)
             {
                 TryStand();
@@ -214,12 +207,6 @@ namespace Player
                 _coyoteTimer = 0.0f;
             else
                 _coyoteTimer -= Time.deltaTime;
-
-            // Grounded timer — used to prevent double jump
-            if (_isGrounded)
-                _groundedTimer += Time.deltaTime;
-            else
-                _groundedTimer = 0.0f;
         }
 
         /// <summary>
@@ -328,7 +315,5 @@ namespace Player
             
             _footstepSoundController?.SetCrouching(false);
         }
-        
-
     }
 }

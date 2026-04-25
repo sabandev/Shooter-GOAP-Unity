@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Profiling;
 
 namespace GOAP
 {
@@ -19,17 +20,23 @@ namespace GOAP
     /// </summary>
     public abstract class Sensor : MonoBehaviour
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Sensor")]
         [SerializeField] [Range(1.0f, 30.0f)] private float _tickRate = 5.0f;
 
-        // -----Protected properties-----
+        // ───── Protected properties ────────────────────────────────────────────────
+        
         protected GOAPAgent Agent { get; private set; }
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private float _tickTimer;
+        
+        private static ProfilerMarker _tickMarker = new ProfilerMarker("Sensor.Tick");
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         protected virtual void Awake()
         {
             GetAgent();
@@ -42,11 +49,15 @@ namespace GOAP
             if (_tickTimer > 0.0f) { return; }
 
             _tickTimer = 1.0f / _tickRate;
-
-            Sense();
+            
+            using (_tickMarker.Auto())
+            {
+                Sense();
+            }
         }
 
-        // -----Implementation-----
+        // ───── Implementation ────────────────────────────────────────────────
+        
         protected abstract void Sense();
         
         protected virtual void GetAgent()

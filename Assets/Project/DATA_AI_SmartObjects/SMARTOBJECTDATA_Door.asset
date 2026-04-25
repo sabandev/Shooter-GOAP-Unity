@@ -23,6 +23,6 @@ MonoBehaviour:
   _requiredAgentState: []
   _baseCost: 1
   _interactionRange: 1.5
-  _interactionOffset: {x: 0, y: 0, z: 0.5}
+  _interactionOffset: {x: 0.5, y: 0, z: 0.5}
   _allowsSimultaneousUse: 0
   _cooldownDuration: 0

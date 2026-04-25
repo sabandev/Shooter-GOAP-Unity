@@ -192,7 +192,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CycleWeapon"",
+                    ""name"": ""CycleWeaponButton"",
                     ""type"": ""Button"",
                     ""id"": ""80b7b4ff-149e-4a79-aed1-a6a4e1b6ca91"",
                     ""expectedControlType"": """",
@@ -208,6 +208,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ScrollWeapon"",
+                    ""type"": ""Value"",
+                    ""id"": ""9da38851-c108-49c0-a979-e662ff6a6eff"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -477,23 +486,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""754fe57c-470c-451d-9829-9c57c8dc5b20"",
-                    ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";KAM"",
-                    ""action"": ""CycleWeapon"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""e9535504-660b-48aa-9da4-ddd0b47524b2"",
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Controller"",
-                    ""action"": ""CycleWeapon"",
+                    ""action"": ""CycleWeaponButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -505,6 +503,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";KAM"",
                     ""action"": ""DropWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""442bb4c1-e3e2-4889-8a03-89de2a819107"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""ScrollWeapon"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -554,8 +563,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         m_Player_WeaponSlot1 = m_Player.FindAction("WeaponSlot1", throwIfNotFound: true);
         m_Player_WeaponSlot2 = m_Player.FindAction("WeaponSlot2", throwIfNotFound: true);
-        m_Player_CycleWeapon = m_Player.FindAction("CycleWeapon", throwIfNotFound: true);
+        m_Player_CycleWeaponButton = m_Player.FindAction("CycleWeaponButton", throwIfNotFound: true);
         m_Player_DropWeapon = m_Player.FindAction("DropWeapon", throwIfNotFound: true);
+        m_Player_ScrollWeapon = m_Player.FindAction("ScrollWeapon", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -647,8 +657,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Reload;
     private readonly InputAction m_Player_WeaponSlot1;
     private readonly InputAction m_Player_WeaponSlot2;
-    private readonly InputAction m_Player_CycleWeapon;
+    private readonly InputAction m_Player_CycleWeaponButton;
     private readonly InputAction m_Player_DropWeapon;
+    private readonly InputAction m_Player_ScrollWeapon;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -705,13 +716,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @WeaponSlot2 => m_Wrapper.m_Player_WeaponSlot2;
         /// <summary>
-        /// Provides access to the underlying input action "Player/CycleWeapon".
+        /// Provides access to the underlying input action "Player/CycleWeaponButton".
         /// </summary>
-        public InputAction @CycleWeapon => m_Wrapper.m_Player_CycleWeapon;
+        public InputAction @CycleWeaponButton => m_Wrapper.m_Player_CycleWeaponButton;
         /// <summary>
         /// Provides access to the underlying input action "Player/DropWeapon".
         /// </summary>
         public InputAction @DropWeapon => m_Wrapper.m_Player_DropWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ScrollWeapon".
+        /// </summary>
+        public InputAction @ScrollWeapon => m_Wrapper.m_Player_ScrollWeapon;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -771,12 +786,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @WeaponSlot2.started += instance.OnWeaponSlot2;
             @WeaponSlot2.performed += instance.OnWeaponSlot2;
             @WeaponSlot2.canceled += instance.OnWeaponSlot2;
-            @CycleWeapon.started += instance.OnCycleWeapon;
-            @CycleWeapon.performed += instance.OnCycleWeapon;
-            @CycleWeapon.canceled += instance.OnCycleWeapon;
+            @CycleWeaponButton.started += instance.OnCycleWeaponButton;
+            @CycleWeaponButton.performed += instance.OnCycleWeaponButton;
+            @CycleWeaponButton.canceled += instance.OnCycleWeaponButton;
             @DropWeapon.started += instance.OnDropWeapon;
             @DropWeapon.performed += instance.OnDropWeapon;
             @DropWeapon.canceled += instance.OnDropWeapon;
+            @ScrollWeapon.started += instance.OnScrollWeapon;
+            @ScrollWeapon.performed += instance.OnScrollWeapon;
+            @ScrollWeapon.canceled += instance.OnScrollWeapon;
         }
 
         /// <summary>
@@ -821,12 +839,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @WeaponSlot2.started -= instance.OnWeaponSlot2;
             @WeaponSlot2.performed -= instance.OnWeaponSlot2;
             @WeaponSlot2.canceled -= instance.OnWeaponSlot2;
-            @CycleWeapon.started -= instance.OnCycleWeapon;
-            @CycleWeapon.performed -= instance.OnCycleWeapon;
-            @CycleWeapon.canceled -= instance.OnCycleWeapon;
+            @CycleWeaponButton.started -= instance.OnCycleWeaponButton;
+            @CycleWeaponButton.performed -= instance.OnCycleWeaponButton;
+            @CycleWeaponButton.canceled -= instance.OnCycleWeaponButton;
             @DropWeapon.started -= instance.OnDropWeapon;
             @DropWeapon.performed -= instance.OnDropWeapon;
             @DropWeapon.canceled -= instance.OnDropWeapon;
+            @ScrollWeapon.started -= instance.OnScrollWeapon;
+            @ScrollWeapon.performed -= instance.OnScrollWeapon;
+            @ScrollWeapon.canceled -= instance.OnScrollWeapon;
         }
 
         /// <summary>
@@ -971,12 +992,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnWeaponSlot2(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "CycleWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "CycleWeaponButton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCycleWeapon(InputAction.CallbackContext context);
+        void OnCycleWeaponButton(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "DropWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -984,5 +1005,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDropWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ScrollWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnScrollWeapon(InputAction.CallbackContext context);
     }
 }

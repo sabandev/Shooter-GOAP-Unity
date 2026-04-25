@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using Weapons;
 
 namespace Player
 {
@@ -75,13 +76,13 @@ namespace Player
         {
             Weapon weapon = _weaponHolder?.ActiveWeapon;
 
-            if (weapon?.LeftHandForegrip == null) { return; }
-
-            // Both weapon and target are in view model / camera space
-            // so this never slips when looking around
-            _leftHandTarget.SetPositionAndRotation(
-                weapon.LeftHandForegrip.position,
-                weapon.LeftHandForegrip.rotation);
+            // if (weapon?.LeftHandForegrip == null) { return; }
+            //
+            // // Both weapon and target are in view model / camera space
+            // // so this never slips when looking around
+            // _leftHandTarget.SetPositionAndRotation(
+            //     weapon.LeftHandForegrip.position,
+            //     weapon.LeftHandForegrip.rotation);
         }
 
         private void BlendWeight()

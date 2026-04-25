@@ -10,21 +10,24 @@ namespace Player
     public sealed class PlayerInteraction : MonoBehaviour
     {
         // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Detection")]
         [SerializeField] private Transform _camera;
         [SerializeField] private float _interactionRange = 2.5f;
         [SerializeField] private LayerMask _interactionMask;
 
         // ───── Public properties ────────────────────────────────────────────────
+        
         public event Action<string> OnInteractableFound;
         public event Action OnInteractableLost;
 
         // ───── Private properties ────────────────────────────────────────────────
+        
         private PlayerInputActions _input;
         private IInteractable _currentInteractable;
-        private GameObject _currentInteractableGameObject;
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void Awake()
         {
             Debug.Assert(_camera != null, "[PlayerInteraction] Camera not assigned.", this);
@@ -59,7 +62,6 @@ namespace Player
                     if (interactable != _currentInteractable)
                     {
                         _currentInteractable = interactable;
-                        _currentInteractableGameObject = hit.collider.gameObject;
                         
                         OnInteractableFound?.Invoke(interactable.InteractionPrompt);
                     }
@@ -71,7 +73,6 @@ namespace Player
             if (_currentInteractable != null)
             {
                 _currentInteractable = null;
-                _currentInteractableGameObject = null;
                 OnInteractableLost?.Invoke();
             }
         }

@@ -1,18 +1,13 @@
 using UnityEngine;
 
-/// <summary>
-/// First-pass test.
-/// Creating some basic actions to test the inital implementation of the GOAP system.
-/// </summary>
-
 namespace GOAP
 {
     // -----IDLE-----
-    [CreateAssetMenu(fileName = "ACTION_Idle", menuName = "GOAP/Actions/TEST0/Idle")]
+    [CreateAssetMenu(fileName = "ACTION_Idle", menuName = "GOAP/Actions/Idle")]
     public sealed class IdleActionData : GOAPActionData
     {
         // -----Serialized properties-----
-        [SerializeField] private float _idleDuration = 3.0f;
+        [SerializeField] [Min(0.0f)] private float _idleDuration = 3.0f;
 
         // -----Implementation-----
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new IdleActionInstance(agent, this, _idleDuration);

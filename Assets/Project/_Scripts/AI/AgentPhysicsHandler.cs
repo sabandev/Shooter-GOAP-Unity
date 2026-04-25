@@ -1,3 +1,4 @@
+using Codice.CM.Common.Merge;
 using UnityEngine;
 
 namespace GOAP
@@ -7,7 +8,7 @@ namespace GOAP
     /// </summary>
     public sealed class AgentPhysicsHandler : MonoBehaviour
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
 
         [Header("Push Settings")]
         [SerializeField] private float _pushForce = 4.0f;
@@ -28,11 +29,15 @@ namespace GOAP
         [Header("Gizmos")]
         [SerializeField] private bool _drawPushDetectionGizmos = true;
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private AgentAnimator _agentAnimator;
+        
+        private Collider[] _hits = new Collider[16];
+        
         private float _pushCheckTimer;
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
 
         private void Awake()
         {
@@ -50,7 +55,7 @@ namespace GOAP
             CheckAndPush();
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
 
         /// <summary>
         /// Checks all configured heights for overlapping pushable
@@ -62,14 +67,14 @@ namespace GOAP
             {
                 Vector3 origin = transform.position + Vector3.up * height;
 
-                Collider[] hits = Physics.OverlapSphere(origin, _pushRadius, _pushableLayers);
-
-                foreach (Collider hit in hits)
+                int count = Physics.OverlapSphereNonAlloc(origin, _pushRadius, _hits, _pushableLayers);
+                
+                for (int i = 0; i < count; i++)
                 {
-                    if (hit.attachedRigidbody == null)              continue;
-                    if (hit.attachedRigidbody.mass > _maxPushMass)  continue;
-
-                    ApplyPushForce(hit.attachedRigidbody, origin);
+                    if (_hits[i].attachedRigidbody == null) { continue; }
+                    if (_hits[i].attachedRigidbody.mass > _maxPushMass) { continue; }
+                    
+                    ApplyPushForce(_hits[i].attachedRigidbody, origin);
                 }
             }
         }
@@ -90,7 +95,7 @@ namespace GOAP
             rb.AddForce(pushDirection * finalForce, ForceMode.Impulse);
         }
 
-        // -----Editor helper methods-----
+        // ───── Helper methods ────────────────────────────────────────────────
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()

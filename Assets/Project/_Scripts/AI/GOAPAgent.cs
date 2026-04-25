@@ -20,7 +20,8 @@ namespace GOAP
     [RequireComponent(typeof(NavMeshAgent))]
     public sealed class GOAPAgent : MonoBehaviour
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] private List<GOAPActionData> _actionDataAssets = new();
         [SerializeField] private List<GOAPGoal> _goals = new();
         [SerializeField] private WaypointPatrolPath _waypointNetwork;
@@ -34,7 +35,8 @@ namespace GOAP
         [SerializeField] private bool _drawPlaningStatusInWorldSpaceGizmos = true;
         [SerializeField] private bool _drawNavigationGizmos = true;
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private List<GOAPActionInstance> _actionInstances;
         private GOAPPlanner _planner;
         private List<GOAPActionInstance> _currentPlan;
@@ -44,24 +46,28 @@ namespace GOAP
         private int _currentActionIndex;
         private float _planningTickTimer;
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public NavMeshAgent NavAgent { get; private set; }
         public Animator Animator { get; private set; }
         public AgentBlackboard Blackboard { get; private set; } = new AgentBlackboard();
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
         public IReadOnlyList<PlanHistoryEntry> PlanHistory => _planHistory;
 
-        // -----Constants-----
+        // ───── Constants ────────────────────────────────────────────────
+        
         private const int MAX_HISTORY_ENTRIES  = 50;
 
-        // ----------FOR EDITOR----------
+        // ───── Editor properties ────────────────────────────────────────────────
+        
         public GOAPGoal ActiveGoal => _activeGoal;
         public List<GOAPActionInstance> CurrentPlan => _currentPlan;
         public int CurrentActionIndex => _currentActionIndex;
         public IReadOnlyList<GOAPGoal> Goals => _goals;
         public IReadOnlyList<GOAPActionInstance> ActionInstances => _actionInstances;
 
-        // -----MonoBehaviour methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void Awake()
         {
             NavAgent = GetComponent<NavMeshAgent>();
@@ -79,7 +85,7 @@ namespace GOAP
             TickPlanning();
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
 
         /// <summary>
         /// Builds a GOAPActionInstance for every GOAPActionData the agent has.
@@ -163,15 +169,13 @@ namespace GOAP
             GOAPGoal bestGoal = null;
             int bestPriority = int.MinValue;
 
-            WorldState snapshot = Blackboard.GetWorldStateSnapshot();
+            WorldState currentState = Blackboard.WorldState;
 
             foreach (GOAPGoal goal in _goals)
             {
                 if (goal == null) { continue; }
 
-                int priority = goal.EvaluatePriority(snapshot);
-
-                // Debug.Log($"[GoalSelect] {goal.name} priority: {priority}");
+                int priority = goal.EvaluatePriority(currentState);
 
                 if (priority > bestPriority)
                 {
@@ -188,15 +192,16 @@ namespace GOAP
         /// runs the plan if one is returned.
         /// </summary>
         /// <param name="goal"></param>
+        /// <param name="triggerReason"></param>
         public void RequestReplan(GOAPGoal goal, string triggerReason = "Manual")
         {
             if (goal == null) { return; }
 
             AbortCurrentPlan();
 
-            WorldState snapshot = Blackboard.GetWorldStateSnapshot();
+            WorldState currentState = Blackboard.WorldState;
 
-            List<GOAPActionInstance> newPlan = _planner.Plan(snapshot, goal.GetDesiredState(), _actionInstances, out int nodesExpanded);
+            List<GOAPActionInstance> newPlan = _planner.Plan(currentState, goal.GetDesiredState(), _actionInstances, out int nodesExpanded);
 
             bool planFound = newPlan != null && newPlan.Count > 0;
             RecordPlanHistory(goal, triggerReason, newPlan, nodesExpanded, planFound);
@@ -312,7 +317,7 @@ namespace GOAP
             nextAction.OnStart();
         }
 
-        /// <summary>§
+        /// <summary>
         /// Aborts the current plan and forces a re-plan so the AI agent can try again.
         /// </summary>
         /// <param name="action"></param>
@@ -345,7 +350,8 @@ namespace GOAP
         /// </summary>
         public void ClearPlanHistory() => _planHistory.Clear();
 
-        // -----Editor Helper-----
+        // ───── Helper methods ────────────────────────────────────────────────
+        
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

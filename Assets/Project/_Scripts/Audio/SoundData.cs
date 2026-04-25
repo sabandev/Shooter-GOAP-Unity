@@ -33,8 +33,8 @@ namespace Audio
         
         [Header("Spatial")] // 0 = 2D (e.g. UI sounds) | 1 = 3D (world sounds)
         [SerializeField] [Range(0.0f, 1.0f)] private float _spatialBlend = 1.0f;
-        [SerializeField] private float _maxDistance = 30.0f; // Max distance sound hits 0 volume
-        [SerializeField] private float _minDistance = 1.0f;
+        [SerializeField] [Min(0.0f)] private float _maxDistance = 30.0f; // Max distance sound hits 0 volume
+        [SerializeField] [Min(0.0f)] private float _minDistance = 1.0f;
         
         [Space(10.0f)]
         
@@ -50,6 +50,20 @@ namespace Audio
         
         public bool IsValid => _clips != null && _clips.Length > 0;
 
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
+        private void OnValidate()
+        {
+            _minVolume = Mathf.Clamp(_minVolume, 0.0f, _maxVolume);
+            _maxVolume = Mathf.Clamp(_maxVolume, _minVolume, 1.0f);
+            _minPitch = Mathf.Clamp(_minPitch, 0.1f, _maxPitch);
+            _maxPitch = Mathf.Clamp(_maxPitch, _minPitch, 3.0f);
+            _minDistance = Mathf.Max(0.0f, _minDistance);
+            _maxDistance = Mathf.Max(_minDistance + 0.01f, _maxDistance);
+            
+            Debug.Assert(_clips != null && _clips.Length > 0, "[SoundData] No AudioClips assigned. Must assign at least 1 AudioClip.", this);
+        }
+        
         // ───── Public methods ────────────────────────────────────────────────
         public AudioClip GetClip()
         {

@@ -28,8 +28,9 @@ public sealed class HealthKit : MonoBehaviour, IInteractable
         
         if (inventory != null)
         {
-            inventory.AddHealthKit();
-            Consume();
+            if (inventory.AddHealthKit())
+                Consume();
+                
             return;
         }
         

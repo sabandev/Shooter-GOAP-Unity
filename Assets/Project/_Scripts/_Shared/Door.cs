@@ -12,7 +12,8 @@ using UnityEngine.AI;
 /// </summary>
 public sealed class Door : MonoBehaviour, IInteractable
 {
-    // -----Nested Type-----
+    // ───── Nested type ────────────────────────────────────────────────
+    
     public enum DoorState
     {
         Closing,
@@ -22,10 +23,12 @@ public sealed class Door : MonoBehaviour, IInteractable
     }
 
     // ───── Implementation ────────────────────────────────────────────────
+    
     public string InteractionPrompt => _state == DoorState.Open ? "Close Door" : "Open Door";
     public bool CanInteract => _state == DoorState.Open || _state == DoorState.Closed;
+
+    // ───── Serialized properties ────────────────────────────────────────────────
     
-    // -----Serialized properties-----
     [Header("References")] 
     [SerializeField] private Transform _hinge;
     [SerializeField] private NavMeshObstacle _navMeshObstacle;
@@ -42,22 +45,25 @@ public sealed class Door : MonoBehaviour, IInteractable
     
     [Header("Gizmos")]
     [SerializeField] private bool _drawDoorGizmos = true;
+
+    // ───── Private properties ────────────────────────────────────────────────
     
-    // -----Private properties-----
     [HideInInspector] [SerializeField] private DoorState _state = DoorState.Closed;
     
-    private float _openTimer;
     private float _targetAngle;
-    private float _closeTimer;
+    private float _animTimer;
+
+    // ───── Public properties ────────────────────────────────────────────────
     
-    // -----Public properties-----
     public DoorState State => _state;
+    
     public bool IsOpen => _state == DoorState.Open;
     public bool IsClosed => _state == DoorState.Closed;
     
     public event Action OnDoorOpened;
 
     // ───── Implementation ────────────────────────────────────────────────
+    
     public void Interact(GameObject interactor)
     {
         if (_state == DoorState.Closed)
@@ -65,19 +71,17 @@ public sealed class Door : MonoBehaviour, IInteractable
         else if (_state == DoorState.Open)
             Close(interactor.transform.position);
     }
+
+    // ───── Lifecycle methods ────────────────────────────────────────────────
     
-    // -----MonoBehaviour methods-----
     private void Awake()
     {
         Debug.Assert(_hinge != null, "[Door] Hinge not assigned", this);
         Debug.Assert(_navMeshObstacle != null, "[Door] NavMeshObstacle not assigned", this);
         
-        if (_hinge != null)
-        {
-            Vector3 euler = _hinge.localEulerAngles;
-            euler.y = _state == DoorState.Open ? _closedAngle + _openAngle : _closedAngle;
-            _hinge.localEulerAngles = euler;
-        }
+        Vector3 euler = _hinge.localEulerAngles;
+        euler.y = _state == DoorState.Open ? _closedAngle + _openAngle : _closedAngle;
+        _hinge.localEulerAngles = euler;
         
         SyncDoorStates(_state);
     }
@@ -89,15 +93,16 @@ public sealed class Door : MonoBehaviour, IInteractable
         else if (_state == DoorState.Closing)
             TickClosing();
     }
+
+    // ───── Pubic methods ────────────────────────────────────────────────
     
-    // -----Public methods-----
     public void Open(Vector3 openerPosition)
     {
         if (_state != DoorState.Closed) { return; }
         
         _targetAngle = CalculateOpenAngle(openerPosition);
         _state = DoorState.Opening;
-        _openTimer = 0.0f;
+        _animTimer = 0.0f;
         
         if (_navMeshObstacle != null)
             _navMeshObstacle.enabled = false;
@@ -108,7 +113,7 @@ public sealed class Door : MonoBehaviour, IInteractable
         if (_state != DoorState.Open) { return; }
         
         _state = DoorState.Closing;
-        _closeTimer = 0.0f;
+        _animTimer = 0.0f;
         
         _targetAngle = _closedAngle;
         
@@ -124,20 +129,21 @@ public sealed class Door : MonoBehaviour, IInteractable
     public void ResetToClosed()
     {
         _state = DoorState.Closed;
-        _openTimer = 0.0f;
+        _animTimer = 0.0f;
         
         if (_hinge != null)
             _hinge.localEulerAngles = new Vector3( _hinge.localEulerAngles.x, _closedAngle, _hinge.localEulerAngles.z);
         
         SyncDoorStates(_state);
     }
+
+    // ───── Private methods ────────────────────────────────────────────────
     
-    // -----Private methods-----
     private void TickOpening()
     {
-        _openTimer += Time.deltaTime;
+        _animTimer += Time.deltaTime;
         
-        float t = Mathf.Clamp01(_openTimer / _openDuration);
+        float t = Mathf.Clamp01(_animTimer / _openDuration);
         float curveT =  _openCurve.Evaluate(t);
         
         _hinge.localEulerAngles = new Vector3( _hinge.localEulerAngles.x, Mathf.LerpAngle(_closedAngle, _targetAngle, curveT), _hinge.localEulerAngles.z);
@@ -152,9 +158,9 @@ public sealed class Door : MonoBehaviour, IInteractable
     
     private void TickClosing()
     {
-        _closeTimer += Time.deltaTime;
+        _animTimer += Time.deltaTime;
         
-        float t = Mathf.Clamp01(_closeTimer / _openDuration);
+        float t = Mathf.Clamp01(_animTimer / _openDuration);
         float curveT =  _openCurve.Evaluate(t);
         
         _hinge.localEulerAngles = new Vector3( _hinge.localEulerAngles.x, Mathf.LerpAngle(_targetAngle, _closedAngle, curveT), _hinge.localEulerAngles.z);
@@ -168,28 +174,7 @@ public sealed class Door : MonoBehaviour, IInteractable
     
     private void SyncDoorStates(DoorState state)
     {
-        switch (state)
-        {
-            case DoorState.Closing:
-                if (_navMeshObstacle != null)
-                    _navMeshObstacle.enabled = false;
-                break;
-            
-            case DoorState.Closed:
-                if (_navMeshObstacle != null)
-                    _navMeshObstacle.enabled = false;
-                break;
-            
-            case DoorState.Opening:
-                if (_navMeshObstacle != null)
-                    _navMeshObstacle.enabled = false;
-                break;
-            
-            case DoorState.Open:
-                if (_navMeshObstacle != null)
-                    _navMeshObstacle.enabled = true;
-                break;
-        }
+        _navMeshObstacle.enabled = _state == DoorState.Open;
     }
     
     private float CalculateOpenAngle(Vector3 openerPosition)
@@ -200,8 +185,9 @@ public sealed class Door : MonoBehaviour, IInteractable
         
         return _closedAngle + (_openAngle * direction);
     }
+
+    // ───── Helper methods ────────────────────────────────────────────────
     
-    // -----Editor helper methods-----
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {

@@ -5,25 +5,26 @@ namespace GOAP
     [CreateAssetMenu(fileName = "ACTION_Chase", menuName = "GOAP/Actions/Chase")]
     public sealed class ChaseActionData : GOAPActionData
     {
-        // -----Serialized properties-----
-        [SerializeField] private float _arrivalRange = 1.5f;
+        // ───── Private properties ────────────────────────────────────────────────
         [SerializeField] [Range(1.0f, 30.0f)] private float _destinationUpdateRate = 10.0f;
 
-        public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new ChaseActionInstance(agent, this, _arrivalRange, _destinationUpdateRate);
+        // ───── Impementation ────────────────────────────────────────────────
+        
+        public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new ChaseActionInstance(agent, this, _destinationUpdateRate);
     }
 
     public sealed class ChaseActionInstance : GOAPActionInstance
     {
-        // -----Private properties-----
-        private readonly float _arrivalRange;
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private readonly float _destinationUpdateRate;
 
         private float _destinationUpdateTimer;
 
-        // -----Implementation-----
-        public ChaseActionInstance(GOAPAgent agent, GOAPActionData data, float arrivalRange, float destinationUpdateRate) : base(agent, data)
+        // ───── Implementation ────────────────────────────────────────────────
+        
+        public ChaseActionInstance(GOAPAgent agent, GOAPActionData data, float destinationUpdateRate) : base(agent, data)
         {
-            _arrivalRange = arrivalRange;
             _destinationUpdateRate = destinationUpdateRate;
         }
 
@@ -34,7 +35,7 @@ namespace GOAP
 
         public override void OnStart()
         {
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Sprint);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Sprint);
 
             _destinationUpdateTimer = 0.0f;
 
@@ -64,17 +65,18 @@ namespace GOAP
         public override void OnEnd()
         {
             Agent.NavAgent.ResetPath();
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         public override void OnReset()
         {
             _destinationUpdateTimer = 0.0f;
 
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
+        
         private void UpdateDestination()
         {
             Transform targetTransform = Agent.Blackboard.Get<Transform>(BlackboardKeys.TARGET_TRANSFORM);

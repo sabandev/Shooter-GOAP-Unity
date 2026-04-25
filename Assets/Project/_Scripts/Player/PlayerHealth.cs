@@ -57,7 +57,6 @@ namespace Player
             if (IsDead)     { return; }
             if (amount <= 0) { return; }
 
-            float previous = CurrentHealth;
             CurrentHealth  = Mathf.Max(0.0f, CurrentHealth - amount);
 
             OnDamageReceived?.Invoke(amount);
@@ -65,7 +64,6 @@ namespace Player
             CheckLowHealthTransition();
 
             AudioManager.Instance?.Play(_damageSound, transform.position);
-            // Debug.Log($"[PlayerHealth] Took {amount:F0} damage. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
 
             if (IsDead)
                 OnDeath?.Invoke();
@@ -84,8 +82,6 @@ namespace Player
             OnHealed?.Invoke(actualHeal);
             OnHealthChanged?.Invoke(CurrentHealth);
             CheckLowHealthTransition();
-
-            // Debug.Log($"[PlayerHealth] Used syringe. Healed {actualHeal:F0}. Health: {CurrentHealth:F0}/{_maxHealth:F0}");
         }
         
         public void Respawn()

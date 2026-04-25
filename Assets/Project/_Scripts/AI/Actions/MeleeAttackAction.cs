@@ -5,15 +5,17 @@ namespace GOAP
     [CreateAssetMenu(fileName = "ACTION_Melee", menuName = "GOAP/Actions/Melee")]
     public sealed class MeleeAttackActionData : GOAPActionData
     {
-        // -----Serialized properties-----
-        [SerializeField] private float _damage = 25.0f;
-        [SerializeField] private float _hitRadius = 1.5f;
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] private LayerMask  _targetMask;
-        [SerializeField] private float _attackDuration = 0.8f;
-        [SerializeField] private float _applyDamageNormalisedFrame = 0.4f;
-        [SerializeField] private float _attackCooldown = 1.2f;
+        [SerializeField] [Min(0.0f)] private float _damage = 25.0f;
+        [SerializeField] [Min(0.0f)] private float _hitRadius = 1.5f;
+        [SerializeField] [Min(0.0f)] private float _attackDuration = 0.8f;
+        [SerializeField] [Min(0.0f)] private float _applyDamageNormalisedFrame = 0.4f;
+        [SerializeField] [Min(0.0f)] private float _attackCooldown = 1.2f;
 
-        // -----Implementation-----
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new MeleeAttackActionInstance(agent, this, _damage, _hitRadius, _targetMask, _attackDuration, _applyDamageNormalisedFrame, _attackCooldown);
     }
 
@@ -24,23 +26,29 @@ namespace GOAP
     /// </summary>
     public sealed class MeleeAttackActionInstance : GOAPActionInstance
     {
-        // -----Hashes-----
+        // ───── Hashes ────────────────────────────────────────────────
+        
         private static readonly int _attackTriggerHash = Animator.StringToHash("MeleeAttack");
 
-        // -----Private properties-----
+        // ───── Private properties────────────────────────────────────────────────
+        
+        private readonly LayerMask _targetMask;
+        
         private readonly float _damage;
         private readonly float _hitRadius;
-        private readonly LayerMask _targetMask;
         private readonly float _attackDuration;
         private readonly float _applyDamageNormalisedFrame;
         private readonly float _attackCooldown;
 
+        private Collider[] _hits = new Collider[16];
+        
         private float _attackTimer;
         private bool _damageApplied;
 
         private static float _lastAttackTime = float.NegativeInfinity;
 
-        // ----Implementation-----
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public MeleeAttackActionInstance(GOAPAgent agent, GOAPActionData data, float damage, float hitRadius, LayerMask targetMask, float attackDuration, float applyDamageNormalisedFrame, float attackCooldown) : base(agent, data)
         {
             _damage = damage;
@@ -67,7 +75,7 @@ namespace GOAP
         public override void OnStart()
         {
             Agent.NavAgent.ResetPath();
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
 
             FaceTarget();
 
@@ -112,8 +120,7 @@ namespace GOAP
         /// </summary>
         private void FaceTarget()
         {
-            Transform targetTransform = Agent.Blackboard
-                .Get<Transform>(BlackboardKeys.TARGET_TRANSFORM);
+            Transform targetTransform = Agent.Blackboard.Get<Transform>(BlackboardKeys.TARGET_TRANSFORM);
 
             if (targetTransform == null) return;
 
@@ -140,22 +147,21 @@ namespace GOAP
             Vector3 agentCenter = Agent.transform.position + Vector3.up * 0.9f;
             Vector3 sphereOrigin = agentCenter + Agent.transform.forward * 0.5f;
 
-            Collider[] hits = Physics.OverlapSphere(sphereOrigin, _hitRadius, _targetMask);
+            int count = Physics.OverlapSphereNonAlloc(sphereOrigin, _hitRadius, _hits, _targetMask);
 
             bool hitSomething = false;
-
-            foreach (Collider hit in hits)
+            
+            for (int i = 0; i < count; i++)
             {
-                if (hit.transform == Agent.transform) continue;
-
-                if (hit.TryGetComponent(out IHealth health))
+                if (_hits[i].transform == Agent.transform) { continue; }
+                
+                if (_hits[i].TryGetComponent(out IHealth health))
                 {
                     health.TakeDamage(_damage);
                     hitSomething = true;
-
+                    
                     if (health.IsDead)
-                        Agent.Blackboard.Set(
-                            BlackboardKeys.TARGET_IS_DEAD, true);
+                        Agent.Blackboard.Set(BlackboardKeys.TARGET_IS_DEAD, true);
                 }
             }
 

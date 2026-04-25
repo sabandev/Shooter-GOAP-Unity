@@ -13,26 +13,31 @@ namespace Player
     /// </summary>
     public sealed class PlayerInventory : MonoBehaviour
     {
-        // ───── Item types ────────────────────────────────────────────────
+        // ───── Nested type ────────────────────────────────────────────────
+        
         public enum ItemType
         {
             HealthKit,
         }
 
         // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] private int _maxHealthKits = 3;
         [SerializeField] private int _startingHealthKits = 0;
 
         // ───── Public properties ────────────────────────────────────────────────
+        
         public event Action<int> OnHealthKitCountChanged;
         
-        public int HealthKitCount => _items.TryGetValue(ItemType.HealthKit, out int count) ? count : 0;
+        public int HealthKitCount => _items.GetValueOrDefault(ItemType.HealthKit, 0);
 
         // ───── Private properties ────────────────────────────────────────────────
+        
         private PlayerHealth _health;
-        private Dictionary<ItemType, int> _items = new  Dictionary<ItemType, int>();
+        private readonly Dictionary<ItemType, int> _items = new  Dictionary<ItemType, int>();
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void  Awake()
         {
             _health = GetComponent<PlayerHealth>();
@@ -40,20 +45,18 @@ namespace Player
             
             _items[ItemType.HealthKit] = _startingHealthKits; 
         }
-        
-        private void OnEnable()
-        {
-            
-        }
 
         // ───── Public methods ────────────────────────────────────────────────
-        public void AddHealthKit()
+        
+        public bool AddHealthKit()
         {
             int current = HealthKitCount;
-            if (current >= _maxHealthKits) { return; }
+            if (current >= _maxHealthKits) { return false; }
             
             _items[ItemType.HealthKit] = current + 1;
             OnHealthKitCountChanged?.Invoke(HealthKitCount);
+            
+            return true;
         }
         
         public bool TryUseHealthKit()
@@ -66,14 +69,12 @@ namespace Player
             _health.UseHealthKit();
             OnHealthKitCountChanged?.Invoke(HealthKitCount);
             
-            Debug.Log($"[PlayerInventory] Syringe used. Remaining: {HealthKitCount}");
-            
             return true;
         }
         
         public int GetCount(ItemType type)
         {
-            return _items.TryGetValue(type, out int count) ? count : 0;
+            return _items.GetValueOrDefault(type, 0);
         }
     }
 }

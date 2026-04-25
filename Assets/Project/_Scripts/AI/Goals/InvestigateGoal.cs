@@ -11,7 +11,7 @@ namespace GOAP
         // -----Implementation-----
         public override int EvaluatePriority(WorldState agentState)
         {
-            bool targetVisible = agentState.Get(BlackboardKeys.TARGET_VISIBLE) is true;
+            bool targetVisible = agentState.GetBool(BlackboardKeys.TARGET_VISIBLE);
             return targetVisible ? _alertPriority : BasePriority;
         }
     }

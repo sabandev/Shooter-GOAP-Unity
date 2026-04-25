@@ -1,4 +1,5 @@
 using UnityEngine;
+using Weapons;
 
 namespace Player
 {
@@ -8,6 +9,7 @@ namespace Player
     public sealed class ViewModelSway : MonoBehaviour
     {
         // ───── Serialized propertise ────────────────────────────────────────────────
+        
         [Header("References")]
         [SerializeField] private WeaponHolder _weaponHolder;
 
@@ -21,6 +23,7 @@ namespace Player
         [SerializeField] [Range(1.0f, 20.0f)] private float _returnSpeed = 8.0f;
 
         // ───── Private properties ────────────────────────────────────────────────
+        
         private PlayerInputActions _input;
         private Quaternion _currentSway = Quaternion.identity;
 

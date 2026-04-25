@@ -8,18 +8,24 @@ namespace GOAP
     [CreateAssetMenu(fileName = "ACTION_PatrolWaypoints", menuName = "GOAP/Actions/PatrolWaypoints")]
     public sealed class PatrolWaypointsActionData : GOAPActionData
     {
-        // -----Serialized properties-----
-        [SerializeField] private float _arrivalTolerance = 0.5f;
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
+        [SerializeField] [Min(0.0f)] private float _arrivalTolerance = 0.5f;
 
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new PatrolWaypointsActionInstance(agent, this, _arrivalTolerance);
     }
 
     public sealed class PatrolWaypointsActionInstance : GOAPActionInstance
     {
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private readonly float _arrivalTolerance;
         private WaypointPatrolPath _waypointNetwork;
         private int _currentWaypointIndex;
+        
+        // ───── Implementation ────────────────────────────────────────────────
 
         public PatrolWaypointsActionInstance(GOAPAgent agent, GOAPActionData data, float arrivalTolerance) : base(agent, data)
         {
@@ -44,7 +50,7 @@ namespace GOAP
         {
             Vector3 destination = _waypointNetwork.GetWaypoint(_currentWaypointIndex);
             Agent.NavAgent.SetDestination(destination);
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, true);
         }
 
@@ -61,7 +67,7 @@ namespace GOAP
         public override void OnEnd()
         {
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, false);
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         /// <summary>
@@ -69,7 +75,7 @@ namespace GOAP
         /// </summary>
         public override void OnReset()
         {
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
     }
 }

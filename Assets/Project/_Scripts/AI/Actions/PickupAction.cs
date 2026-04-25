@@ -5,13 +5,16 @@ namespace GOAP
     [CreateAssetMenu(fileName = "ACTION_Pickup", menuName = "GOAP/Actions/Pickup")]
     public sealed class PickupActionData : SmartObjectActionData
     {
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Pickup")]
         [SerializeField] private string _acquiredItemKey = "HAS_ITEM";
-        [SerializeField] private float _pickupDuration = 0.8f;
+        [SerializeField] [Min(0.0f)] private float _pickupDuration = 0.8f;
         [SerializeField] [Range(0.0f, 1.0f)] private float _itemDisappearNormalizedFrame = 0.45f;
         [SerializeField] private bool _disableOnPickup = true;
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public string AcquiredItemKey => _acquiredItemKey;
         public float  PickupDuration  => _pickupDuration;
         public float ItemDisappearNormalizedFrame => _itemDisappearNormalizedFrame;
@@ -22,13 +25,16 @@ namespace GOAP
 
     public sealed class PickupActionInstance : SmartObjectActionInstance
     {
-        // ─── Pre-hashed animator parameters ──────────────────────────
+        // ─── Hashes  ──────────────────────────
+        
         private static readonly int _pickupTriggerHash = Animator.StringToHash("Pickup"); //TODO: Static check
 
-        // ─── Private state ────────────────────────────────────────────
+        // ─── Private properties ────────────────────────────────────────────
+        
+        private readonly PickupActionData _pickupData;
+        
         private float _pickupTimer;
         private bool _itemDisappeared;
-        private PickupActionData _pickupData;
 
         public PickupActionInstance(
             GOAPAgent      agent,
@@ -37,15 +43,14 @@ namespace GOAP
             _pickupData = data;
         }
 
-        // ─── SmartObjectActionInstance implementation ─────────────────
+        // ─── Implementation ─────────────────
 
         public override void OnStart()
         {
             base.OnStart();
             _pickupTimer = 0.0f;
 
-            Agent.Blackboard.Set(
-                BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Jog);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Jog);
         }
 
         protected override void OnArrival()
@@ -99,7 +104,7 @@ namespace GOAP
         public override void OnEnd()
         {
             base.OnEnd();
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, MovementSpeed.Walk);
+            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
         }
 
         public override void OnReset()
@@ -119,15 +124,10 @@ namespace GOAP
             Agent.Blackboard.Set(_pickupData.AcquiredItemKey, true);
 
             // Also apply any advertised effects from the smart object
-            foreach (WorldStatePair effect in
-                     TargetObject.Data.AdvertisedEffects)
+            foreach (WorldStatePair effect in TargetObject.Data.AdvertisedEffects)
             {
-                Agent.Blackboard.Set(effect.Key, effect.GetValue());
+                effect.ApplyTo(Agent.Blackboard);
             }
-
-            Debug.Log($"[PickupAction] '{Agent.name}' picked up " +
-                      $"'{TargetObject.name}'. " +
-                      $"Key '{_pickupData.AcquiredItemKey}' = true.");
         }
 
         private void DisappearItem()

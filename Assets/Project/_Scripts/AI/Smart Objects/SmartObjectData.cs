@@ -11,7 +11,8 @@ namespace GOAP
     [CreateAssetMenu(fileName = "SMARTOBJECTDATA_New", menuName = "GOAP/Smart Objects/Smart Object Data")]
     public class SmartObjectData : ScriptableObject
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [Header("Identity")]
         [SerializeField] private string _objectTag = "SmartObject";
         [SerializeField] private string _description = "";
@@ -25,17 +26,18 @@ namespace GOAP
         [Space(10.0f)]
 
         [Header("Interaction")]
-        [SerializeField] private float _baseCost = 1.0f;
-        [SerializeField] private float _interactionRange = 1.2f;
+        [SerializeField] [Min(0.0f)] private float _baseCost = 1.0f;
+        [SerializeField] [Min(0.01f)] private float _interactionRange = 1.2f;
         [SerializeField] private Vector3 _interactionOffset = new Vector3(0.0f, 0.0f, -1.0f);
 
         [Space(10.0f)]
 
         [Header("Availability")]
         [SerializeField] private bool _allowsSimultaneousUse = false;
-        [SerializeField] private float _cooldownDuration = 0.0f;
+        [SerializeField] [Min(0.0f)] private float _cooldownDuration = 0.0f;
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public string ObjectTag => _objectTag;
         public string Description => _description;
         public IReadOnlyList<WorldStatePair> AdvertisedEffects => _advertisedEffects;
@@ -46,12 +48,25 @@ namespace GOAP
         public bool AllowsSimultaneousUse => _allowsSimultaneousUse;
         public float CooldownDuration => _cooldownDuration;
 
-        // -----Public methods------
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
+        private void OnValidate()
+        {
+            _baseCost = Mathf.Max(0.0f, _baseCost);
+            _interactionRange = Mathf.Max(0.01f, _interactionRange);
+            _cooldownDuration = Mathf.Max(0.0f, _cooldownDuration);
+            
+            Debug.Assert(!string.IsNullOrWhiteSpace(_objectTag), $"[SmartObjectData] '{name}' ObjectTag is empty. Must assign an ObjectTag.", this);
+            Debug.Assert(_advertisedEffects != null && _advertisedEffects.Count > 0, $"[SmartObjectData] '{name}' AdvertisedEffects is empty. Must assign AdvertisedEffects.", this);
+        }
+
+        // ───── Public methods ────────────────────────────────────────────────
+        
         public WorldState GetAdvertisedWorldState()
         {
             var state = new WorldState();
             foreach (WorldStatePair pair in _advertisedEffects)
-                state.Set(pair.Key, pair.GetValue());
+                pair.ApplyTo(state);
 
             return state;
         }
@@ -60,7 +75,7 @@ namespace GOAP
         {
             var state = new WorldState();
             foreach (WorldStatePair pair in _requiredAgentState)
-                state.Set(pair.Key, pair.GetValue());
+                pair.ApplyTo(state);
                 
             return state;
         }
