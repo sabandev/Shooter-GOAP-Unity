@@ -165,7 +165,7 @@ namespace Audio
                 return _footstepSounds.GetSound(type);
             }
 
-            return _footstepSounds.GetSound(SurfaceType.Surface.Default);
+            return null;
         }
         
         

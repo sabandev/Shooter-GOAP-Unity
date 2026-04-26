@@ -82,14 +82,13 @@ namespace Player
 
         // Input values
         private Vector2 _moveInput;
-        private bool    _jumpPressed;
 
         // ─── Public properties ───────────────────────────────────────────────
 
-        public bool    IsGrounded => _isGrounded;
-        public bool    IsCrouching => _isCrouching;
+        public bool IsGrounded => _isGrounded;
+        public bool IsCrouching => _isCrouching;
         public Vector3 Velocity => _velocity;
-        public float   NormalisedSpeed   => _horizontalVelocity.magnitude / (_isCrouching ? _crouchSpeed : _walkSpeed);
+        public float NormalisedSpeed   => _horizontalVelocity.magnitude / (_isCrouching ? _crouchSpeed : _walkSpeed);
         public float WalkSpeed => _walkSpeed;
 
         // ─── Lifecycle methods ──────────────────────────────────────────
@@ -145,6 +144,8 @@ namespace Player
 
         private void OnJumpPerformed(InputAction.CallbackContext ctx)
         {
+            if (_verticalVelocity > 0.0f) { return; }
+            
             bool canJump = _isGrounded || _coyoteTimer > 0.0f;
 
             if (!canJump)     { return; }

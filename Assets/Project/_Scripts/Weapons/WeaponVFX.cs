@@ -19,6 +19,11 @@ namespace Weapons
         [Header("Attachment Points")]
         [SerializeField] private Transform _muzzlePoint;
         [SerializeField] private Transform _shellEjectPoint;
+        
+        [Space(10.0f)]
+        
+        [Header("Layers")]
+        [SerializeField] private LayerMask _environmentMask;
 
         // ───── Private properties ────────────────────────────────────────────────
         
@@ -42,8 +47,7 @@ namespace Weapons
             
             if (_weaponHolder.HasWeapon)
             {
-                OnWeaponEquipped(_weaponHolder.ActiveWeapon,
-                    _weaponHolder.ActiveSlot);
+                OnWeaponEquipped(_weaponHolder.ActiveWeapon, _weaponHolder.ActiveSlot);
             }
         }
         private void OnDisable()
@@ -67,6 +71,7 @@ namespace Weapons
             UnsubscribeFromWeapon();
             _weapon = weapon;
             _weapon.OnFired += OnFired;
+            _weapon.OnHit += OnHit;
         }
         
         private void UnsubscribeFromWeapon()
@@ -74,6 +79,7 @@ namespace Weapons
             if (_weapon == null) { return; }
             
             _weapon.OnFired -= OnFired;
+            _weapon.OnHit -= OnHit;
             _weapon = null;
         }
         
@@ -82,6 +88,38 @@ namespace Weapons
             SpawnMuzzleFlash();
             SpawnShellCasing();
             SpawnBulletTrail(hitPoint);
+        }
+        
+        private void OnHit(RaycastHit hit, SurfaceType.Surface surface)
+        {
+            SpawnImpactVFX(hit, surface);
+            
+            bool isEnvironment = (_environmentMask.value & (1 << hit.collider.gameObject.layer)) != 0;
+            if (isEnvironment)
+                SpawnDebris(hit, surface);
+        }
+        
+        private void SpawnImpactVFX(RaycastHit hit, SurfaceType.Surface surface)
+        {
+            GameObject impactPrefab = _weapon?.Data?.GetImpactPrefab(surface);
+            if (impactPrefab == null)  { return; }
+            
+            Quaternion rotation = Quaternion.LookRotation(hit.normal);
+            ObjectPool.Get(impactPrefab, hit.point, rotation);
+        }
+        
+        private void SpawnDebris(RaycastHit hit, SurfaceType.Surface surface)
+        {
+            GameObject debrisPrefab = _weapon?.Data?.GetDebrisPrefab(surface);
+            if (debrisPrefab == null) { return; }
+            
+            Vector3 position = hit.point + hit.normal * 0.05f;
+            Quaternion rotation = Random.rotation;
+            
+            PooledObject debris = ObjectPool.Get(debrisPrefab, position, rotation);
+            
+            if (debris == null || !debris.TryGetComponent(out BulletDebris bd)) { return; }
+            bd.Launch(hit.normal);
         }
 
         private void SpawnMuzzleFlash()
@@ -100,7 +138,7 @@ namespace Weapons
             if (casing == null) { return; }
 
             if (casing.TryGetComponent(out ShellCasing sc))
-                sc.Eject(_shellEjectPoint.right);
+                sc.Eject(_shellEjectPoint.forward);
         }
         
         private void SpawnBulletTrail(Vector3 hitPoint)

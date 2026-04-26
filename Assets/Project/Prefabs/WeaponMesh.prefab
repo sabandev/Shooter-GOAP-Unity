@@ -60,6 +60,38 @@ PrefabInstance:
       propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.016599974
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.05669998
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.04690008
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.72791106
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.00000013863468
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.6856717
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.00000001695022
+      objectReference: {fileID: 0}
+    - target: {fileID: 6321331631718295165, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -273.423
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -88,6 +120,9 @@ MonoBehaviour:
   _weaponHolder: {fileID: 0}
   _muzzlePoint: {fileID: 4527928754628157934}
   _shellEjectPoint: {fileID: 6104100061637588731}
+  _environmentMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!4 &4527928754628157934 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4766620140861640344, guid: 40cb849895dd45645ac3fadcc88190af, type: 3}

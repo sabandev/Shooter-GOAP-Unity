@@ -106,6 +106,16 @@ namespace Weapons
         public GameObject ImpactConcretePrefab;
         public GameObject ImpactFleshPrefab;
         public GameObject ImpactGlassPrefab;
+        
+        [Space(10.0f)]
+        
+        [Header("Debris Prefabs")]
+        public GameObject DebrisDefaultPrefab;
+        public GameObject DebrisMetalPrefab;
+        public GameObject DebrisWoodPrefab;
+        public GameObject DebrisConcretePrefab;
+        public GameObject DebrisFleshPrefab;
+        public GameObject DebrisGlassPrefab;
 
         [Space(10.0f)]
         
@@ -159,6 +169,22 @@ namespace Weapons
                 SurfaceType.Surface.Glass => ImpactGlassSound,
                 _ => ImpactDefaultSound
             };
+        }
+        
+        public GameObject GetDebrisPrefab(SurfaceType.Surface surface)
+        {
+            GameObject prefab = surface switch
+            {                                                                                                                                                                                                                       
+                SurfaceType.Surface.Concrete => DebrisConcretePrefab,
+                SurfaceType.Surface.Wood => DebrisWoodPrefab,                                                                                                                                                                   
+                SurfaceType.Surface.Metal => DebrisMetalPrefab,
+                SurfaceType.Surface.Flesh => DebrisFleshPrefab,                                                                                                                                                                  
+                SurfaceType.Surface.Glass => DebrisGlassPrefab,
+                _ => DebrisDefaultPrefab                                                                                                                                                                 
+            };          
+                                                                                                                                                                                                                              
+            return prefab != null ? prefab : DebrisDefaultPrefab;
+
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Weapons
         public event Action OnReloadStarted;
         public event Action OnReloadCompleted;
         public event Action<int, int> OnAmmoChanged;
+        public event Action<RaycastHit, SurfaceType.Surface> OnHit;
         
         public WeaponData Data => _data;
         
@@ -182,16 +183,11 @@ namespace Weapons
         {
             if (hit.collider.TryGetComponent(out IHealth targetHealth))
                 targetHealth.TakeDamage(_data.Damage);
-
-            SurfaceType surface = hit.collider.GetComponentInParent<SurfaceType>();
-
-            SurfaceType.Surface type = surface != null ? surface.Type : SurfaceType.Surface.Default;
-
-            GameObject impactPrefab = _data.GetImpactPrefab(type);
-            if (impactPrefab == null) { return;}
-                
-            Quaternion impactRotation = Quaternion.LookRotation(hit.normal);
-            ObjectPool.Get(impactPrefab,hit.point, impactRotation);
+            
+            SurfaceType surfaceComp = hit.collider.GetComponentInParent<SurfaceType>();
+            SurfaceType.Surface type = surfaceComp != null ? surfaceComp.Type : SurfaceType.Surface.Default;
+            
+            OnHit?.Invoke(hit, type);
             
             SoundData impactSound = _data.GetImpactSound(type);
             AudioManager.Instance.Play(impactSound, hit.point);

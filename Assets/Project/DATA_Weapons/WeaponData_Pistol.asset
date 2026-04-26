@@ -93,6 +93,12 @@ MonoBehaviour:
   ImpactConcretePrefab: {fileID: 0}
   ImpactFleshPrefab: {fileID: 0}
   ImpactGlassPrefab: {fileID: 0}
+  DebrisDefaultPrefab: {fileID: 8348424212931227147, guid: b388a8bb92f6440c1806c28e1a2c0265, type: 3}
+  DebrisMetalPrefab: {fileID: 0}
+  DebrisWoodPrefab: {fileID: 0}
+  DebrisConcretePrefab: {fileID: 0}
+  DebrisFleshPrefab: {fileID: 0}
+  DebrisGlassPrefab: {fileID: 0}
   ImpactDefaultSound: {fileID: 11400000, guid: 042d70b702cf048598f0c5334f36fc5d, type: 2}
   ImpactMetalSound: {fileID: 0}
   ImpactWoodSound: {fileID: 0}
