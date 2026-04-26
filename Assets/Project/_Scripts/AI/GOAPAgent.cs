@@ -61,10 +61,15 @@ namespace GOAP
         // ───── Editor properties ────────────────────────────────────────────────
         
         public GOAPGoal ActiveGoal => _activeGoal;
+        
         public List<GOAPActionInstance> CurrentPlan => _currentPlan;
-        public int CurrentActionIndex => _currentActionIndex;
+        
         public IReadOnlyList<GOAPGoal> Goals => _goals;
         public IReadOnlyList<GOAPActionInstance> ActionInstances => _actionInstances;
+        
+        public int CurrentActionIndex => _currentActionIndex;
+        
+        public bool IsPaused { get; private set; }
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
@@ -85,108 +90,8 @@ namespace GOAP
             TickPlanning();
         }
 
-        // ───── Private methods ────────────────────────────────────────────────
-
-        /// <summary>
-        /// Builds a GOAPActionInstance for every GOAPActionData the agent has.
-        /// Each will be used for whole agent lifecycle.
-        /// </summary>
-        private void InitializeActionInstances()
-        {
-            _actionInstances = new List<GOAPActionInstance>(_actionDataAssets.Count);
-
-            foreach (GOAPActionData data in _actionDataAssets)
-            {
-                if (data == null)
-                {
-                    Debug.LogWarning($"[GOAPAgent] Action data null on {name}. Skipping this GOAPActionData.");
-                    continue;
-                }
-
-                _actionInstances.Add(data.CreateInstance(this));
-            }
-        }
-
-        private void RegisterReplanCallbacks()
-        {
-            Blackboard.RegisterChangeCallback(BlackboardKeys.TARGET_VISIBLE, _ => OnSignificantFactChanged());
-        }
-
-        /// <summary>
-        /// Runs every frame. Handles the current action's execution loop and transitions between actions in the plan.
-        /// </summary>
-        private void TickActionExecution()
-        {
-            if (_currentPlan == null || _currentActionIndex >= _currentPlan.Count) { return; }
-
-            GOAPActionInstance activeAction = _currentPlan[_currentActionIndex];
-            ActionStatus status = activeAction.Perform();
-
-            switch(status)
-            {
-                case ActionStatus.Running:
-                // no-op
-                // Keep executing action next frame
-                break;
-
-                case ActionStatus.Succeeded:
-                OnActionSucceeded(activeAction);
-                break;
-
-                case ActionStatus.Failed:
-                OnActionFailed(activeAction);
-                break;
-            }
-        }
-
-        /// <summary>
-        /// Runs every specified planning tick (1-10Hz usually).
-        /// Constantly calculates the most important goal and triggers a re-plan if the best
-        /// goal is not the current goal OR if there is no current plan.
-        /// </summary>
-        private void TickPlanning()
-        {
-            // Re-plan optimisation
-            _planningTickTimer -= Time.deltaTime;
-            if (_planningTickTimer > 0.0f) { return; }
-            _planningTickTimer = 1.0f / _planningTickRate;
-
-            GOAPGoal bestGoal = SelectBestGoal();
-            if (bestGoal == null) { return; }
-
-            bool needsReplan = _currentPlan == null || bestGoal != _activeGoal;
-            if (!needsReplan) { return; }
-
-            RequestReplan(bestGoal, "Goal changed");
-        }
-
-        /// <summary>
-        /// Evaluates all agent goals and returns the one with the highest priority given the WorldState
-        /// </summary>
-        /// <returns></returns>
-        private GOAPGoal SelectBestGoal()
-        {
-            GOAPGoal bestGoal = null;
-            int bestPriority = int.MinValue;
-
-            WorldState currentState = Blackboard.WorldState;
-
-            foreach (GOAPGoal goal in _goals)
-            {
-                if (goal == null) { continue; }
-
-                int priority = goal.EvaluatePriority(currentState);
-
-                if (priority > bestPriority)
-                {
-                    bestPriority = priority;
-                    bestGoal = goal;
-                }
-            }
-
-            return bestGoal;
-        }
-
+        // ───── Public methods ────────────────────────────────────────────────
+        
         /// <summary>
         /// Aborts the current plan, requests a fresh plan from the GOAP planner with the given goal and 
         /// runs the plan if one is returned.
@@ -249,6 +154,112 @@ namespace GOAP
             firstAction.OnStart();
         }
 
+        // ───── Private methods ────────────────────────────────────────────────
+
+        /// <summary>
+        /// Builds a GOAPActionInstance for every GOAPActionData the agent has.
+        /// Each will be used for whole agent lifecycle.
+        /// </summary>
+        private void InitializeActionInstances()
+        {
+            _actionInstances = new List<GOAPActionInstance>(_actionDataAssets.Count);
+
+            foreach (GOAPActionData data in _actionDataAssets)
+            {
+                if (data == null)
+                {
+                    Debug.LogWarning($"[GOAPAgent] Action data null on {name}. Skipping this GOAPActionData.");
+                    continue;
+                }
+
+                _actionInstances.Add(data.CreateInstance(this));
+            }
+        }
+
+        private void RegisterReplanCallbacks()
+        {
+            Blackboard.RegisterChangeCallback(BlackboardKeys.TARGET_VISIBLE, _ => OnSignificantFactChanged());
+        }
+
+        /// <summary>
+        /// Runs every frame. Handles the current action's execution loop and transitions between actions in the plan.
+        /// </summary>
+        private void TickActionExecution()
+        {
+            if (IsPaused) { return; }
+            
+            if (_currentPlan == null || _currentActionIndex >= _currentPlan.Count) { return; }
+
+            GOAPActionInstance activeAction = _currentPlan[_currentActionIndex];
+            ActionStatus status = activeAction.Perform();
+
+            switch(status)
+            {
+                case ActionStatus.Running:
+                // no-op
+                // Keep executing action next frame
+                break;
+
+                case ActionStatus.Succeeded:
+                OnActionSucceeded(activeAction);
+                break;
+
+                case ActionStatus.Failed:
+                OnActionFailed(activeAction);
+                break;
+            }
+        }
+
+        /// <summary>
+        /// Runs every specified planning tick (1-10Hz usually).
+        /// Constantly calculates the most important goal and triggers a re-plan if the best
+        /// goal is not the current goal OR if there is no current plan.
+        /// </summary>
+        private void TickPlanning()
+        {
+            if (IsPaused) { return; }
+            
+            // Re-plan optimisation
+            _planningTickTimer -= Time.deltaTime;
+            if (_planningTickTimer > 0.0f) { return; }
+            _planningTickTimer = 1.0f / _planningTickRate;
+
+            GOAPGoal bestGoal = SelectBestGoal();
+            if (bestGoal == null) { return; }
+
+            bool needsReplan = _currentPlan == null || bestGoal != _activeGoal;
+            if (!needsReplan) { return; }
+
+            RequestReplan(bestGoal, "Goal changed");
+        }
+
+        /// <summary>
+        /// Evaluates all agent goals and returns the one with the highest priority given the WorldState
+        /// </summary>
+        /// <returns></returns>
+        private GOAPGoal SelectBestGoal()
+        {
+            GOAPGoal bestGoal = null;
+            int bestPriority = int.MinValue;
+
+            WorldState currentState = Blackboard.WorldState;
+
+            foreach (GOAPGoal goal in _goals)
+            {
+                if (goal == null) { continue; }
+
+                int priority = goal.EvaluatePriority(currentState);
+
+                if (priority > bestPriority)
+                {
+                    bestPriority = priority;
+                    bestGoal = goal;
+                }
+            }
+
+            return bestGoal;
+        }
+        
         private void RecordPlanHistory(GOAPGoal goal, string triggerReason, List<GOAPActionInstance> plan, int nodesExpanded, bool planFound)
         {
             var actionNames = planFound ? plan.ConvertAll(a => a.Data.ActionName) : new List<string>();
@@ -345,11 +356,6 @@ namespace GOAP
             RequestReplan(currentGoal, "Significant fact changed");
         }
 
-        /// <summary>
-        /// Used by GOAP debugger to clear history at runtime
-        /// </summary>
-        public void ClearPlanHistory() => _planHistory.Clear();
-
         // ───── Helper methods ────────────────────────────────────────────────
         
         #if UNITY_EDITOR
@@ -381,6 +387,48 @@ namespace GOAP
                 Gizmos.DrawLine(transform.position, NavAgent.destination);
                 Gizmos.DrawWireSphere(NavAgent.destination, 0.3f);
             }
+        }
+        
+        /// <summary>
+        /// Used by GOAP debugger to clear history at runtime
+        /// </summary>
+        public void ClearPlanHistory() => _planHistory.Clear();
+        
+        public void Pause()
+        {
+            IsPaused = true;
+            NavAgent.isStopped = true;
+        }
+        
+        public void Resume()
+        {
+            IsPaused = false;
+            NavAgent.isStopped = false;
+        }
+        
+        public void Step()
+        {
+            if (IsPaused) { return; }
+            if (_currentPlan == null || _currentActionIndex >= _currentPlan.Count) {  return; }
+            
+            GOAPActionInstance current = _currentPlan[_currentActionIndex];
+            current.OnEnd();
+            current.OnReset();
+            
+            _currentActionIndex++;
+            
+            if (_currentActionIndex >= _currentPlan.Count)
+            {
+                if (_debugLogging)
+                    Debug.Log($"[GOAPAgent] '{name}' stepped through last action. Plan complete.", this);
+                
+                _currentPlan = null;
+                _activeGoal = null;
+                return;
+            }
+            
+            GOAPActionInstance next = _currentPlan[_currentActionIndex];
+            next.OnStart();
         }
         #endif
     }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Weapons
         // ───── Serialized properties ────────────────────────────────────────────────
         
         [Header("Pooling")]
-        [SerializeField] [Min(1)]  private int _maxCount = 20;
+        [SerializeField] [Min(1)] private int _maxCount = 20;
         
         [Space(10.0f)]
         
@@ -44,8 +45,15 @@ namespace Weapons
             Debug.Assert(_pooledObject != null, "[BulletDebris] PooledObject is null.", this);
         }
         
-        private void OnEnable() => _activeBulletDebris.Add(this);
-        private void OnDisable() => _activeBulletDebris.Remove(this);
+        private void OnEnable()
+        {
+            _activeBulletDebris.Add(this);
+        }
+            
+        private void OnDisable()
+        {
+            _activeBulletDebris.Remove(this);
+        }
 
         // ───── Public methods ────────────────────────────────────────────────
         

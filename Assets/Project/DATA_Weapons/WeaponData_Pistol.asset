@@ -15,12 +15,13 @@ MonoBehaviour:
   WeaponName: Pistol
   HUDIcon: {fileID: 21300000, guid: 5de2ff934a8b3ea4ebfe923a6f958686, type: 3}
   Damage: 25
+  ImpactForce: 8
   FireRate: 8
   Range: 50
   Spread: 1.5
   Mode: 0
   MagazineSize: 8
-  MaxReserveAmmo: 16
+  MaxReserveAmmo: 120
   ReloadDuration: 2
   ReloadRefillTime: 0.6
   RecoilVertical:

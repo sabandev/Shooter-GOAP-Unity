@@ -72,7 +72,7 @@ namespace Player
         {
             _animator.SetBool(_weaponEquippedHash, true);
             _animator.SetBool(_isReloadingHash, weapon.IsReloading);
-            _weaponAnimator.SetBool(_weaponEmptyBoolHash, weapon.IsEmpty);
+            _weaponAnimator?.SetBool(_weaponEmptyBoolHash, weapon.IsEmpty);
             SubscribeToWeapon(weapon);
         }
 

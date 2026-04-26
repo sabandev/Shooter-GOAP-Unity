@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -11,7 +12,8 @@ namespace GOAP.Editor
     [CustomEditor(typeof(GOAPAgent))]
     public sealed class GOAPAgentEditor : UnityEditor.Editor
     {
-        // -----Styles-----
+        // ───── Styles ────────────────────────────────────────────────
+        
         private static class Styles
         {
             public static readonly GUIStyle DiagnosticsHeader;
@@ -91,7 +93,8 @@ namespace GOAP.Editor
             }
         }
 
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private bool _showGoals = true;
         private bool _showActions = true;
         private bool _showPlan = true;
@@ -101,10 +104,12 @@ namespace GOAP.Editor
         private readonly Dictionary<string, bool> _proceduralCache = new();
         private float _proceduralCacheTime;
 
-        // -----Constants-----
+        // ───── Constants ────────────────────────────────────────────────
+        
         private const float PROCEDURAL_CACHE_REFRESH_INTERVAL = 0.2f;
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void OnEnable()
         {
             // Allows inspector to constantly be re-painted, not just when it is interacted with
@@ -122,7 +127,8 @@ namespace GOAP.Editor
                 Repaint();
         }
 
-        // -----Inspector GUI-----
+        // ───── Inspector GUI ────────────────────────────────────────────────
+        
         public override void OnInspectorGUI()
         {
             GOAPAgent agent = (GOAPAgent)target;
@@ -157,7 +163,8 @@ namespace GOAP.Editor
             DrawControlsPanel(agent);
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
+        
         private void DrawEditModeMessage()
         {
             EditorGUILayout.Space(4.0f);
@@ -339,7 +346,7 @@ namespace GOAP.Editor
                 EditorGUILayout.EndHorizontal();
             }
 
-            if (!snapshot.GetFacts().GetEnumerator().MoveNext())
+            if (!snapshot.GetFacts().Any())
             {
                 EditorGUILayout.LabelField("Blackboard is empty.", EditorStyles.centeredGreyMiniLabel);
             }
@@ -363,15 +370,31 @@ namespace GOAP.Editor
                 Debug.Log($"[GOAPAgentEditor] Forced re-plan triggered on {agent.name}.");
             }
 
-            GUI.enabled = false; // TODO: Pause and Step functionality
-            GUILayout.Button("Pause", GUILayout.Height(24.0f));
-            GUILayout.Button("Step", GUILayout.Height(24.0f));
+            string pauseLabel = agent.IsPaused ? "Resume" : "Pause";
+            if (GUILayout.Button(pauseLabel, GUILayout.Height(24.0f)))
+            {
+                if (agent.IsPaused) { agent.Resume(); }
+                else { agent.Pause(); }
+            }
+            
+            bool canStep = agent.IsPaused && agent.CurrentPlan != null && agent.CurrentActionIndex < agent.CurrentPlan.Count;
+            
+            GUI.enabled = canStep;
+            if (GUILayout.Button("Step", GUILayout.Height(24.0f)))
+                agent.Step();
             GUI.enabled = true;
 
             EditorGUILayout.EndHorizontal();
+            
+            if (agent.IsPaused)
+            {
+                EditorGUILayout.Space(2.0f);
+                EditorGUILayout.HelpBox("Agent is paused. Step advances to the next action. Inspect the Blackboard between steps.", MessageType.Info);
+            }
         }
 
-        // -----Helper methods-----
+        // ───── Helper methods ────────────────────────────────────────────────
+        
         private static void DrawDivider()
         {
             Rect rect = EditorGUILayout.GetControlRect(false, 1.0f, GUILayout.ExpandWidth(true));

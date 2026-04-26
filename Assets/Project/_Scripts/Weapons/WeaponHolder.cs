@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using Audio;
+using Random = UnityEngine.Random;
 
 namespace Weapons
 {
@@ -17,8 +19,16 @@ namespace Weapons
     public sealed class WeaponHolder : MonoBehaviour
     {
         // ─── Serialized properties ───────────────────────────────────────────────────
+        [Header("Starting Weapons")]
+        [SerializeField] private Weapon _startingFirstWeapon;
+        [SerializeField] private Weapon _startingSecondWeapon;
+        
+        [Space(10.0f)]
+        
         [Header("Weapon Dropping")]
         [SerializeField] [Min(0.01f)] private float _dropForce = 2.0f;
+        
+        [Space(10.0f)]
         
         [Header("Audio")]
         [SerializeField] private SoundData _equipSound;
@@ -32,16 +42,27 @@ namespace Weapons
 
         // ─── Public properties ───────────────────────────────────────────────
 
-        public event System.Action<Weapon, int> OnWeaponEquipped;
-        public event System.Action<int>         OnWeaponUnequipped;
-        public event System.Action<Weapon, int> OnWeaponPickedUp;
-        public event System.Action<Weapon>      OnWeaponDropped;
+        public event Action<Weapon, int> OnWeaponEquipped;
+        public event Action<int> OnWeaponUnequipped;
+        public event Action<Weapon, int> OnWeaponPickedUp;
+        public event Action<Weapon> OnWeaponDropped;
         
         public Weapon ActiveWeapon => _activeSlot >= 0 ? _slots[_activeSlot] : null;
         public Weapon GetWeapon(int slot) => slot >= 0 && slot < _slots.Length ? _slots[slot] : null;
 
-        public int    ActiveSlot => _activeSlot;
-        public bool   HasWeapon  => ActiveWeapon != null;
+        public int ActiveSlot => _activeSlot;
+        public bool HasWeapon  => ActiveWeapon != null;
+
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+
+        private void Start()
+        {
+            if (_startingFirstWeapon != null)
+                TryPickupWeapon(_startingFirstWeapon);
+            
+            if (_startingSecondWeapon != null)
+                TryPickupWeapon(_startingSecondWeapon);
+        }
 
 
         // ─── Public methods ───────────────────────────────────────────────
@@ -70,16 +91,15 @@ namespace Weapons
         public void EquipSlot(int slot)
         {
             if (slot < 0 || slot >= _slots.Length) { return; }
-            if (_slots[slot] == null)               { return; }
-            if (slot == _activeSlot)                { return; }
+            if (_slots[slot] == null) { return; }
+            if (slot == _activeSlot) { return; }
 
             if (_activeSlot >= 0)
                 UnequipCurrent();
 
             _activeSlot = slot;
 
-            // _slots[slot].gameObject.SetActive(false);
-            _slots[slot].OnEquipped();
+            _slots[slot].OnEquipped(gameObject.layer);
 
             OnWeaponEquipped?.Invoke(_slots[slot], slot);
             AudioManager.Instance.Play(_equipSound, transform.position);

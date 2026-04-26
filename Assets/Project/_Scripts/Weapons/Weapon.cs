@@ -126,12 +126,14 @@ namespace Weapons
             return true;
         }
 
-        public void OnEquipped()
+        public void OnEquipped(int ownerLayer)
         {
             _isHeld              = true;
             _smartObject.enabled = false;
             RigidBody.isKinematic = true;
             SetRanderersEnabled(false);
+            
+            _hitMask = ~LayerMask.GetMask("ViewModel", "WorldModel") & ~(1 << ownerLayer); // Prevents player/AI from shooting themselves
         }
 
         public void OnDropped()
@@ -142,6 +144,8 @@ namespace Weapons
             _smartObject.enabled = true;
             RigidBody.isKinematic = false;
             SetRanderersEnabled(true);
+            
+            _hitMask = ~LayerMask.GetMask("ViewModel", "WorldModel");
         }
 
         // ─── Private methods ──────────────────────────────────────────
@@ -153,7 +157,7 @@ namespace Weapons
 
             Vector3 spread = new Vector3(UnityEngine.Random.Range(-_data.Spread, _data.Spread), UnityEngine.Random.Range(-_data.Spread, _data.Spread), 0.0f) * Mathf.Deg2Rad;
 
-            // Fire from camera since this is first person
+            // Fire from camera
             Camera mainCam = Camera.main;
             if (mainCam == null) { return; }
 
@@ -163,7 +167,7 @@ namespace Weapons
             
             if (Physics.Raycast(origin, direction, out RaycastHit hit, _data.Range, _hitMask))
             {
-                ProcessHit(hit);
+                ProcessHit(hit, direction);
                 hitPoint = hit.point;
             }
             else
@@ -179,10 +183,13 @@ namespace Weapons
                 StartReload();
         }
 
-        private void ProcessHit(RaycastHit hit)
+        private void ProcessHit(RaycastHit hit, Vector3 direction)
         {
             if (hit.collider.TryGetComponent(out IHealth targetHealth))
                 targetHealth.TakeDamage(_data.Damage);
+            
+            if (hit.collider.TryGetComponent(out IImpactReceiver impactReceiver))
+                impactReceiver.ReceiveImpact(hit.point, direction, _data.ImpactForce);
             
             SurfaceType surfaceComp = hit.collider.GetComponentInParent<SurfaceType>();
             SurfaceType.Surface type = surfaceComp != null ? surfaceComp.Type : SurfaceType.Surface.Default;

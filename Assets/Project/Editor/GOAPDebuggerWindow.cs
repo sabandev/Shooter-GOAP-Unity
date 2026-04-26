@@ -491,6 +491,7 @@ namespace GOAP.Editor
             if (snapshot == null)
             {
                 EditorGUILayout.LabelField("Waiting for WorldState data...", EditorStyles.centeredGreyMiniLabel);
+                return;
             }
 
             bool hasAnyFacts = false;
