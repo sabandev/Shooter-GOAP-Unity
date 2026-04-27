@@ -52,7 +52,7 @@ namespace Player
         [Space(10.0f)]
         
         [Header("Crouch")]
-        [SerializeField] private PlayerCrouchSettings _crouchSettings;
+        [SerializeField] public PlayerCrouchSettings _crouchSettings;
 
         [Space(10.0f)]
         

@@ -217,6 +217,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Button"",
+                    ""id"": ""42a70947-cc6d-4f0c-9ad4-cc611a718a84"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeanLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""5466f816-daec-4ab1-bf1e-52f20febeb72"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeanRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""8765614e-50fe-4603-9607-34b07335cf12"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -355,7 +382,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4bde5f17-9fcd-4295-8308-5ae0cb1bdbc1"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";KAM"",
@@ -516,6 +543,72 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ScrollWeapon"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7abbf7ee-23fd-4365-9768-c5dffe9674eb"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ef5050d2-4a0d-4fb4-b858-eea36bf5ecc3"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e3b0e91-b534-4e55-a638-61a381ba1157"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""LeanLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f6890d31-edc3-4712-8527-382d38d8e44f"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""LeanLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4452ad42-415c-4d13-8d9e-1bd77a038ed3"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KAM"",
+                    ""action"": ""LeanRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8744941b-0309-4f68-8ef1-911249dad7ce"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Controller"",
+                    ""action"": ""LeanRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -566,6 +659,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_CycleWeaponButton = m_Player.FindAction("CycleWeaponButton", throwIfNotFound: true);
         m_Player_DropWeapon = m_Player.FindAction("DropWeapon", throwIfNotFound: true);
         m_Player_ScrollWeapon = m_Player.FindAction("ScrollWeapon", throwIfNotFound: true);
+        m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_LeanLeft = m_Player.FindAction("LeanLeft", throwIfNotFound: true);
+        m_Player_LeanRight = m_Player.FindAction("LeanRight", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -660,6 +756,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CycleWeaponButton;
     private readonly InputAction m_Player_DropWeapon;
     private readonly InputAction m_Player_ScrollWeapon;
+    private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_LeanLeft;
+    private readonly InputAction m_Player_LeanRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -728,6 +827,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ScrollWeapon => m_Wrapper.m_Player_ScrollWeapon;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Aim".
+        /// </summary>
+        public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LeanLeft".
+        /// </summary>
+        public InputAction @LeanLeft => m_Wrapper.m_Player_LeanLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LeanRight".
+        /// </summary>
+        public InputAction @LeanRight => m_Wrapper.m_Player_LeanRight;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -795,6 +906,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ScrollWeapon.started += instance.OnScrollWeapon;
             @ScrollWeapon.performed += instance.OnScrollWeapon;
             @ScrollWeapon.canceled += instance.OnScrollWeapon;
+            @Aim.started += instance.OnAim;
+            @Aim.performed += instance.OnAim;
+            @Aim.canceled += instance.OnAim;
+            @LeanLeft.started += instance.OnLeanLeft;
+            @LeanLeft.performed += instance.OnLeanLeft;
+            @LeanLeft.canceled += instance.OnLeanLeft;
+            @LeanRight.started += instance.OnLeanRight;
+            @LeanRight.performed += instance.OnLeanRight;
+            @LeanRight.canceled += instance.OnLeanRight;
         }
 
         /// <summary>
@@ -848,6 +968,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ScrollWeapon.started -= instance.OnScrollWeapon;
             @ScrollWeapon.performed -= instance.OnScrollWeapon;
             @ScrollWeapon.canceled -= instance.OnScrollWeapon;
+            @Aim.started -= instance.OnAim;
+            @Aim.performed -= instance.OnAim;
+            @Aim.canceled -= instance.OnAim;
+            @LeanLeft.started -= instance.OnLeanLeft;
+            @LeanLeft.performed -= instance.OnLeanLeft;
+            @LeanLeft.canceled -= instance.OnLeanLeft;
+            @LeanRight.started -= instance.OnLeanRight;
+            @LeanRight.performed -= instance.OnLeanRight;
+            @LeanRight.canceled -= instance.OnLeanRight;
         }
 
         /// <summary>
@@ -1012,5 +1141,26 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnScrollWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Aim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAim(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LeanLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeanLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LeanRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeanRight(InputAction.CallbackContext context);
     }
 }

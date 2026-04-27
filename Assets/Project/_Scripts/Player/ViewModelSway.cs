@@ -25,7 +25,10 @@ namespace Player
         // ───── Private properties ────────────────────────────────────────────────
         
         private PlayerInputActions _input;
+        
         private Quaternion _currentSway = Quaternion.identity;
+        
+        private float _aimMultiplier = 1.0f;
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
@@ -35,13 +38,12 @@ namespace Player
 
         private void Update()
         {
-            float amount = _weaponHolder.HasWeapon ? _swayAmount : _swayAmount * 0.3f;
+            float amount = _weaponHolder.HasWeapon ? _swayAmount * _aimMultiplier : _swayAmount * 0.3f;
 
             Vector2 look = _input.Player.Look.ReadValue<Vector2>();
 
             float swayX = Mathf.Clamp(-look.y * amount, -_swayMaxAngle, _swayMaxAngle);
-            float swayY = Mathf.Clamp(look.x * amount, -_swayMaxAngle, _swayMaxAngle);
-            
+            float swayY = Mathf.Clamp(look.x * amount, -_swayMaxAngle * _aimMultiplier, _swayMaxAngle * _aimMultiplier);
             float swayZ = Mathf.Clamp(-look.x * _rollAmount, -_rollMaxAngle, _rollMaxAngle);
 
             Quaternion target = Quaternion.Euler(swayX, swayY, swayZ);
@@ -50,5 +52,9 @@ namespace Player
 
             transform.localRotation = _currentSway;
         }
+
+        // ───── Public properties ────────────────────────────────────────────────
+        
+        public void SetAimMultiplier(float multiplier) => _aimMultiplier = multiplier;
     }
 }

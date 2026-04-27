@@ -2,7 +2,8 @@
     "name": "GOAP",
     "rootNamespace": "",
     "references": [
-        "GUID:f1d768a4e5adb45a98643d3c7cfcd07e"
+        "GUID:f1d768a4e5adb45a98643d3c7cfcd07e",
+        "GUID:d5030e33d76fd47f4aab71872243fee5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

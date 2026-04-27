@@ -71,7 +71,7 @@ namespace GOAP
         }
 
         /// <summary>
-        /// NOTE: Can make a no-op if we want the current waypoint index to persist across plans (resuming waypoint behaviour)
+        /// Can make a no-op if we want the current waypoint index to persist across plans (resuming waypoint behaviour).
         /// </summary>
         public override void OnReset()
         {

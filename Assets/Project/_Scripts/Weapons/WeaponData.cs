@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Audio;
 
@@ -34,6 +35,12 @@ namespace Weapons
         [Min(0.1f)] public float Range = 50.0f;
         [Min(0.0f)] public float Spread = 1.5f; // degrees
         public FireMode Mode = FireMode.SemiAuto;
+        
+        [Space(10.0f)]
+        
+        [Header("Aiming")]
+        [Range(-40.0f, 0.0f)] public float AimFOVOffset = -20.0f; // degrees to zoom
+        [Range(0.0f, 1.0f)] public float AimSpreadMultiplier = 0.3f; // x% of base spread when aimed
         
         [Space(10.0f)]
 

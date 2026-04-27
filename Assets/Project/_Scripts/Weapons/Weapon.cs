@@ -66,11 +66,15 @@ namespace Weapons
         // ─── Private properties ────────────────────────────────────────────
 
         private SmartObject _smartObject;
+        
+        private LayerMask _hitMask;
+        
         private float _fireTimer;
         private float _reloadTimer;
+        
         private bool _reloadRefilled;
         private bool _isHeld;
-        private LayerMask _hitMask;
+        private bool _isAiming;
 
         // ─── Lifecycle methods ──────────────────────────────────────────
 
@@ -128,7 +132,7 @@ namespace Weapons
 
         public void OnEquipped(int ownerLayer)
         {
-            _isHeld              = true;
+            _isHeld = true;
             _smartObject.enabled = false;
             RigidBody.isKinematic = true;
             SetRanderersEnabled(false);
@@ -138,15 +142,18 @@ namespace Weapons
 
         public void OnDropped()
         {
-            _isHeld              = false;
-            IsReloading          = false;
-            _reloadTimer         = 0.0f;
+            _isHeld = false;
+            IsReloading = false;
+            _isAiming = false;
+            _reloadTimer = 0.0f;
             _smartObject.enabled = true;
             RigidBody.isKinematic = false;
             SetRanderersEnabled(true);
             
             _hitMask = ~LayerMask.GetMask("ViewModel", "WorldModel");
         }
+        
+        public void SetAiming(bool value) => _isAiming = value;
 
         // ─── Private methods ──────────────────────────────────────────
 
@@ -155,14 +162,15 @@ namespace Weapons
             CurrentAmmo--;
             _fireTimer = 1.0f / _data.FireRate;
 
-            Vector3 spread = new Vector3(UnityEngine.Random.Range(-_data.Spread, _data.Spread), UnityEngine.Random.Range(-_data.Spread, _data.Spread), 0.0f) * Mathf.Deg2Rad;
+            float spread = _data.Spread * (_isAiming ? _data.AimSpreadMultiplier : 1.0f);
+            Vector3 spreadVector = new Vector3(UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread), 0.0f) * Mathf.Deg2Rad;
 
             // Fire from camera
             Camera mainCam = Camera.main;
             if (mainCam == null) { return; }
 
             Vector3 origin    = mainCam.transform.position;
-            Vector3 direction = mainCam.transform.forward + spread;
+            Vector3 direction = mainCam.transform.forward + spreadVector;
             Vector3 hitPoint;
             
             if (Physics.Raycast(origin, direction, out RaycastHit hit, _data.Range, _hitMask))

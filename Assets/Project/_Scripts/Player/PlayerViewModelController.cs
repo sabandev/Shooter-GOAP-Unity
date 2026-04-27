@@ -72,7 +72,9 @@ namespace Player
         {
             _animator.SetBool(_weaponEquippedHash, true);
             _animator.SetBool(_isReloadingHash, weapon.IsReloading);
-            _weaponAnimator?.SetBool(_weaponEmptyBoolHash, weapon.IsEmpty);
+            
+            if (_weaponAnimator != null)
+                _weaponAnimator.SetBool(_weaponEmptyBoolHash, weapon.IsEmpty);
             SubscribeToWeapon(weapon);
         }
 
@@ -88,7 +90,7 @@ namespace Player
             _weaponAnimator = weaponAnimator;
             
             if (_subscribedWeapon != null)
-                _weaponAnimator.SetBool(_weaponEmptyBoolHash, _subscribedWeapon.IsEmpty);
+                _weaponAnimator?.SetBool(_weaponEmptyBoolHash, _subscribedWeapon.IsEmpty);
         }
         private void OnWeaponMeshDespawned() { _weaponAnimator = null; }
 
@@ -115,24 +117,24 @@ namespace Player
         private void OnFired(Vector3 hitPoint)
         {
             _animator.Play(_firingStateHash, 0, 0.0f);
-            _weaponAnimator.Play(_weaponFireStateHash, 0, 0.0f);
+            _weaponAnimator?.Play(_weaponFireStateHash, 0, 0.0f);
         }
 
         private void OnReloadStarted()
         {
             _animator.SetBool(_isReloadingHash, true);
-            _weaponAnimator.SetBool(_weaponReloadBoolHash, true);
+            _weaponAnimator?.SetBool(_weaponReloadBoolHash, true);
         }
 
         private void OnReloadCompleted()
         {
             _animator.SetBool(_isReloadingHash, false);
-            _weaponAnimator.SetBool(_weaponReloadBoolHash, false);
+            _weaponAnimator?.SetBool(_weaponReloadBoolHash, false);
         }
         
         private void OnAmmoChanged(int current, int reserve)
         {
-            _weaponAnimator.SetBool(_weaponEmptyBoolHash, current == 0);
+            _weaponAnimator?.SetBool(_weaponEmptyBoolHash, current == 0);
         }
     }
 }

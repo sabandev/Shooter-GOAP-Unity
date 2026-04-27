@@ -10,6 +10,7 @@ namespace Player
         // ─── Serialized properies ────────────────────────────────────────
         [Header("References")]
         [SerializeField] private FPSController _controller;
+        [SerializeField] private PlayerLeanController _leanController;
 
         [Space(10.0f)]
         
@@ -36,8 +37,9 @@ namespace Player
         private PlayerInputActions _input;
 
         // Look 
-        private float   _pitch;
-        private float   _yaw;
+        private float _pitch;
+        private float _yaw;
+        private float _sensitivityMultiplier = 1.0f;
         private Vector2 _smoothedLookDelta;
 
         // Eye height 
@@ -45,8 +47,8 @@ namespace Player
         private float _targetEyeHeight;
 
         // Head bob 
-        private float   _bobTimer;
-        private float   _bobWeight;
+        private float _bobTimer;
+        private float _bobWeight;
         private Vector3 _bobOffset;
 
         // ─── Lifecycle methods ──────────────────────────────────────────
@@ -91,7 +93,7 @@ namespace Player
                 return;
             }
             
-            Vector2 lookDelta = _input.Player.Look.ReadValue<Vector2>() * _sensitivity;
+            Vector2 lookDelta = _input.Player.Look.ReadValue<Vector2>() * _sensitivity * _sensitivityMultiplier;
 
             // Smooth mouse input
             _smoothedLookDelta = Vector2.Lerp( _smoothedLookDelta, lookDelta, 1.0f - Mathf.Pow(0.1f, Time.deltaTime * 60.0f * (1.0f - _lookSmoothing)));
@@ -149,9 +151,12 @@ namespace Player
         
         private void ApplyTransform()
         {
-            transform.position = _controller.transform.position + Vector3.up * _currentEyeHeight + _bobOffset + transform.forward * _cameraForwardOffset;
+            Vector3 leanOffset = _leanController != null ? _leanController.WorldLeanOffset : Vector3.zero;
+            float leanRoll = _leanController != null ? _leanController.LeanRoll : 0.0f;
             
-            transform.rotation = Quaternion.Euler(_pitch, _yaw, 0.0f);
+            transform.position = _controller.transform.position + Vector3.up * _currentEyeHeight + _bobOffset + transform.forward * _cameraForwardOffset +  leanOffset;
+            
+            transform.rotation = Quaternion.Euler(_pitch, _yaw, leanRoll);
         }
 
         // ───── Public methods ────────────────────────────────────────────────
@@ -160,5 +165,7 @@ namespace Player
             _pitch -= pitchKick;
             _pitch = Mathf.Clamp(_pitch, -_maxPitchAngle, _maxPitchAngle);
         }
+        
+        public void SetSensitivityMultiplier(float multiplier) => _sensitivityMultiplier = multiplier;
     }
 }
