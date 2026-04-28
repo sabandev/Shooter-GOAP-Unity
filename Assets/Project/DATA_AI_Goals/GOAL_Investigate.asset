@@ -11,13 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebe62d42d34d74de9901a2268e9e5159, type: 3}
   m_Name: GOAL_Investigate
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.InvestigateGoal
-  _goalName: Investigate Goal
-  _basePriority: 5
+  m_EditorClassIdentifier: GOAP::GOAP.InvestigateGoal
+  _goalName: Investigate
+  _basePriority: 0
   _desiredState:
   - _key: IS_INVESTIGATING
     _valueType: 0
-    _boolValue: 1
+    _boolValue: 0
     _intValue: 0
     _floatValue: 0
-  _alertPriority: 80
+  _investigatePriority: 60

@@ -6,6 +6,7 @@ namespace GOAP
     public sealed class ChaseActionData : GOAPActionData
     {
         // ───── Private properties ────────────────────────────────────────────────
+        
         [SerializeField] [Range(1.0f, 30.0f)] private float _destinationUpdateRate = 10.0f;
 
         // ───── Impementation ────────────────────────────────────────────────

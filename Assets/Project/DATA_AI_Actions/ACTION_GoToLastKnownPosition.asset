@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34fcedcdea1e4afe9f49b7d0081c105c, type: 3}
+  m_Name: ACTION_GoToLastKnownPosition
+  m_EditorClassIdentifier: GOAP::GOAP.GoToLastKnownPositionActionData
+  _actionName: Go to last known position
+  _cost: 1
+  _preconditions:
+  - _key: IS_INVESTIGATING
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0
+  _effects:
+  - _key: AT_INVESTIGATION_POINT
+    _valueType: 0
+    _boolValue: 1
+    _intValue: 0
+    _floatValue: 0
+  _arrivalDistance: 1.2
+  _timeout: 12

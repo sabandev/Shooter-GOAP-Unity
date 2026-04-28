@@ -29,8 +29,14 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
-  _damage: 25
+  _damage: 10
   _hitRadius: 1.5
-  _attackDuration: 0.18
-  _applyDamageNormalisedFrame: 0.9
+  _applyDamageNormalisedFrame: 0.75
   _attackCooldown: 0.5
+  _meleeClips:
+  - {fileID: -203655887218126122, guid: 042807f34ba4f4d2992b337adc14b7b3, type: 3}
+  - {fileID: -203655887218126122, guid: 81ffbff42a69e427d9239084f1a34d8c, type: 3}
+  - {fileID: -203655887218126122, guid: 679740675047a417bb1f755a6a2cf658, type: 3}
+  - {fileID: -203655887218126122, guid: 4a7e97b448af34523b3ba3b05fc9e6a2, type: 3}
+  _preAttackDelay: 0
+  _postAttackDelay: 0.1

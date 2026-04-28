@@ -25,6 +25,9 @@ namespace GOAP
         {
             foreach (Sensor sensor in GetComponentsInChildren<Sensor>())
                 sensor.enabled = false;
+
+            foreach (AgentTurnAnimator turnAnimator in GetComponentsInChildren<AgentTurnAnimator>())
+                turnAnimator.enabled = false;
             
             if (TryGetComponent(out GOAPAgent agent))                                                                                                                                                                           
               agent.enabled = false;

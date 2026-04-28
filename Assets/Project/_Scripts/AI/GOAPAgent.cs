@@ -179,6 +179,7 @@ namespace GOAP
         private void RegisterReplanCallbacks()
         {
             Blackboard.RegisterChangeCallback(BlackboardKeys.TARGET_VISIBLE, _ => OnSignificantFactChanged());
+            Blackboard.RegisterChangeCallback(BlackboardKeys.TARGET_IN_MELEE_RANGE, _ => OnSignificantFactChanged());
         }
 
         /// <summary>

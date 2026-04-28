@@ -7,46 +7,55 @@ namespace GOAP
     {
         // ───── Serialized properties ────────────────────────────────────────────────
         
+        [Header("Melee Settings")]
         [SerializeField] private LayerMask  _targetMask;
         [SerializeField] [Min(0.0f)] private float _damage = 25.0f;
         [SerializeField] [Min(0.0f)] private float _hitRadius = 1.5f;
-        [SerializeField] [Min(0.0f)] private float _attackDuration = 0.8f;
         [SerializeField] [Min(0.0f)] private float _applyDamageNormalisedFrame = 0.4f;
         [SerializeField] [Min(0.0f)] private float _attackCooldown = 1.2f;
+        
+        [Space(10.0f)]
+        
+        [Header("Melee Animation Settings")]
+        [SerializeField] private AnimationClip[] _meleeClips;
+        [SerializeField] [Min(0.0f)] private float _preAttackDelay = 0.0f;
+        [SerializeField] [Min(0.0f)] private float _postAttackDelay = 0.0f;
 
         // ───── Implementation ────────────────────────────────────────────────
         
-        public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new MeleeAttackActionInstance(agent, this, _damage, _hitRadius, _targetMask, _attackDuration, _applyDamageNormalisedFrame, _attackCooldown);
+        public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new MeleeAttackActionInstance(agent, this, _damage, _hitRadius, _targetMask, _applyDamageNormalisedFrame, _attackCooldown, _meleeClips, _preAttackDelay, _postAttackDelay);
     }
 
     /// <summary>
     /// Authorised Use Instructions
-    ///     - Contains a static property (_lastAttackTime) that MUST be called as a subsystem
-    ///       registration at the start of runtime to prevent stale states while playtesting.
+    ///     - Melee Animations MUST be dragged into this agent's AnimatorController by their
+    ///       DEFAULT names, or the state hashes will be inaccurate.
     /// </summary>
     public sealed class MeleeAttackActionInstance : GOAPActionInstance
     {
-        // ───── Hashes ────────────────────────────────────────────────
-        
-        private static readonly int _attackTriggerHash = Animator.StringToHash("MeleeAttack");
-
         // ───── Private properties────────────────────────────────────────────────
         
         private readonly LayerMask _targetMask;
         
+        private readonly AnimationClip[] _meleeClips;
+        private readonly int[] _meleeStateHashes;
+            
         private readonly float _damage;
         private readonly float _hitRadius;
-        private readonly float _attackDuration;
         private readonly float _applyDamageNormalisedFrame;
         private readonly float _attackCooldown;
+        private readonly float _preAttackDelay;
+        private readonly float _postAttackDelay;
 
         private Collider[] _hits = new Collider[16];
         
         private float _attackTimer;
+        private float _attackDuration;
+        private float _damageTime;
+        
         private bool _damageApplied;
 
         private static float _lastAttackTime = float.NegativeInfinity;
-        
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStaticState()
         {
@@ -55,14 +64,20 @@ namespace GOAP
 
         // ───── Implementation ────────────────────────────────────────────────
         
-        public MeleeAttackActionInstance(GOAPAgent agent, GOAPActionData data, float damage, float hitRadius, LayerMask targetMask, float attackDuration, float applyDamageNormalisedFrame, float attackCooldown) : base(agent, data)
+        public MeleeAttackActionInstance(GOAPAgent agent, GOAPActionData data, float damage, float hitRadius, LayerMask targetMask, float applyDamageNormalisedFrame, float attackCooldown, AnimationClip[] meleeClips, float preAttackDelay, float postAttackDelay) : base(agent, data)
         {
             _damage = damage;
             _hitRadius = hitRadius;
              _targetMask = targetMask;
-            _attackDuration = attackDuration;
             _applyDamageNormalisedFrame = applyDamageNormalisedFrame;
             _attackCooldown = attackCooldown;
+            _meleeClips = meleeClips;
+            _preAttackDelay = preAttackDelay;
+            _postAttackDelay = postAttackDelay;
+            
+            _meleeStateHashes = new int[meleeClips.Length];
+            for (int i = 0; i < meleeClips.Length; i++)
+                _meleeStateHashes[i] = Animator.StringToHash(meleeClips[i].name);
         }
 
         public override bool CheckProceduralPreconditions()
@@ -81,11 +96,19 @@ namespace GOAP
         public override void OnStart()
         {
             Agent.NavAgent.ResetPath();
+            Agent.NavAgent.velocity = Vector3.zero;
+            Agent.NavAgent.isStopped = true;
             Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
-
             FaceTarget();
 
-            Agent.Animator.SetTrigger(_attackTriggerHash);
+            // Choose a melee animation
+            int index = Random.Range(0, _meleeClips.Length);
+            AnimationClip chosenClip = _meleeClips[index];
+            
+            Agent.Animator.Play(_meleeStateHashes[index], 0, 0.0f);
+            
+            _attackDuration = _preAttackDelay + chosenClip.length + _postAttackDelay;
+            _damageTime = _preAttackDelay + chosenClip.length * _applyDamageNormalisedFrame;
 
             _attackTimer  = 0.0f;
             _damageApplied = false;
@@ -94,28 +117,27 @@ namespace GOAP
         public override ActionStatus Perform()
         {
             _attackTimer += Time.deltaTime;
-
-            float normalisedTime = _attackTimer / _attackDuration;
-
+            
             // Apply damage at the impact frame
-            if (!_damageApplied && normalisedTime >= _applyDamageNormalisedFrame)
+            if (!_damageApplied && _attackTimer >= _damageTime)
             {
                 ApplyDamage();
                 _damageApplied = true;
             }
 
-            if (_attackTimer >= _attackDuration)
-                return ActionStatus.Succeeded;
-
-            return ActionStatus.Running;
+            return _attackTimer >= _attackDuration ? ActionStatus.Succeeded : ActionStatus.Running;
         }
 
-        public override void OnEnd() { }
+        public override void OnEnd()
+        {
+            Agent.NavAgent.isStopped = false;
+        }
 
         public override void OnReset()
         {
             _attackTimer   = 0.0f;
             _damageApplied = false;
+            Agent.NavAgent.isStopped = false;
         }
 
         // ─── Private helpers ──────────────────────────────────────────

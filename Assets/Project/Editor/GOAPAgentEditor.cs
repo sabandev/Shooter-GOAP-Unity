@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -103,6 +104,10 @@ namespace GOAP.Editor
 
         private readonly Dictionary<string, bool> _proceduralCache = new();
         private float _proceduralCacheTime;
+        
+        private List<GOAPActionInstance> _planSnapshot;
+        private int _planActiveIndexSnapshot;
+        private Dictionary<string, bool> _proceduralSnapshot = new();
 
         // ───── Constants ────────────────────────────────────────────────
         
@@ -132,6 +137,13 @@ namespace GOAP.Editor
         public override void OnInspectorGUI()
         {
             GOAPAgent agent = (GOAPAgent)target;
+            
+            if (Event.current.type == EventType.Layout && EditorApplication.isPlaying)
+            {
+                _planSnapshot = agent.CurrentPlan != null ? new List<GOAPActionInstance>(agent.CurrentPlan) : null;
+                _planActiveIndexSnapshot = agent.CurrentActionIndex;
+                RefreshProceduralSnapshot(agent);
+            }
 
             DrawDefaultInspector();
 
@@ -189,8 +201,8 @@ namespace GOAP.Editor
 
             EditorGUI.indentLevel++;
 
-            List<GOAPActionInstance> plan = agent.CurrentPlan;
-            int activeIndex = agent.CurrentActionIndex;
+            List<GOAPActionInstance> plan = _planSnapshot;
+            int activeIndex = _planActiveIndexSnapshot;
 
             if (plan == null || plan.Count == 0)
             {
@@ -204,7 +216,6 @@ namespace GOAP.Editor
             for (int i = 0; i < plan.Count; i++)
             {
                 GOAPActionInstance action = plan[i];
-                bool isActive = i == activeIndex;
 
                 DrawPlanActionBox(action.Data.ActionName, i, activeIndex, plan.Count);
 
@@ -401,29 +412,26 @@ namespace GOAP.Editor
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.3f));
         }
 
+        
+        private void RefreshProceduralSnapshot(GOAPAgent agent)
+        {
+            if (Time.realtimeSinceStartup - _proceduralCacheTime <= PROCEDURAL_CACHE_REFRESH_INTERVAL) { return; }
+            
+            _proceduralSnapshot.Clear();
+            
+            foreach (GOAPActionInstance a in agent.ActionInstances)
+                _proceduralSnapshot[a.Data.ActionName] = a.CheckProceduralPreconditions();
+            
+            _proceduralCacheTime = Time.realtimeSinceStartup;
+        }
+        
         /// <summary>
         /// Checks procedural preconditions of the agent's action instances.
         /// Used purely for optimisation so the results can be cached and the check can be throttled.
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        private bool GetProceduralResult(GOAPActionInstance instance)
-        {
-            if (Time.realtimeSinceStartup - _proceduralCacheTime > PROCEDURAL_CACHE_REFRESH_INTERVAL)
-            {
-                _proceduralCache.Clear();
-                GOAPAgent agent = (GOAPAgent)target;
-
-                foreach (GOAPActionInstance a in agent.ActionInstances)
-                {
-                    _proceduralCache[a.Data.ActionName] = a.CheckProceduralPreconditions();
-                }
-
-                _proceduralCacheTime = Time.realtimeSinceStartup;
-            }
-
-            return _proceduralCache.TryGetValue(instance.Data.ActionName, out bool result) && result;
-        }
+        private bool GetProceduralResult(GOAPActionInstance instance) => _proceduralSnapshot.TryGetValue(instance.Data.ActionName, out bool result) && result;
     }
 }
-
+#endif

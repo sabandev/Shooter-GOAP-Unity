@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e75e71a80b4e5486bbc5b3665f4949b8, type: 3}
-  m_Name: ACTION_Investigate
-  m_EditorClassIdentifier: Assembly-CSharp::GOAP.InvestigateActionData
-  _actionName: Investigate Action
+  m_Script: {fileID: 11500000, guid: 39cb8cd328cb45f9a04e9b06517faa22, type: 3}
+  m_Name: ACTION_SearchArea
+  m_EditorClassIdentifier: GOAP::GOAP.SearchAreaActionData
+  _actionName: Search Area
   _cost: 1
   _preconditions:
-  - _key: TARGET_VISIBLE
+  - _key: AT_INVESTIGATION_POINT
     _valueType: 0
     _boolValue: 1
     _intValue: 0
@@ -23,7 +23,14 @@ MonoBehaviour:
   _effects:
   - _key: IS_INVESTIGATING
     _valueType: 0
-    _boolValue: 1
+    _boolValue: 0
     _intValue: 0
     _floatValue: 0
-  _arrivalTolerance: 1.5
+  - _key: AT_INVESTIGATION_POINT
+    _valueType: 0
+    _boolValue: 0
+    _intValue: 0
+    _floatValue: 0
+  _searchPointCount: 3
+  _searchRadius: 5
+  _waitTimeAtPoint: 1.2

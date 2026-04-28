@@ -53,14 +53,12 @@ namespace GOAP
 
         private void Update()
         {
+            if (!_navAgent.isActiveAndEnabled) { return; }
+            
             if (_isTurning)
-            {
                 TickTurnInProgress();
-            }
             else
-            {
                 TickTurnDetection();
-            }
         }
 
         /// <summary>

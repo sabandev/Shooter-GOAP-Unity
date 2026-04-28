@@ -883,7 +883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.MeleeRangeSensor
   _tickRate: 10
-  _meleeRange: 3
+  _meleeRange: 2.5
   _targetMask:
     serializedVersion: 2
     m_Bits: 8

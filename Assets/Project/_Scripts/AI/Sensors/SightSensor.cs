@@ -12,8 +12,9 @@ namespace GOAP
         // ───── Serialized properties ────────────────────────────────────────────────
         
         [SerializeField] private Transform eyeLocation;
-        [SerializeField] private float _sightRange = 20.0f;
+        [SerializeField] [Min(0.0f)] private float _sightRange = 20.0f;
         [SerializeField] [Range(1.0f, 180.0f)] private float _sightAngle = 90.0f;
+        [SerializeField] [Min(0.0f)] private float _sightMemoryDuration = 2.0f;
         [SerializeField] private LayerMask _targetMask;
         [SerializeField] private LayerMask _occlusionMask;
 
@@ -28,6 +29,14 @@ namespace GOAP
         // ───── Private properties ────────────────────────────────────────────────
         
         private readonly Collider[] _hits = new Collider[16];
+        
+        private Vector3 _prevTargetPos;
+        
+        private bool _wasLOS;
+        private bool _wasEffectivelyVisible;
+        private bool _prevTargetPosValid;
+        
+        private float _lostSightTime = float.NegativeInfinity;
 
         // ───── Implementation ────────────────────────────────────────────────
 
@@ -36,28 +45,55 @@ namespace GOAP
         /// </summary>
         protected override void Sense()
         {
+            bool hasLOS = false;
+            Transform nearest = null;
+            
             int count = Physics.OverlapSphereNonAlloc(transform.position, _sightRange, _hits, _targetMask);
-            if (count == 0)
+            if (count > 0)
             {
-                Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
-                return;
+                nearest = FindNearest(count);
+                if (nearest != null)
+                    hasLOS = CheckLineOfSight(nearest);
             }
+            
+            // When real LOS is first lost
+            if (_wasLOS && !hasLOS)
+                _lostSightTime = Time.time;
+            else if (hasLOS)
+                _lostSightTime = float.NegativeInfinity;
+            
+            bool withinMemory = !hasLOS && _lostSightTime != float.NegativeInfinity && Time.time - _lostSightTime < _sightMemoryDuration;
+            bool nowVisible = hasLOS || withinMemory;
 
-            Transform nearest = FindNearest(count);
-            if (nearest == null)
+            if (_wasEffectivelyVisible && !nowVisible)
             {
-                Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, false);
-                return;
+                // Target left view and memory expired
+                Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, true);
+                Agent.Blackboard.Set(BlackboardKeys.AT_INVESTIGATION_POINT, false);
             }
-
-            bool hasLOS = CheckLineOfSight(nearest);
-            Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, hasLOS);
-
+            else if (!_wasEffectivelyVisible && nowVisible)
+                Agent.Blackboard.Set(BlackboardKeys.IS_INVESTIGATING, false);
+            
+            Agent.Blackboard.Set(BlackboardKeys.TARGET_VISIBLE, nowVisible);
+            _wasLOS = hasLOS;
+            _wasEffectivelyVisible = nowVisible;
+            
             if (hasLOS)
             {
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_POS, nearest.position);
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_DISTANCE, Vector3.Distance(Agent.transform.position, nearest.position));
                 Agent.Blackboard.Set(BlackboardKeys.TARGET_TRANSFORM, nearest);
+                
+                // Track movement direction of the target to later bias a search area in that direction
+                if (_prevTargetPosValid)
+                {
+                    Vector3 delta = nearest.position - _prevTargetPos;
+                    
+                    if (delta.sqrMagnitude > 0.01f)
+                        Agent.Blackboard.Set(BlackboardKeys.TARGET_LAST_KNOWN_DIRECTION, delta.normalized);
+                }
+                _prevTargetPos = nearest.position;
+                _prevTargetPosValid = true;
             }
         }
 
@@ -96,7 +132,8 @@ namespace GOAP
             return !Physics.Raycast(origin, direction, distance, _occlusionMask);
         }
 
-        // -----Editor helper methods-----
+        // ───── Helper methods ────────────────────────────────────────────────
+        
 #if UNITY_EDITOR
         /// <summary>
         /// Draws vision cone for debugging

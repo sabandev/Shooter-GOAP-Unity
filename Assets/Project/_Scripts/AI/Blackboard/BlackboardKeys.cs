@@ -8,26 +8,28 @@ namespace GOAP
     /// </summary>
     public static class BlackboardKeys
     {
-        // -----Agent States-----
+        // ───── Agent states ────────────────────────────────────────────────
         public const string IS_IDLE = "IS_IDLE";
         public const string IS_PATROLLING = "IS_PATROLLING";
         public const string IS_INVESTIGATING = "IS_INVESTIGATING";
         public const string TARGET_IN_MELEE_RANGE = "TARGET_IN_MELEE_RANGE";
         public const string TARGET_IS_DEAD = "TARGET_IS_DEAD";
         public const string TARGET_TRANSFORM = "TARGET_TRANSFORM";
+        public const string TARGET_LAST_KNOWN_DIRECTION = "TARGET_LAST_KNOWN_DIRECTION";
+        public const string AT_INVESTIGATION_POINT = "AT_INVESTIGATION_POINT";
 
-        // -----Agent Inventory-----
+        // ───── Agent inventory ────────────────────────────────────────────────
         public const string HAS_ITEM = "HAS_ITEM";
 
-        // -----Locomotion States-----
+        // ───── Locomotion states ────────────────────────────────────────────────
         public const string MOVEMENT_SPEED = "MOVEMENT_SPEED";
 
-        // -----Vision-----
+        // ───── Vision ────────────────────────────────────────────────
         public const string TARGET_VISIBLE = "TARGET_VISIBLE";
         public const string TARGET_LAST_KNOWN_POS = "TARGET_LAST_KNOWN_POS";
         public const string TARGET_DISTANCE = "TARGET_DISTANCE";
 
-        // -----Smart Object States-----
+        // ───── SmartObject states ────────────────────────────────────────────────
         public const string PICKUP_AVAILABLE = "PICKUP_AVAILABLE";
         public const string PICKUP_TRANSFORM = "PICKUP_TRANSFORM";
         public const string PICKUP_DISTANCE  = "PICKUP_DISTANCE";
