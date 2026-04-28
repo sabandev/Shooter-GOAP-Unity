@@ -115,15 +115,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "DropWeapon",
-                    "type": "Button",
-                    "id": "bd5ed44d-5bc1-4026-92aa-f3bf963d2937",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "ScrollWeapon",
                     "type": "Value",
                     "id": "9da38851-c108-49c0-a979-e662ff6a6eff",
@@ -131,6 +122,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "DropWeapon",
+                    "type": "Button",
+                    "id": "bd5ed44d-5bc1-4026-92aa-f3bf963d2937",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Aim",
@@ -154,6 +154,15 @@
                     "name": "LeanRight",
                     "type": "Button",
                     "id": "8765614e-50fe-4603-9607-34b07335cf12",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "7002130e-16c9-492e-9dab-4968cccb8341",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -521,6 +530,28 @@
                     "processors": "",
                     "groups": ";Controller",
                     "action": "LeanRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1027d398-f68b-42a6-99d2-cb5a9b6825e2",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KAM",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5bc8592-1dc3-43b6-b458-a20e717ab68f",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

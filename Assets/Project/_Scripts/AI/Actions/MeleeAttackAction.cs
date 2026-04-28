@@ -46,6 +46,12 @@ namespace GOAP
         private bool _damageApplied;
 
         private static float _lastAttackTime = float.NegativeInfinity;
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            _lastAttackTime = float.NegativeInfinity;
+        }
 
         // ───── Implementation ────────────────────────────────────────────────
         
@@ -92,8 +98,7 @@ namespace GOAP
             float normalisedTime = _attackTimer / _attackDuration;
 
             // Apply damage at the impact frame
-            if (!_damageApplied &&
-                normalisedTime >= _applyDamageNormalisedFrame)
+            if (!_damageApplied && normalisedTime >= _applyDamageNormalisedFrame)
             {
                 ApplyDamage();
                 _damageApplied = true;
@@ -148,8 +153,6 @@ namespace GOAP
             Vector3 sphereOrigin = agentCenter + Agent.transform.forward * 0.5f;
 
             int count = Physics.OverlapSphereNonAlloc(sphereOrigin, _hitRadius, _hits, _targetMask);
-
-            bool hitSomething = false;
             
             for (int i = 0; i < count; i++)
             {
@@ -158,7 +161,6 @@ namespace GOAP
                 if (_hits[i].TryGetComponent(out IHealth health))
                 {
                     health.TakeDamage(_damage);
-                    hitSomething = true;
                     
                     if (health.IsDead)
                         Agent.Blackboard.Set(BlackboardKeys.TARGET_IS_DEAD, true);
@@ -166,21 +168,6 @@ namespace GOAP
             }
 
             _lastAttackTime = Time.time;
-
-            if (hitSomething)
-                Debug.Log($"[MeleeAttack] '{Agent.name}' struck target " +
-                          $"for {_damage} damage.");
-            else
-                Debug.Log($"[MeleeAttack] '{Agent.name}' attack missed.");
-        }
-
-        /// <summary>
-        /// VITAL to reset the state in between play mode tests to prevent delay in melee action.
-        /// </summary>
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStaticState()
-        {
-            _lastAttackTime = float.NegativeInfinity;
         }
     }
 }

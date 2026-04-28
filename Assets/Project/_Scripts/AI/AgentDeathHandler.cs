@@ -21,16 +21,23 @@ namespace GOAP
 
         // ───── Private methods ────────────────────────────────────────────────
         
-        private void HandleDeath()                                                                                                                                                                                              
+        private void HandleDeath(Vector3 hitPoint, Vector3 hitDirection, float force)                                                                                                                                                                                              
         {
             foreach (Sensor sensor in GetComponentsInChildren<Sensor>())
                 sensor.enabled = false;
             
             if (TryGetComponent(out GOAPAgent agent))                                                                                                                                                                           
               agent.enabled = false;
-                                                                                                                                                                                                                              
+                                  
+            Vector3 deathVelocity = Vector3.zero;
             if (TryGetComponent(out NavMeshAgent nav))
-              nav.enabled = false;                                                                                                                                                                                            
+            {
+                deathVelocity = nav.velocity;
+                nav.enabled = false;      
+            }
+            
+            if (TryGetComponent(out AIRagdoll ragdoll))
+                ragdoll.EnableRagdoll(deathVelocity, hitPoint, hitDirection, force);
         }       
     }
 }

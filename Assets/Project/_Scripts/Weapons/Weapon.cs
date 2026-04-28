@@ -194,7 +194,12 @@ namespace Weapons
         private void ProcessHit(RaycastHit hit, Vector3 direction)
         {
             if (hit.collider.TryGetComponent(out IHealth targetHealth))
+            {
+                if (targetHealth is IDamageContext ctx)
+                    ctx.SetHitContext(hit.point, direction, _data.ImpactForce);
+                
                 targetHealth.TakeDamage(_data.Damage);
+            }
             
             if (hit.collider.TryGetComponent(out IImpactReceiver impactReceiver))
                 impactReceiver.ReceiveImpact(hit.point, direction, _data.ImpactForce);

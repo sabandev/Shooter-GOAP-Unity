@@ -7,7 +7,7 @@ namespace GOAP
     /// <summary>
     /// Responsible for handling the AI's health state.
     /// </summary>
-    public sealed class AIHealth : MonoBehaviour, IHealth                                                                                                                                                                       
+    public sealed class AIHealth : MonoBehaviour, IHealth, IDamageContext                                                                                                                                                                       
     {
         // ───── Serialized properties ────────────────────────────────────────────────
         
@@ -17,18 +17,32 @@ namespace GOAP
 
         // ───── Public properties ────────────────────────────────────────────────
         
-        public event Action OnDeath;
+        public event Action<Vector3, Vector3, float> OnDeath;
                                                                                                                                                                                                                               
         public float CurrentHealth { get; private set; }
         public float MaxHealth => _maxHealth;   
         
         public bool  IsDead => CurrentHealth <= 0.0f;
 
+        // ───── Private properties ────────────────────────────────────────────────
+        
+        private Vector3 _hitPoint;
+        private Vector3 _hitDirection;
+        
+        private float _force;
+
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
         private void Awake() => CurrentHealth = _maxHealth;
 
-        // ───── Implementation ────────────────────────────────────────────────
+        // ───── Implementations ────────────────────────────────────────────────
+        
+        public void SetHitContext(Vector3 hitPoint, Vector3 hitDirection, float force)
+        {
+            _hitPoint = hitPoint;
+            _hitDirection = hitDirection;
+            _force = force;
+        }
         
         public void TakeDamage(float amount)
         {                                                                                                                                                                                                                       
@@ -40,7 +54,7 @@ namespace GOAP
           if (IsDead)                                                                                                                                                                                                         
           {          
               // AudioManager.Instance?.Play(_deathSound, transform.position);
-              OnDeath?.Invoke();
+              OnDeath?.Invoke(_hitPoint, _hitDirection, _force);
           }                                                                                                                                                                                                                   
         }
     }                                                                                                                                                                                                                           
