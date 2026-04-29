@@ -4,7 +4,6 @@ using UnityEngine.AI;
 
 namespace GOAP
 {
-    // -----PATROL WAYPOINTS-----
     [CreateAssetMenu(fileName = "ACTION_PatrolWaypoints", menuName = "GOAP/Actions/PatrolWaypoints")]
     public sealed class PatrolWaypointsActionData : GOAPActionData
     {
@@ -48,9 +47,10 @@ namespace GOAP
 
         public override void OnStart()
         {
+            base.OnStart();
+            
             Vector3 destination = _waypointNetwork.GetWaypoint(_currentWaypointIndex);
             Agent.NavAgent.SetDestination(destination);
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
             Agent.Blackboard.Set(BlackboardKeys.IS_PATROLLING, true);
         }
 

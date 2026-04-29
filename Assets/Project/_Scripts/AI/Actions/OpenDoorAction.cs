@@ -41,6 +41,7 @@ namespace GOAP
         public override void OnStart()
         {
             base.OnStart();
+            
             _waitTimer = 0.0f;
             _doorOpenTriggered = false;
             

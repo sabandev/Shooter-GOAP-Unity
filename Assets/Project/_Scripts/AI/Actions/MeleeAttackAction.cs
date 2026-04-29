@@ -95,10 +95,11 @@ namespace GOAP
 
         public override void OnStart()
         {
+            base.OnStart();
+            
             Agent.NavAgent.ResetPath();
             Agent.NavAgent.velocity = Vector3.zero;
             Agent.NavAgent.isStopped = true;
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Walk);
             FaceTarget();
 
             // Choose a melee animation

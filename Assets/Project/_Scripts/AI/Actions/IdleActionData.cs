@@ -2,24 +2,27 @@ using UnityEngine;
 
 namespace GOAP
 {
-    // -----IDLE-----
     [CreateAssetMenu(fileName = "ACTION_Idle", menuName = "GOAP/Actions/Idle")]
     public sealed class IdleActionData : GOAPActionData
     {
-        // -----Serialized properties-----
+        // ───── Serialized properties ────────────────────────────────────────────────
+        
         [SerializeField] [Min(0.0f)] private float _idleDuration = 3.0f;
 
-        // -----Implementation-----
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public override GOAPActionInstance CreateInstance(GOAPAgent agent) => new IdleActionInstance(agent, this, _idleDuration);
     }
 
     public sealed class IdleActionInstance : GOAPActionInstance
     {
-        // -----Private properties-----
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private readonly float _idleDuration;
         private float _timer;
 
-        // -----Implementation-----
+        // ───── Implementation ────────────────────────────────────────────────
+        
         public IdleActionInstance(GOAPAgent agent, GOAPActionData data, float idleDuration) : base(agent, data)
         {
             _idleDuration = idleDuration;

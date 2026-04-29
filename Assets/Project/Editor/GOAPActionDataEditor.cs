@@ -10,7 +10,7 @@ namespace GOAP.Editor
     [CustomEditor(typeof(GOAPActionData), true)]
     public sealed class GOAPActionDataEditor : UnityEditor.Editor
     {
-        // -----Nested class-----
+        // ───── Nested type ────────────────────────────────────────────────
         
         /// <summary>
         /// Public properties because GOAPGoalEditor shares these styles.
@@ -69,8 +69,9 @@ namespace GOAP.Editor
                     : new Color(0.6f, 0.1f, 0.1f);
             }
         }
-    
-        // -----Private properties-----
+
+        // ───── Private properties ────────────────────────────────────────────────
+        
         private SerializedProperty _actionNameProp;
         private SerializedProperty _costProp;
         private SerializedProperty _preconditionsProp;
@@ -80,7 +81,8 @@ namespace GOAP.Editor
         private bool _validationPassed;
         private bool _hasValidated;
 
-        // -----Lifecycle methods-----
+        // ───── Lifecycle methods ────────────────────────────────────────────────
+        
         private void OnEnable()
         {
             _actionNameProp    = serializedObject.FindProperty("_actionName");
@@ -89,7 +91,8 @@ namespace GOAP.Editor
             _effectsProp       = serializedObject.FindProperty("_effects");
         }
 
-        // -----GUI-----
+        // ───── GUI ────────────────────────────────────────────────
+        
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -112,7 +115,8 @@ namespace GOAP.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        // -----Private methods-----
+        // ───── Private methods ────────────────────────────────────────────────
+        
         private void DrawActionDataHeader()
         {
             EditorGUILayout.BeginHorizontal();

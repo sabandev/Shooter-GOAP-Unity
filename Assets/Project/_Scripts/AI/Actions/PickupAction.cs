@@ -48,9 +48,8 @@ namespace GOAP
         public override void OnStart()
         {
             base.OnStart();
+            
             _pickupTimer = 0.0f;
-
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int) MovementSpeed.Jog);
         }
 
         protected override void OnArrival()

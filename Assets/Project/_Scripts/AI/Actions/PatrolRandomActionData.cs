@@ -36,6 +36,8 @@ namespace GOAP
 
         public override void OnStart()
         {
+            base.OnStart();
+            
             if (NavMesh.SamplePosition(RandomPointInRadius(), out NavMeshHit hit, _wanderRadius, NavMesh.AllAreas))
             {
                 Agent.NavAgent.SetDestination(hit.position);

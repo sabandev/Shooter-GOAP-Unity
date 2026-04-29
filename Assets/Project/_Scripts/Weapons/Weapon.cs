@@ -86,13 +86,13 @@ namespace Weapons
             Debug.Assert(_data != null, "[Weapon] WeaponData not assigned.", this);
             Debug.Assert(_smartObject != null, "[Weapon] SmartObject not assigned.", this);
             Debug.Assert(RigidBody != null, "[Weapon] RigidBody not assigned.", this);
+            
+            CurrentAmmo = _data.MagazineSize;
+            ReserveAmmo = _data.MaxReserveAmmo;
         }
         
         private void Start()
         {
-            CurrentAmmo = _data.MagazineSize;
-            ReserveAmmo = _data.MaxReserveAmmo;
-
             _hitMask = ~LayerMask.GetMask("ViewModel", "WorldModel");
         }
 
@@ -193,12 +193,26 @@ namespace Weapons
 
         private void ProcessHit(RaycastHit hit, Vector3 direction)
         {
-            if (hit.collider.TryGetComponent(out IHealth targetHealth))
+            float multiplier = 1.0f;
+            IHealth targetHealth = null;
+            IDamageContext damageContext = null;
+            
+            if (hit.collider.TryGetComponent(out Hitbox hitbox))
             {
-                if (targetHealth is IDamageContext ctx)
-                    ctx.SetHitContext(hit.point, direction, _data.ImpactForce);
-                
-                targetHealth.TakeDamage(_data.Damage);
+                multiplier = hitbox.DamageMultiplier;
+                targetHealth = hitbox.RootHealth;
+                damageContext = hitbox.RootDamageContext;
+            }
+            else
+            {
+                hit.collider.TryGetComponent(out targetHealth);
+                damageContext = targetHealth as IDamageContext;
+            }
+            
+            if (targetHealth != null)
+            {
+                damageContext?.SetHitContext(hit.point, direction, _data.ImpactForce);
+                targetHealth.TakeDamage(_data.Damage * multiplier);
             }
             
             if (hit.collider.TryGetComponent(out IImpactReceiver impactReceiver))

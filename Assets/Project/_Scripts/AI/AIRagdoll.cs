@@ -34,17 +34,17 @@ namespace GOAP
 
         public void EnableRagdoll(Vector3 inheritedVelocity, Vector3 hitPoint, Vector3 hitDirection, float force)                                                                                                                                                          
         {
-          if (_mainCollider != null)                                                                                                                                                                                          
+            if (_mainCollider != null)                                                                                                                                                                                          
               _mainCollider.enabled = false;
 
-          _animator.enabled = false;
-          SetPhysicsEnabled(true);
+            _animator.enabled = false;
+            SetPhysicsEnabled(true);
 
-          foreach (Rigidbody bone in _bones)
+            foreach (Rigidbody bone in _bones)
               bone.linearVelocity =  inheritedVelocity;
-          
-          Rigidbody hitBone = GetNearestBone(hitPoint);
-          if (hitBone != null)
+
+            Rigidbody hitBone = GetNearestBone(hitPoint);
+            if (hitBone != null)
               hitBone.AddForceAtPosition(hitDirection.normalized * force, hitPoint, ForceMode.Impulse);
         }
 
@@ -70,11 +70,11 @@ namespace GOAP
         
         private void SetPhysicsEnabled(bool value)
         {
-          foreach (Rigidbody bone in _bones)                                                                                                                                                                                  
+            foreach (Rigidbody bone in _bones)                                                                                                                                                                                  
               bone.isKinematic = !value;
                                                                                                                                                                                                                               
-          foreach (Collider col in _boneColliders)
-              col.enabled = value;
+            foreach (Collider col in _boneColliders) // only disable non-trigger bone colliders so hitboxes stay active
+                if (!col.isTrigger) { col.enabled = value; }
         }
     }
 }

@@ -4,10 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Target
-  - Concrete
-  - Metal
-  - ExplosiveBarrel
+  - Hitbox
   layers:
   - Default
   - TransparentFX

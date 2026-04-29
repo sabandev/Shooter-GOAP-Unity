@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.PatrolRandomActionData
   _actionName: Patrol Randomly Action
   _cost: 2
+  _applyMovementSpeed: 1
+  _movementSpeed: 0
   _preconditions: []
   _effects:
   - _key: IS_PATROLLING
@@ -21,5 +23,5 @@ MonoBehaviour:
     _boolValue: 1
     _intValue: 0
     _floatValue: 0
-  _wanderRadius: 30
+  _wanderRadius: 10
   _arrivalTolerance: 0.5

@@ -71,7 +71,7 @@ namespace Player
         
         private void TryDash()
         {
-            if (!DashReady || !_controller.IsGrounded) { return; }
+            if (!DashReady || !_controller.IsGrounded || _controller.IsCrouching) { return; }
             
             _dashDirection = GetDashDirection();
             _dashTimer = _dashDuration;

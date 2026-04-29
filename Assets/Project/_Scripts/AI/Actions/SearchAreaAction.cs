@@ -48,7 +48,9 @@ namespace GOAP
         public override bool CheckProceduralPreconditions() => Agent.Blackboard.Get<bool>(BlackboardKeys.AT_INVESTIGATION_POINT);
                                                                                                                                                                                                                               
         public override void OnStart()
-        {                                                                                                                                                                                                                       
+        {        
+            base.OnStart();
+            
             _searchCenter = Agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS);
             Vector3 dir = Agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_DIRECTION);
             _searchBiasDir = dir.sqrMagnitude > 0.01f ? dir : Vector3.zero;
@@ -56,8 +58,7 @@ namespace GOAP
             _remainingPoints = _searchPointCount;
             _waitTimer = 0;                                                                                                                                                                                               
             _waiting = false;
-                                                                                                                                                                                                                              
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int)MovementSpeed.Walk);                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                                               
             MoveToNextPoint();
         }                                                                                                                                                                                                                       
               

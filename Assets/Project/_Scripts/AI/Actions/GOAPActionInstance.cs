@@ -18,14 +18,17 @@ namespace GOAP
     /// </summary>
     public abstract class GOAPActionInstance
     {
-        // -----Protected properties-----
+        // ───── Protected properties ────────────────────────────────────────────────
+        
         protected GOAPAgent Agent { get; }
 
-        // -----Public properties-----
+        // ───── Public properties ────────────────────────────────────────────────
+        
         public GOAPActionData Data { get; }
         public float Cost => Data.Cost;
 
-        // -----Constructor-----
+        // ───── Constructor ────────────────────────────────────────────────
+        
         protected GOAPActionInstance(GOAPAgent agent, GOAPActionData data)
         {
             Debug.Assert(agent != null, "[GOAPActionInstance] Agent must not be null.");
@@ -35,7 +38,7 @@ namespace GOAP
             Data = data;
         }
 
-        // -----Public methods-----
+        // ───── Public methods ────────────────────────────────────────────────
 
         /// <summary>
         /// Checks REAL-WORLD preconditions that the GOAP planner cannot reason. The planner does all symbolic checks.
@@ -55,7 +58,11 @@ namespace GOAP
         /// </summary>
         public abstract void OnReset();
 
-        public virtual void OnStart() {}
+        public virtual void OnStart()
+        {
+            if (Data.ApplyMovementSpeed)
+                Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int)Data.MovementSpeed);
+        }
         public virtual void OnEnd() {}
 
         // -----Diagnostics-----

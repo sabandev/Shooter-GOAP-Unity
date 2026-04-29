@@ -26,25 +26,14 @@ namespace Player
         [SerializeField] private Image           _syringeIcon;
 
         [Header("Colours")]
-        [SerializeField] private Color _normalBorderColour =
-            new Color(0.0f, 0.8f, 1.0f, 0.8f);
-
-        [SerializeField] private Color _lowHealthBorderColour =
-            new Color(1.0f, 0.1f, 0.1f, 0.8f);
-
-        [SerializeField] private Color _damageFlashColour =
-            new Color(1.0f, 0.0f, 0.0f, 0.5f);
+        [SerializeField] private Color _normalBorderColour = new Color(0.0f, 0.8f, 1.0f, 0.8f);
+        [SerializeField] private Color _lowHealthBorderColour = new Color(1.0f, 0.1f, 0.1f, 0.8f);
+        [SerializeField] private Color _damageFlashColour = new Color(1.0f, 0.0f, 0.0f, 0.5f);
 
         [Header("Animation")]
-        [Tooltip("Speed of the damage flash fade.")]
         [SerializeField] private float _flashFadeSpeed = 4.0f;
-
-        [Tooltip("Speed of the low health pulse.")]
         [SerializeField] private float _pulseSpeed = 2.0f;
-
-        [Tooltip("Pulse intensity — how much the border alpha varies.")]
-        [SerializeField] [Range(0.0f, 1.0f)]
-        private float _pulseIntensity = 0.4f;
+        [SerializeField] [Range(0.0f, 1.0f)] private float _pulseIntensity = 0.4f;
 
         // ─── Private state ────────────────────────────────────────────
 
@@ -56,10 +45,8 @@ namespace Player
 
         private void Awake()
         {
-            Debug.Assert(_health    != null,
-                "[HealthUI] Missing PlayerHealth.",    this);
-            Debug.Assert(_inventory != null,
-                "[HealthUI] Missing PlayerInventory.", this);
+            Debug.Assert(_health    != null,"[HealthUI] Missing PlayerHealth.",    this);
+            Debug.Assert(_inventory != null,"[HealthUI] Missing PlayerInventory.", this);
 
             _currentFlashColour = Color.clear;
         }

@@ -27,15 +27,16 @@ namespace GOAP
         public GoToLastKnownPositionActionInstance(GOAPAgent agent, GOAPActionData data, float arrivalDistance, float timeout) : base(agent, data)                                                                                                                                                           
         {       
             _arrivalDistance = arrivalDistance;
-            _timeout         = timeout;                                                                                                                                                                                         
+            _timeout = timeout;                                                                                                                                                                                         
         }
                                                                                                                                                                                                                               
         public override bool CheckProceduralPreconditions() => Agent.Blackboard.Get<bool>(BlackboardKeys.IS_INVESTIGATING) && Agent.Blackboard.Contains(BlackboardKeys.TARGET_LAST_KNOWN_POS);                                                                                                                                                    
 
         public override void OnStart()                                                                                                                                                                                          
         {       
+            base.OnStart();
+            
             _timer = 0;
-            Agent.Blackboard.Set(BlackboardKeys.MOVEMENT_SPEED, (int)MovementSpeed.Walk);
             Agent.NavAgent.SetDestination(Agent.Blackboard.Get<Vector3>(BlackboardKeys.TARGET_LAST_KNOWN_POS));                                                                                                                 
         }
                                                                                                                                                                                                                               

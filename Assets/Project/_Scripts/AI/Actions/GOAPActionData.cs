@@ -17,15 +17,23 @@ namespace GOAP
         
         [SerializeField] private string _actionName = "New Action";
         [SerializeField] [Min(0.0f)] private float _cost = 1.0f;
+        [SerializeField] private bool _applyMovementSpeed = true;
+        [SerializeField] private MovementSpeed _movementSpeed = MovementSpeed.Walk;
         [SerializeField] private List<WorldStatePair> _preconditions = new();
         [SerializeField] private List<WorldStatePair> _effects = new();
 
         // ───── Public properties ────────────────────────────────────────────────
         
         public string ActionName => _actionName;
+        
         public float Cost => _cost;
+        
+        public bool ApplyMovementSpeed => _applyMovementSpeed;
+        
         public IReadOnlyList<WorldStatePair> Preconditions => _preconditions;
         public IReadOnlyList<WorldStatePair> Effects => _effects;
+        
+        public MovementSpeed MovementSpeed => _movementSpeed;
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
@@ -44,36 +52,6 @@ namespace GOAP
         /// <param name="agent"></param>
         /// <returns></returns>
         public abstract GOAPActionInstance CreateInstance(GOAPAgent agent);
-
-        /// <summary>
-        /// Builds and returns this action's preconditions as a WorldState for use by the planner
-        /// to check if the current search node satisfies the action's preconditions.
-        /// </summary>
-        /// <returns></returns>
-        // public WorldState GetPreconditionsAsWorldState()
-        // {
-        //     var state = new WorldState(_preconditions.Count);
-        //
-        //     foreach (WorldStatePair pair in _preconditions)
-        //         state.Set(pair.Key, pair.GetValue());
-        //
-        //     return state;
-        // }
-        
-        /// <summary>
-        /// Builds and returns this action's preconditions as a WorldState for use by the planner
-        /// to check what the WorldState will be after this action's effects are applied.
-        /// </summary>
-        /// <returns></returns>
-        // public WorldState GetEffectsAsWorldState()
-        // {
-        //     var state = new WorldState(_effects.Count);
-        //
-        //     foreach (WorldStatePair pair in _effects)
-        //         state.Set(pair.Key, pair.GetValue());
-        //
-        //     return state;
-        // }
     }
 }
 
