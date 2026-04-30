@@ -1033,6 +1033,7 @@ GameObject:
   - component: {fileID: 4883870662464631839}
   - component: {fileID: 5170634492144560065}
   - component: {fileID: 1398816697108664609}
+  - component: {fileID: 2026994192769515756}
   m_Layer: 6
   m_Name: AI Sensors
   m_TagString: Untagged
@@ -1099,7 +1100,7 @@ MonoBehaviour:
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
-  _drawMeleeRangeGizmos: 1
+  _drawMeleeRangeGizmos: 0
 --- !u!114 &5170634492144560065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,7 +1113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27da85858fc1148cf8dce1e9b684022c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.SmartObjectSensor
-  _tickRate: 5
+  _tickRate: 3
   _targetTag: Pickup
   _detectionRange: 20
 --- !u!114 &1398816697108664609
@@ -1132,7 +1133,24 @@ MonoBehaviour:
   _forwardAngle: 60
   _doorTag: Door
   _pathProximityThreshold: 1.5
-  _drawDoorDetectionGizmos: 1
+  _drawDoorDetectionGizmos: 0
+--- !u!114 &2026994192769515756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830102529562912333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de451cb1e0ba4b7e93a4158cab565228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GOAP::GOAP.HearingSensor
+  _tickRate: 3
+  _hearingRange: 30
+  _newSoundDistanceThreshold: 10
+  _showHearingGizmos: 0
+  _hearingGizmoColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1843270042884595026
 GameObject:
   m_ObjectHideFlags: 0
@@ -1487,21 +1505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32c7a4f3e5ec347dab9f6ff40ddc4ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GOAP.GOAPAgent
-  _actionDataAssets:
-  - {fileID: 11400000, guid: bafc71e314fec41fdb7ecd0ce221e587, type: 2}
-  - {fileID: 11400000, guid: d1b3f0c7d97374c278498117714ecb6e, type: 2}
-  - {fileID: 11400000, guid: 354272894e0fc4bff88eab55c898edc4, type: 2}
-  - {fileID: 11400000, guid: 2b2dcc1891fed4247bdd07946a4364fb, type: 2}
-  - {fileID: 11400000, guid: 208ecb2c0ea4a45b7917c954cac988b0, type: 2}
-  - {fileID: 11400000, guid: 8d132720fdec34d41a974d718d4abf84, type: 2}
-  - {fileID: 11400000, guid: d8fc12d68a4dd4553bb9adf7ed4f375d, type: 2}
-  - {fileID: 11400000, guid: c7403bb9f0235418eb13874527628281, type: 2}
-  _goals:
-  - {fileID: 11400000, guid: 1e1c6c4dd80034acf8ab84b44edc16bf, type: 2}
-  - {fileID: 11400000, guid: fdaa29ea907a44f51a19ef88cf7cdb93, type: 2}
-  - {fileID: 11400000, guid: e6680d072d11c440a9b7588ff1c76914, type: 2}
-  - {fileID: 11400000, guid: 1d77c718475204ca3b9e5c062ff4900d, type: 2}
-  - {fileID: 11400000, guid: d3b3b2a42897a4d9ba28eb15646b41de, type: 2}
+  _agentType: {fileID: 11400000, guid: b8307ed86500d40cba156fe01cf80dbf, type: 2}
   _waypointNetwork: {fileID: 0}
   _planningTickRate: 3
   _debugLogging: 0
@@ -2140,6 +2144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ee2a336c6e44ba38a6a6006f678d17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Audio::Audio.FootstepSoundController
+  _playerSoundEmitter: {fileID: 0}
   _mode: 1
   _footstepSounds: {fileID: 11400000, guid: 31c5da20287f14dee92d83e07eeba686, type: 2}
   _groundCheckDistance: 1.5

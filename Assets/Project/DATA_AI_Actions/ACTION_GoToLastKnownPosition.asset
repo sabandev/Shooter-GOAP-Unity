@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: GOAP::GOAP.GoToLastKnownPositionActionData
   _actionName: Go to last known position
   _cost: 1
+  _applyMovementSpeed: 1
+  _movementSpeed: 1
   _preconditions:
   - _key: IS_INVESTIGATING
     _valueType: 0

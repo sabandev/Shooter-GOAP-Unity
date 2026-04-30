@@ -38,6 +38,7 @@ namespace Weapons
         // ─── Private properties ────────────────────────────────────────────
 
         private readonly Weapon[] _slots = new Weapon[2];
+        
         private int _activeSlot = -1;
 
         // ─── Public properties ───────────────────────────────────────────────
@@ -54,7 +55,7 @@ namespace Weapons
         public bool HasWeapon  => ActiveWeapon != null;
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
-
+        
         private void Start()
         {
             if (_startingFirstWeapon != null)
@@ -74,6 +75,7 @@ namespace Weapons
                 if (_slots[i] != null) { continue; }
 
                 _slots[i] = weapon;
+                weapon.OnEquipped(gameObject.layer);
                 OnWeaponPickedUp?.Invoke(weapon, i);
                 AudioManager.Instance.Play(_pickupSound, transform.position);
 
@@ -178,9 +180,10 @@ namespace Weapons
         {
             if (_activeSlot < 0) { return; }
 
-            DropSlot(_activeSlot);
-            _slots[_activeSlot] = newWeapon;
-            EquipSlot(_activeSlot);
+            int targetSlot = _activeSlot;
+            DropSlot(targetSlot);
+            _slots[targetSlot] = newWeapon;
+            EquipSlot(targetSlot);
         }
     }
 }

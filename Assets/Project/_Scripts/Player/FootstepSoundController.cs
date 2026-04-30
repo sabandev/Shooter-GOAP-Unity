@@ -1,6 +1,7 @@
 using UnityEngine;
+using Audio;
 
-namespace Audio
+namespace Player
 {
     /// <summary>
     /// Plays footstep sounds driven by animation events.
@@ -22,8 +23,13 @@ namespace Audio
         
         // ─── Serialized properties ────────────────────────────────────────
 
+        [Header("References")]
+        [SerializeField] private PlayerSoundEmitter _playerSoundEmitter;
+        
         [Header("Mode")]
         [SerializeField] private FootstepMode _mode = FootstepMode.AnimationEvents;
+        
+        [Space(10.0f)]
         
         [Header("Sounds")]
         [SerializeField] private FootstepSounds _footstepSounds;
@@ -62,6 +68,11 @@ namespace Audio
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
+        private void Awake()
+        {
+            Debug.Assert(_footstepSounds != null, "[FootstepSoundController]: PlayerSoundEmitter not assigned.", this);
+        }
+        
         private void Start()
         {
             _lastPosition = transform.position;
@@ -85,6 +96,7 @@ namespace Audio
             
             _lastFootstepTime = Time.time;
             PlayFootstep();
+            _playerSoundEmitter?.EmitFootstep();
         }
 
         /// <summary>
@@ -97,6 +109,7 @@ namespace Audio
             
             _lastFootstepTime = Time.time;
             PlayFootstep();
+            _playerSoundEmitter?.EmitFootstep();
         }
 
         public void SetCrouching(bool isCrouching)
@@ -137,6 +150,7 @@ namespace Audio
                 _lastFootstepTime = Time.time;
                 
                 PlayFootstep();
+                _playerSoundEmitter?.EmitFootstep();
             }
         }
         

@@ -9350,7 +9350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11730,21 +11730,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 659006308}
     m_Modifications:
     - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _agentType
-      value: 
-      objectReference: {fileID: 11400000, guid: b8307ed86500d40cba156fe01cf80dbf, type: 2}
-    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: _waypointNetwork
       value: 
       objectReference: {fileID: 579386585}
-    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _goals.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
-      propertyPath: _actionDataAssets.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_Name
       value: AI Agent
@@ -13307,7 +13295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0639d4c22833f4e43ad7e084c7ec6c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Audio::Audio.AudioManager
-  _poolSize: 20
+  _poolSize: 50
   _sfxVolume: 1
   _musicVolume: 0.8
   _uiVolume: 1
@@ -14984,7 +14972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8731467589096876401, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -16426,6 +16414,28 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1035246074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6629615896440095604, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
+  m_PrefabInstance: {fileID: 5591225618665207006}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1035246082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035246074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2ed65876bc44c8c974c99eb094de9db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerSoundEmitter
+  _weaponHolder: {fileID: 1556099281}
+  _controller: {fileID: 1556099283}
+  _gunshotRadius: 30
+  _walkFootstepRadius: 6
+  _crouchFootstepRadius: 2
 --- !u!1 &1039357676
 GameObject:
   m_ObjectHideFlags: 0
@@ -41200,6 +41210,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6450421360830106160, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
+      propertyPath: _playerSoundEmitter
+      value: 
+      objectReference: {fileID: 1035246082}
+    - target: {fileID: 6450421360830106160, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
       propertyPath: _groundCheckDistance
       value: 0.5
       objectReference: {fileID: 0}
@@ -41263,6 +41277,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 155872593254486233, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1556099289}
+    - targetCorrespondingSourceObject: {fileID: 6629615896440095604, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1035246082}
   m_SourcePrefab: {fileID: 100100000, guid: 18a087f1501704099b95cd929296ee2d, type: 3}
 --- !u!1001 &6169993387444033477
 PrefabInstance:

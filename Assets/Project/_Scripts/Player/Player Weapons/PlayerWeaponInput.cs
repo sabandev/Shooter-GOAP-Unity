@@ -35,7 +35,7 @@ namespace Player
         private void Awake()
         {
             _weaponHolder = GetComponent<WeaponHolder>();
-            _input        = new PlayerInputActions();
+            _input = new PlayerInputActions();
         }
 
         private void OnEnable()
@@ -43,12 +43,12 @@ namespace Player
             _input.Player.Enable();
             
             // Fire
-            _input.Player.Fire.performed += ctx =>
+            _input.Player.Fire.performed += _ =>
             {
                 _fireHeld = true;
                 _firePressedThisFrame = true;
             };
-            _input.Player.Fire.canceled         += ctx => _fireHeld = false;
+            _input.Player.Fire.canceled += _ => _fireHeld = false;
             
             // Aim
             _input.Player.Aim.performed += _ =>
@@ -66,12 +66,12 @@ namespace Player
             };
             
             // Reload
-            _input.Player.Reload.performed      += ctx => _weaponHolder.TryReload();
+            _input.Player.Reload.performed += _ => _weaponHolder.TryReload();
             
             // Weapon slot navigation
-            _input.Player.WeaponSlot1.performed += ctx => _weaponHolder.EquipSlot(0);
-            _input.Player.WeaponSlot2.performed += ctx => _weaponHolder.EquipSlot(1);
-            _input.Player.CycleWeaponButton.performed += ctx => _weaponHolder.CycleWeapon();
+            _input.Player.WeaponSlot1.performed += _ => _weaponHolder.EquipSlot(0);
+            _input.Player.WeaponSlot2.performed += _ => _weaponHolder.EquipSlot(1);
+            _input.Player.CycleWeaponButton.performed += _ => _weaponHolder.CycleWeapon();
             _input.Player.ScrollWeapon.performed += ctx =>
             {
                 float scroll = ctx.ReadValue<float>();
@@ -80,7 +80,7 @@ namespace Player
             };
             
             // Weapon drop
-            _input.Player.DropWeapon.performed  += ctx => _weaponHolder.DropActiveWeapon();
+            _input.Player.DropWeapon.performed  += _ => _weaponHolder.DropActiveWeapon();
             
             // Lean
             _input.Player.LeanLeft.performed += _ => { _leanLeftHeld = true; UpdateLeanInput(); };

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 namespace UI
@@ -11,7 +12,7 @@ namespace UI
         [SerializeField] private GameObject _pausePanel;
 
         private PlayerInputActions _input;
-        private bool               _isPaused;
+        private bool _isPaused;
 
         private void Awake()
         {
@@ -50,6 +51,15 @@ namespace UI
             Cursor.lockState    = CursorLockMode.Locked;
             Cursor.visible      = false;
             _isPaused           = false;
+        }
+        
+        public void Restart()
+        {
+            Time.timeScale      = 1.0f;
+            Cursor.lockState    = CursorLockMode.Locked;
+            Cursor.visible      = false;
+            _isPaused           = false;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         public void Quit()

@@ -185,7 +185,7 @@ namespace Weapons
             
             OnFired?.Invoke(hitPoint);
             OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
-            AudioManager.Instance.Play(_fireSound, transform.position);
+            PlaySound(_fireSound, transform.position);
 
             if (CurrentAmmo <= 0 && ReserveAmmo > 0)
                 StartReload();
@@ -224,7 +224,7 @@ namespace Weapons
             OnHit?.Invoke(hit, type);
             
             SoundData impactSound = _data.GetImpactSound(type);
-            AudioManager.Instance.Play(impactSound, hit.point);
+            PlaySound(impactSound, hit.point);
         }
 
         private void StartReload()
@@ -234,7 +234,7 @@ namespace Weapons
             _reloadRefilled = false;
 
             OnReloadStarted?.Invoke();
-            AudioManager.Instance.Play(_reloadStartSound, transform.position);
+            PlaySound(_reloadStartSound, transform.position);
         }
 
         private void TickReload()
@@ -251,14 +251,14 @@ namespace Weapons
                 ReserveAmmo -= toAdd;
                 _reloadRefilled = true;
                 OnAmmoChanged?.Invoke(CurrentAmmo, ReserveAmmo);
-                AudioManager.Instance.Play(_reloadMidSound, transform.position);
+                PlaySound(_reloadMidSound, transform.position);
             }
 
             if (_reloadTimer >= _data.ReloadDuration)
             {
                 IsReloading = false;
                 OnReloadCompleted?.Invoke();
-                AudioManager.Instance.Play(_reloadEndSound, transform.position);
+                PlaySound(_reloadEndSound, transform.position);
             }
         }
         
@@ -268,6 +268,13 @@ namespace Weapons
             {
                 r.enabled = status;
             }
+        }
+        
+        private void PlaySound(SoundData data, Vector3 position)
+        {
+            if (data == null) { return; }
+            
+            AudioManager.Instance?.Play(data, position);
         }
     }
 }
