@@ -54,7 +54,15 @@ namespace GOAP
         /// <param name="availableActions"></param>
         /// <param name="nodesExpanded"></param>
         /// <returns></returns>
-        public List<GOAPActionInstance> Plan(WorldState currentState, WorldState goal, IReadOnlyList<GOAPActionInstance> availableActions, out int nodesExpanded)
+        public List<GOAPActionInstance> Plan(
+            WorldState currentState, 
+            WorldState goal, 
+            IReadOnlyList<GOAPActionInstance> availableActions, 
+            out int nodesExpanded 
+#if UNITY_EDITOR 
+        , PlanSearchTrace trace = null
+#endif
+        )
         {
             using (_planMarker.Auto())
             {
@@ -64,12 +72,37 @@ namespace GOAP
                 // calculation f(n) = g(n) + h(n).
                 // If action sets have > 30 actions, use a priority queue for better performance
                 var openSet = new List<PlanNode>();
+                
+                #if UNITY_EDITOR
+                var nodeIndex = trace != null ? new Dictionary<PlanNode, int>() : null;
+                #endif
 
                 var root = new PlanNode(RentState(goal), 0.0f, null, null);
 
                 openSet.Add(root);
 
                 nodesExpanded = 0;
+                
+                #if UNITY_EDITOR
+                if (trace != null)
+                {
+                    SnapshotState(goal, trace.GoalStateFacts);
+                    SnapshotState(currentState, trace.CurrentStateFacts);
+                    
+                    var rootRecord = new TraceNode
+                    {
+                        ActionName = null,
+                        ParentIndex = -1,
+                        Depth = 0,
+                        GCost = 0,
+                        HCost = Heuristic(root.RequiredState, currentState),
+                    };
+                    
+                    SnapshotState(root.RequiredState, rootRecord.RequiredFacts);
+                    trace.Nodes.Add(rootRecord);
+                    nodeIndex![root] = 0;
+                }
+                #endif
 
                 while (openSet.Count > 0)
                 {
@@ -81,26 +114,67 @@ namespace GOAP
                     }
 
                     PlanNode current = PopLowestCostNode(openSet);
+                    
+                    #if UNITY_EDITOR
+                    int curIdx = trace != null ? nodeIndex![current] : -1;
+                    #endif
+                    
                     nodesExpanded++;
 
                     // Plan has successfully been found
                     if (currentState.Satisfies(current.RequiredState))
                     {
                         List<GOAPActionInstance> plan = ReconstructPlan(current);
+                        
+                        #if UNITY_EDITOR
+                        if (trace != null)
+                        {
+                            PlanNode n = current;
+                            while (n != null && nodeIndex!.TryGetValue(n, out int idx))
+                            {
+                                trace.Nodes[idx].IsOnWinningPath = true;
+                                n = n.Parent;
+                            }
+                            trace.PlanFound = true;
+                        }
+                        #endif
+                        
                         ReturnAllRented();
                         return plan;
                     }
                     
                     foreach (GOAPActionInstance action in availableActions)
                     {
-                        if (!ActionSatisfiesAnyRequirement(action, current.RequiredState)) { continue; }
+                        if (!ActionSatisfiesAnyRequirement(action, current.RequiredState))
+                        {
+                            #if UNITY_EDITOR
+                            trace?.Nodes[curIdx].Rejected.Add(new RejectedAction { ActionName = action.Data.ActionName });
+                            #endif
+                            continue;
+                        }
 
                         WorldState nextRequired = BuildNextRequiredState(current.RequiredState, action);
-
                         float nextCost = current.RunningCost + action.Cost;
-
                         var child = new PlanNode(nextRequired, nextCost, action, current);
                         InsertByPriority(openSet, child, currentState);
+                        
+                        #if UNITY_EDITOR
+                        if (trace != null)
+                        {
+                            var record = new TraceNode
+                            {
+                                ActionName = action.Data.ActionName,
+                                ParentIndex = curIdx,
+                                Depth = trace.Nodes[curIdx].Depth + 1,
+                                GCost = nextCost,
+                                HCost = Heuristic(nextRequired, currentState),
+                            };
+                            
+                            SnapshotState(nextRequired, record.RequiredFacts);
+                            nodeIndex![child] = trace.Nodes.Count;
+                            trace.Nodes.Add(record);
+                        }
+                        #endif
                     }
                 }
 
@@ -208,6 +282,14 @@ namespace GOAP
 
             openSet.Add(node);
         }
+        
+        #if UNITY_EDITOR
+        private static void SnapshotState(WorldState state, List<(string, string)> into)
+        {
+            foreach (KeyValuePair<string, object> fact in state.GetFacts())
+                into.Add((fact.Key, fact.Value?.ToString() ?? "null"));
+        }
+        #endif
         
         private WorldState RentState(WorldState copyFrom)
         {

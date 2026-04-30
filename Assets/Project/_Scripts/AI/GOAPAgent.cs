@@ -22,8 +22,8 @@ namespace GOAP
     {
         // ───── Serialized properties ────────────────────────────────────────────────
         
-        [SerializeField] private List<GOAPActionData> _actionDataAssets = new();
-        [SerializeField] private List<GOAPGoal> _goals = new();
+        [Header("GOAP")]
+        [SerializeField] private GOAPAgentType _agentType;
         [SerializeField] private WaypointPatrolPath _waypointNetwork;
         [SerializeField] [Range(1.0f, 30.0f)] float _planningTickRate = 3.0f;
         [SerializeField] private bool _debugLogging = true;
@@ -37,13 +37,18 @@ namespace GOAP
 
         // ───── Private properties ────────────────────────────────────────────────
         
-        private List<GOAPActionInstance> _actionInstances;
-        private GOAPPlanner _planner;
-        private List<GOAPActionInstance> _currentPlan;
-        private GOAPGoal _activeGoal;
         private readonly List<PlanHistoryEntry> _planHistory = new();
+        
+        private List<GOAPActionInstance> _actionInstances;
+        private List<GOAPActionData> _actionDataAssets = new();
+        private List<GOAPGoal> _goals = new();
+        private List<GOAPActionInstance> _currentPlan;
+        
+        private GOAPPlanner _planner;
+        private GOAPGoal _activeGoal;
 
         private int _currentActionIndex;
+        
         private float _planningTickTimer;
 
         // ───── Public properties ────────────────────────────────────────────────
@@ -54,22 +59,29 @@ namespace GOAP
         public WaypointPatrolPath WaypointNetwork => _waypointNetwork;
         public IReadOnlyList<PlanHistoryEntry> PlanHistory => _planHistory;
 
+
         // ───── Constants ────────────────────────────────────────────────
         
         private const int MAX_HISTORY_ENTRIES  = 50;
 
         // ───── Editor properties ────────────────────────────────────────────────
         
+        
         public GOAPGoal ActiveGoal => _activeGoal;
         
         public List<GOAPActionInstance> CurrentPlan => _currentPlan;
-        
         public IReadOnlyList<GOAPGoal> Goals => _goals;
         public IReadOnlyList<GOAPActionInstance> ActionInstances => _actionInstances;
+        
         
         public int CurrentActionIndex => _currentActionIndex;
         
         public bool IsPaused { get; private set; }
+        
+        #if UNITY_EDITOR
+        public PlanSearchTrace LastPlanTrace { get; private set; }
+        public bool CaptureNextTrace { get; set; }
+        #endif
 
         // ───── Lifecycle methods ────────────────────────────────────────────────
         
@@ -79,6 +91,9 @@ namespace GOAP
             Animator = GetComponentInChildren<Animator>();
             Blackboard = new AgentBlackboard();
             _planner = new GOAPPlanner();
+            
+            if (_agentType != null)
+                _goals = new List<GOAPGoal>(_agentType.Goals);
 
             InitializeActionInstances();
             RegisterReplanCallbacks();
@@ -104,9 +119,33 @@ namespace GOAP
 
             AbortCurrentPlan();
 
+            #if UNITY_EDITOR
+            PlanSearchTrace trace = null;
+            if (CaptureNextTrace)
+            {
+                trace = new  PlanSearchTrace
+                {
+                    GoalName = goal.GoalName,
+                    TriggerReason = triggerReason,
+                    Timestamp = Time.time,
+                };
+            }
+            #endif
+            
             WorldState currentState = Blackboard.WorldState;
-
-            List<GOAPActionInstance> newPlan = _planner.Plan(currentState, goal.GetDesiredState(), _actionInstances, out int nodesExpanded);
+            List<GOAPActionInstance> newPlan = _planner.Plan(
+                currentState, 
+                goal.GetDesiredState(), 
+                _actionInstances, 
+                out int nodesExpanded 
+                #if UNITY_EDITOR
+                , trace
+                #endif
+                );
+            
+            #if UNITY_EDITOR
+            if (trace != null) { LastPlanTrace = trace; }
+            #endif
 
             bool planFound = newPlan != null && newPlan.Count > 0;
             RecordPlanHistory(goal, triggerReason, newPlan, nodesExpanded, planFound);
@@ -140,9 +179,7 @@ namespace GOAP
             {
                 // First action already invalid — discard plan and wait for next tick
                 if (_debugLogging)
-                    Debug.Log($"[GOAPAgent] '{name}' first action " +
-                            $"'{firstAction.Data.name}' failed procedural " +
-                            $"preconditions. Discarding plan.");
+                    Debug.Log($"[GOAPAgent] '{name}' first action '{firstAction.Data.name}' failed procedural preconditions. Discarding plan.");
 
                 _currentPlan          = null;
                 _currentActionIndex   = 0;
@@ -162,9 +199,10 @@ namespace GOAP
         /// </summary>
         private void InitializeActionInstances()
         {
-            _actionInstances = new List<GOAPActionInstance>(_actionDataAssets.Count);
+            IReadOnlyList<GOAPActionData> sources = _agentType != null ? _agentType.Actions : (IReadOnlyList<GOAPActionData>)_actionDataAssets;
+            _actionInstances = new List<GOAPActionInstance>(sources.Count);
 
-            foreach (GOAPActionData data in _actionDataAssets)
+            foreach (GOAPActionData data in sources)
             {
                 if (data == null)
                 {

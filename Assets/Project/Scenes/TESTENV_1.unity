@@ -11730,9 +11730,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 659006308}
     m_Modifications:
     - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _agentType
+      value: 
+      objectReference: {fileID: 11400000, guid: b8307ed86500d40cba156fe01cf80dbf, type: 2}
+    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: _waypointNetwork
       value: 
       objectReference: {fileID: 579386585}
+    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _goals.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1390674438380524051, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
+      propertyPath: _actionDataAssets.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2534134415953119248, guid: 9feb599dc8ea14548adbe6f421eb3c5c, type: 3}
       propertyPath: m_Name
       value: AI Agent
