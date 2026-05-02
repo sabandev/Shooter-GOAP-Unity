@@ -169,7 +169,7 @@ namespace Weapons
             Camera mainCam = Camera.main;
             if (mainCam == null) { return; }
 
-            Vector3 origin    = mainCam.transform.position;
+            Vector3 origin = mainCam.transform.position;
             Vector3 direction = mainCam.transform.forward + spreadVector;
             Vector3 hitPoint;
             

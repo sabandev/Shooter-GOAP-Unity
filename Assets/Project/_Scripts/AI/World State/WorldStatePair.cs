@@ -8,7 +8,7 @@ namespace GOAP
     /// Serializable so it can be displayed in the Unity inspector.
     /// </summary>
     [Serializable]
-    public sealed class WorldStatePair
+    public struct WorldStatePair
     {
         // ───── Nested type ────────────────────────────────────────────────
         
@@ -38,7 +38,7 @@ namespace GOAP
             ValueType.Bool   => _boolValue,
             ValueType.Int    => _intValue,
             ValueType.Float  => _floatValue,
-            _                => throw new InvalidOperationException($"[WorldStatePair] has unhandled Value type '{_valueType} on Key '{_key}''"),
+            _ => throw new InvalidOperationException($"[WorldStatePair] has unhandled Value type '{_valueType} on Key '{_key}''"),
 
         };
         
@@ -90,6 +90,8 @@ namespace GOAP
             _key = key;
             _valueType = ValueType.Bool;
             _boolValue = value;
+            _intValue = default;
+            _floatValue = default;
         }    
         
         // For creating Integer-value WorldStatePairs
@@ -98,6 +100,8 @@ namespace GOAP
             _key = key;
             _valueType = ValueType.Int;
             _intValue = value;
+            _boolValue = default;
+            _floatValue = default;
         }    
         
         // For creating Float-value WorldStatePairs
@@ -106,6 +110,8 @@ namespace GOAP
             _key = key;
             _valueType = ValueType.Float;
             _floatValue = value;
+            _boolValue = default;
+            _intValue = default;
         }
 
         // ───── Helper methods ────────────────────────────────────────────────

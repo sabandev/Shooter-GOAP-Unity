@@ -47,7 +47,7 @@ namespace GOAP
     /// <summary>
     /// Stores the name of a rejcted action from the search trace.
     /// </summary>
-    public sealed class RejectedAction
+    public struct RejectedAction
     {
         // ───── Public properties ────────────────────────────────────────────────
         

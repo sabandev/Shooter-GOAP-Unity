@@ -16,7 +16,7 @@ TagManager:
   - Interactable
   - WorldModel
   - ViewModel
-  - 
+  - NonCollidablePlayer
   - 
   - 
   - 

@@ -138,7 +138,10 @@ namespace Weapons
             if (casing == null) { return; }
 
             if (casing.TryGetComponent(out ShellCasing sc))
-                sc.Eject(_shellEjectPoint.forward);
+            {
+                CharacterController cc = _weaponHolder.GetComponent<CharacterController>();
+                sc.Eject(_shellEjectPoint.forward, cc != null ? cc.velocity : Vector3.zero);
+            }
         }
         
         private void SpawnBulletTrail(Vector3 hitPoint)

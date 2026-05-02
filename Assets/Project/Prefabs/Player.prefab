@@ -16,6 +16,10 @@ GameObject:
   - component: {fileID: 2043203370828052120}
   - component: {fileID: 6970322612809034865}
   - component: {fileID: 4223595190869283746}
+  - component: {fileID: 6061966674477649608}
+  - component: {fileID: 4902813861762409900}
+  - component: {fileID: 8157719896120574630}
+  - component: {fileID: 4549347156727782831}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -128,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4153a681badc740bdaab5b10a4ebbd0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerInventory
-  _maxHealthKits: 3
+  _maxHealthKits: 10
   _startingHealthKits: 1
 --- !u!114 &2043203370828052120
 MonoBehaviour:
@@ -159,6 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed82facba6fb643da9f6f38ba5ac316f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponHolder
+  _startingFirstWeapon: {fileID: 0}
+  _startingSecondWeapon: {fileID: 0}
+  _dropForce: 2
   _equipSound: {fileID: 0}
   _dropSound: {fileID: 11400000, guid: dee2345975cec488f9ca809d2f55d534, type: 2}
   _pickupSound: {fileID: 11400000, guid: f5553499f8420443fab033567eef22d5, type: 2}
@@ -174,6 +181,88 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aee4cd1e87714f019fed47c93d69c37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWeaponInput
+  _aimController: {fileID: 6061966674477649608}
+  _leanController: {fileID: 4902813861762409900}
+  _toggleAim: 0
+--- !u!114 &6061966674477649608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155872593254486233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10925d611ed354ea6b87cb4a1953fc42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerAimController
+  _camera: {fileID: 4136471718074021237}
+  _fpsCamera: {fileID: 4876369762907238855}
+  _weaponHolder: {fileID: 6970322612809034865}
+  _viewModelSway: {fileID: 2966762837290672679}
+  _fovTransitionSpeed: 12
+  _aimSensitivityMultiplier: 0.6
+  _aimSwayMultiplier: 0.7
+--- !u!114 &4902813861762409900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155872593254486233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55e6270b97eb4411a916413cc2adb026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerLeanController
+  _controller: {fileID: 3134622540112242605}
+  _cameraTransform: {fileID: 839554108503858920}
+  _maxLeanDistance: 0.35
+  _maxLeanRoll: 10
+  _leanSpeed: 10
+  _wallCheckRadius: 0.12
+  _wallMask:
+    serializedVersion: 2
+    m_Bits: 1015
+--- !u!114 &8157719896120574630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155872593254486233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0eb0b0c12da744bb859f51330f7a566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerDashController
+  _controller: {fileID: 3134622540112242605}
+  _characterController: {fileID: 4519704230840715739}
+  _dashSound: {fileID: 0}
+  _dashForce: 10
+  _dashDuration: 0.12
+  _dashCooldown: 1.5
+--- !u!114 &4549347156727782831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155872593254486233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f42e47524ef74efabc4101f38830f11c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerDeathHandler
+  _playerHealth: {fileID: 7020952862533228671}
+  _componentsToDisable:
+  - {fileID: 3134622540112242605}
+  - {fileID: 7799448440639310416}
+  - {fileID: 4876369762907238855}
+  - {fileID: 4223595190869283746}
+  - {fileID: 6061966674477649608}
+  - {fileID: 4902813861762409900}
+  - {fileID: 8157719896120574630}
 --- !u!1 &2662225218045000519
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,12 +309,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonShooterController.FPSCamera
   _controller: {fileID: 3134622540112242605}
+  _leanController: {fileID: 4902813861762409900}
   _sensitivity: 0.15
   _maxPitchAngle: 85
   _lookSmoothing: 0.05
   _crouchSettings: {fileID: 11400000, guid: 791e2cc12cc9e40708d2f424b0393b43, type: 2}
   _eyeHeightSpeed: 12
-  _cameraForwardOffset: 0.4
+  _cameraForwardOffset: 0
   _standingBob: {fileID: 11400000, guid: c8a950e7e40254a6cb489e06adcb8430, type: 2}
   _crouchingBob: {fileID: 11400000, guid: ad92f5d6ba93b4f3dbf177a233cd0654, type: 2}
 --- !u!1 &2991023056315028633
@@ -346,7 +436,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -391,13 +481,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4073179224746560413}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13814414, y: -0.21903554, z: -0.59440833, w: -0.7613268}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.1641, y: -0.0414, z: 0.0371}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6151708893555266763}
-  m_LocalEulerAnglesHint: {x: -28.082, y: 11.062, z: 75.475}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6475754334667038216
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +516,7 @@ Transform:
   m_GameObject: {fileID: 6475754334667038216}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0, z: 0.1}
+  m_LocalPosition: {x: 0.1, y: 0, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -587,7 +677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
-  m_RenderShadows: 0
+  m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 1
@@ -598,7 +688,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -946,6 +1036,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2faa610713d3b3c439473daa55e8c60a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6450421360830106160}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2faa610713d3b3c439473daa55e8c60a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8439215755987193971}
   m_SourcePrefab: {fileID: 100100000, guid: 2faa610713d3b3c439473daa55e8c60a, type: 3}
 --- !u!4 &2252139889784436803 stripped
 Transform:
@@ -1128,9 +1221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ee2a336c6e44ba38a6a6006f678d17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Audio::Audio.FootstepSoundController
+  _playerSoundEmitter: {fileID: 8439215755987193971}
   _mode: 1
   _footstepSounds: {fileID: 11400000, guid: 31c5da20287f14dee92d83e07eeba686, type: 2}
-  _groundCheckDistance: 1.5
+  _groundCheckDistance: 0.5
   _groundMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1139,6 +1233,23 @@ MonoBehaviour:
   _crouchStrideLength: 2
   _minSpeed: 0.1
   _footstepCooldown: 0.2
+--- !u!114 &8439215755987193971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629615896440095604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2ed65876bc44c8c974c99eb094de9db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Player::Player.PlayerSoundEmitter
+  _weaponHolder: {fileID: 6970322612809034865}
+  _controller: {fileID: 3134622540112242605}
+  _gunshotRadius: 30
+  _walkFootstepRadius: 6
+  _crouchFootstepRadius: 2
 --- !u!1001 &6151708893555658323
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1357,7 +1468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100104, guid: b0299d1388028864e9874bcacb6c2123, type: 3}
       propertyPath: m_Name
-      value: SK_FP_CH_Default_Cubic
+      value: Arms Mesh
       objectReference: {fileID: 0}
     - target: {fileID: 100104, guid: b0299d1388028864e9874bcacb6c2123, type: 3}
       propertyPath: m_Layer
@@ -1483,6 +1594,10 @@ PrefabInstance:
       propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: b0299d1388028864e9874bcacb6c2123, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1530,6 +1645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Player::Player.ViewModelController
   _weaponHolder: {fileID: 6970322612809034865}
+  _worldWeaponController: {fileID: 6871140437441252414}
   _animator: {fileID: 6151708893546281779}
 --- !u!114 &6871140437441252414
 MonoBehaviour:
@@ -1544,6 +1660,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Player::WorldWeaponController
   _weaponHolder: {fileID: 6970322612809034865}
-  _rightHandBone: {fileID: 1969881038608556278}
-  _positionOffset: {x: 0, y: 0, z: 0}
-  _rotationOffset: {x: 0, y: 0, z: 0}
+  _weaponAttachPoint: {fileID: 1969881038608556278}
+  _positionOffset: {x: -0.01500857, y: -0.007606229, z: 0.001102429}
+  _rotationOffset: {x: 20.165, y: 89.688, z: 60.146}
